@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# Create base docker-compose command to run
+COMPOSE="docker-compose -f docker-compose.yml"
+
+# If we pass any arguments...
+if [ $# -gt 0 ]; then
+
+    # Start up containers
+    if [ "$1" == "serve" ]; then
+        $COMPOSE up -d app \
+        && $COMPOSE exec \
+            app \
+            php artisan migrate
+
+    # Stop the containers
+    elif [ "$1" == "down" ]; then
+        $COMPOSE down
+
+    # If "comp[oser]" is used, pass-thru to "composer" inside a new container
+    elif [ "$1" == "composer" ] || [ "$1" == "comp" ]; then
+        shift 1
+        $COMPOSE run --rm \
+            app \
+            composer "$@"
+
+    # If "art[isan]" is used, pass-thru to "artisan" inside a new container
+    elif [ "$1" == "artisan" ] || [ "$1" == "art" ]; then
+        shift 1
+        $COMPOSE run --rm \
+            app \
+            php artisan "$@"
+
+    # If "test" is used, run unit tests, pass-thru any extra arguments to phpunit
+    elif [ "$1" == "test" ]; then
+        shift 1
+        $COMPOSE run --rm \
+            app \
+            ./vendor/bin/phpunit "$@"
+
+    # Else, pass-thru args to docker-compose
+    else
+        $COMPOSE "$@"
+    fi
+else
+    # Use the docker-compose ps command if nothing else passed through
+    $COMPOSE ps
+fi
