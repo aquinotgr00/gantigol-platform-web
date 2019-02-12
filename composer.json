@@ -17,9 +17,20 @@
         "beyondcode/laravel-dump-server": "^1.0",
         "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.4",
+        "jakub-onderka/php-parallel-lint": "^1.0",
+        "jangregor/phpstan-prophecy": "^0.3.0",
+        "mi-schi/phpmd-extension": "^4.3",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^2.0",
-        "phpunit/phpunit": "^7.0"
+        "nunomaduro/larastan": "^0.3.15",
+        "phpmd/phpmd": "^2.6",
+        "phpstan/phpstan": "^0.11.1",
+        "phpstan/phpstan-mockery": "^0.11.0",
+        "phpstan/phpstan-phpunit": "^0.11.0",
+        "phpstan/phpstan-strict-rules": "^0.11.0",
+        "phpunit/phpunit": "^7.0",
+        "sebastian/phpcpd": "^4.1",
+        "squizlabs/php_codesniffer": "^3.4"
     },
     "config": {
         "optimize-autoloader": true,
@@ -48,6 +59,21 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "lint": "parallel-lint --colors --exclude vendor --exclude storage .",
+        "phpcpd": "phpcpd app tests modules",
+        "phpcs": "phpcs -sp app tests modules",
+        "phpstan": "phpstan analyze --level=max app tests modules",
+        "phpmd": "phpmd app,tests,modules text phpmd.xml",
+        "test": "phpunit --colors=always --stop-on-failure",
+        "check": [
+            "@lint",
+            "@phpcpd",
+            "@phpcs",
+            "@phpstan",
+            "@phpmd",
+            "@test"
+        ],
+        "fix": "phpcbf -sp app tests modules",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

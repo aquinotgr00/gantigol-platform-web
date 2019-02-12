@@ -1,0 +1,14 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-mockery/extension.neon
+    - vendor/jangregor/phpstan-prophecy/src/extension.neon
+    - vendor/nunomaduro/larastan/extension.neon
+parameters:
+    excludes_analyse:
+        - %currentWorkingDirectory%/modules/*/database/*
+    ignoreErrors:
+        - '#Dynamic call to static method Illuminate\\Database\\[a-zA-Z\\]+::[a-zA-Z]+\(\)\.#'
+        - '#Call to an undefined static method Illuminate\\[a-zA-Z\\]+::assert[a-zA-Z]+\(\)\.#'
+        - '#Access to an undefined property Faker\\Generator::\$[a-zA-Z1-9_]+\.#'
