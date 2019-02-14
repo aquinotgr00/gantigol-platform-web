@@ -26,6 +26,8 @@ RUN apk add --no-cache --virtual .build-deps \
         )" \
     && apk add --virtual .phpext-rundeps $runDeps \
     && apk del .build-deps
+    
+RUN apk add --no-cache libpng libpng-dev && docker-php-ext-install gd && apk del libpng-dev
 
 # install composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
