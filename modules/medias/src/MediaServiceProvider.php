@@ -18,7 +18,7 @@ class MediaServiceProvider extends ServiceProvider
         $this->loadConfig();
         $this->loadRoutes($router);
         $this->loadViews();
-       $this->loadMigrationsAndFactories($factory);
+        $this->loadMigrationsAndFactories($factory);
     }
 
     private function loadConfig()
@@ -63,6 +63,4 @@ class MediaServiceProvider extends ServiceProvider
             $factory->load(__DIR__.'/../database/factories');
         }
     }
-
 }
-

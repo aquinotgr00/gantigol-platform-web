@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ContentMediaController extends Controller
 {
-     protected $contentalbum;
+    protected $contentalbum;
 
     public function __construct()
     {

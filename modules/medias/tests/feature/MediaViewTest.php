@@ -15,7 +15,7 @@ class MediaViewTest extends TestCase
      */
     public function media_cannot_render_view_empty_model()
     {
-        $response = $this->get(route('media.view.content',['model'=>'content']));
+        $response = $this->get(route('media.view.content', ['model'=>'content']));
 
         $response->assertStatus(500);
     }
@@ -27,7 +27,7 @@ class MediaViewTest extends TestCase
     {
         $media = factory(Content::class)->create();
 
-        $response = $this->get(route('media.view.content',['model'=>'content']));
+        $response = $this->get(route('media.view.content', ['model'=>'content']));
 
         $response->assertStatus(200);
     }
@@ -39,9 +39,8 @@ class MediaViewTest extends TestCase
     {
         $media = factory(Content::class)->create();
 
-        $response = $this->get(route('media.view.content',['model'=>'content']));
+        $response = $this->get(route('media.view.content', ['model'=>'content']));
 
         $this->assertEquals(0, count($response->original['media']));
     }
 }
-

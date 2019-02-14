@@ -30,9 +30,8 @@ class MediaFunctionTest extends TestCase
         $model->addMedia($file)
             ->toMediaCollection();
 
-        $response = $this->get(route('media.view.content',['model'=>'content']));
+        $response = $this->get(route('media.view.content', ['model'=>'content']));
         $this->assertEquals(1, count($response->original['media']));
-        
     }
 
     /**
@@ -51,10 +50,7 @@ class MediaFunctionTest extends TestCase
             ->toMediaCollection();
 
         $model->clearMediaCollection();
-        $response = $this->get(route('media.view.content',['model'=>'content']));
+        $response = $this->get(route('media.view.content', ['model'=>'content']));
         $this->assertEquals(0, count($response->original['media']));
-        
     }
-
 }
-
