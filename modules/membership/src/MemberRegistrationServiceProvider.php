@@ -1,17 +1,18 @@
 <?php
 
-namespace Modules\MemberRegistration;
+namespace Modules\Membership;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Database\Eloquent\Factory;
+use Laravel\Passport\Passport;
 
 class MemberRegistrationServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(ExceptionHandler::class, AdminHandler::class);
+        
     }
 
     public function boot(Router $router, Factory $factory)
@@ -21,6 +22,8 @@ class MemberRegistrationServiceProvider extends ServiceProvider
         $this->loadViews();
         $this->loadMigrationsAndFactories($factory);
         $this->mergeAuthConfig();
+
+        Passport::routes();
     }
 
     private function loadConfig()
@@ -30,15 +33,15 @@ class MemberRegistrationServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => config_path('members.php'),
-            ], 'members:config');
+                $path => config_path('member.php'),
+            ], 'member:config');
         }
     }
 
     private function loadRoutes(Router $router)
     {
         $router->prefix(config('member.prefix', 'member'))
-               ->namespace('Modules\member_registration\Http\Controllers')
+               ->namespace('Modules\Membership\Http\Controllers')
                ->middleware(['api'])
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
@@ -48,7 +51,7 @@ class MemberRegistrationServiceProvider extends ServiceProvider
     private function loadViews()
     {
         $path = __DIR__.'/../resources/views';
-        $this->loadViewsFrom($path, 'member_registration');
+        $this->loadViewsFrom($path, 'membership');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([

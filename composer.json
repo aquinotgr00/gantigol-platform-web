@@ -45,7 +45,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Modules\\MemberRegistration\\": "modules/member-registration/src",
+            "Modules\\Membership\\": "modules/membership/src",
             "App\\": "app/"
         },
         "classmap": [
@@ -55,7 +55,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Modules\\MemberRegistration\\": "modules/member-registration/test",
+            "Modules\\Membership\\Tests\\": "modules/membership/test",
             "Tests\\": "tests/"
         }
     },

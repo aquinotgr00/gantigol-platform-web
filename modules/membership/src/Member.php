@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules/MemberRegistration;
+namespace Modules\Membership;
 
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -20,6 +20,14 @@ class Member extends Authenticatable
         'email',
         'password',
         'username',
+        'phone',
+        'address',
+        'gender',
+        'dob',
+        'subdistrict',
+        'city',
+        'province',
+        'postal_code'
     ];
 
     /**
