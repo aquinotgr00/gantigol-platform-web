@@ -55,7 +55,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Modules\\Membership\\Tests\\": "modules/membership/test",
+            "Modules\\Membership\\Tests\\": "modules/membership/tests",
             "Tests\\": "tests/"
         }
     },
