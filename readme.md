@@ -81,3 +81,7 @@ Run `phpunit` and pass-thru any extra arguments inside a new app container
 ./dev test --help
 ```
 
+### add middleware custom passport
+
+'passport-administrators' => \App\Http\Middleware\PassportCustomProvider::class, to kernel route middleware
+
