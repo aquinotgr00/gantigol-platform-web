@@ -6,25 +6,43 @@ use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Membership\Member;
-use Modules\Membership\accessToken;
+use Modules\Membership\AccessToken;
 use Carbon\Carbon;
 use Hash;
 
 class ApiMembershipController extends Controller
 {
 
+    /**
+     * Create a new parameter.
+     *
+     * @var mixed members
+     */
     protected $members;
+
+    /**
+     * Create a new parameter.
+     *
+     * @var mixed access_token
+     */
     protected $access_token;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Member $memberModel, AccessToken $accessTokenModel)
     {
-        $this->members = new Member();
-        $this->access_token = new accessToken();
+        $this->members = $memberModel;
+        $this->access_token = $accessTokenModel;
     }
+
+    /**
+     * using a new guard instance.
+     *
+     * @return mixed
+     */
     protected function guard()
     {
         return Auth::guard('api');
@@ -32,13 +50,8 @@ class ApiMembershipController extends Controller
     /**
      * Create member
      *
-     * @param  [string] name
-     * @param  [string] email
-     * @param  [string] username
-     * @param  [string] phone
-     * @param  [string] password
-     * @param  [string] password_confirmation
-     * @return [string] message
+     * @param \Illuminate\Http\Request  $request
+     * @return mixed
      */
     public function signup(Request $request)
     {
@@ -80,12 +93,9 @@ class ApiMembershipController extends Controller
     /**
      * Login member and create token
      *
-     * @param  [string] username
-     * @param  [string] password
-     * @param  [boolean] remember_me
-     * @return [string] access_token
-     * @return [string] token_type
-     * @return [string] expires_at
+     * @param  \Illuminate\Http\Request  $request
+     * @var boolean $remember_me
+     * @return mixed|boolean
      */
     public function signin(Request $request)
     {
@@ -98,53 +108,51 @@ class ApiMembershipController extends Controller
             'remember_me' => 'boolean'
         ]);
 
-       $user = $this->members->findForPassport($request->username);
+        $user = $this->members->findForPassport($request->username);
 
+        $response = [ "message" => "Account does not exist"];
+        $status = 422;
 
-    if ($user) {
-
-            if($request->verification === "verified" && $user->verification != "verified"){
+        if ($user) {
+            if ($request->verification === "verified" && $user->verification != "verified") {
                 $verification = false;
-               }
+            }
 
             if (Hash::check($request->password, $user->password) && $verification) {
                 $tokenResult = $user->createToken('Member Grant Client');
                 $token = $tokenResult->token;
-                if ($request->remember_me)
-                $token->expires_at = Carbon::now()->addWeeks(1);
+                $remember_me = $request->remember_me;
+                
+                if (!is_null($remember_me)) {
+                    $token->expires_at = Carbon::now()->addWeeks(1);
+                }
 
                 $token->save();
-            } else {
-                $response = "Account does not exist";
-                return response($response, 422);
+                $response =[
+                                'access_token' => $tokenResult->accessToken,
+                                'token_type' => 'Bearer',
+                                'expires_at' => Carbon::parse(
+                                    $tokenResult->token->expires_at
+                                )->toDateTimeString()
+                            ];
+                $status  = 200;
             }
-
-        } else {
-            $response = 'Account does not exist';
-            return response($response, 422);
         }
-
-        return response()->json([
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => Carbon::parse(
-                $tokenResult->token->expires_at
-            )->toDateTimeString()
-        ],200);
+        return response()->json($response, $status);
     }
 
     /**
-     * Access token login member
+     * Access token login member to get oauth Client
      *
-     * @param  [int] id
+     * @param  string $data
      *
-     * @return [string] access_token
+     * @return string $access_token
      */
-
-    public function accessTokenMember($data){
+    public function accessTokenMember($data)
+    {
         
         $token = sha1(Carbon::now()->timestamp."".$data);
-        $access_token = new accessToken([
+        $access_token = new AccessToken([
             'member_id' => $data,
             'token' => $token,
             'expired_at' =>Carbon::now()->addWeeks(1)
@@ -156,11 +164,12 @@ class ApiMembershipController extends Controller
         /**
      * Access token login member verification
      *
-     * @param  [int] token
+     * @param  string $token
      *
-     * @return [string] access_token
+     * @return mixed $response
      */
-    public function findToken($token){
+    public function findToken($token)
+    {
 
         $response = $this->access_token->verifiedToken($token);
 
@@ -168,35 +177,33 @@ class ApiMembershipController extends Controller
     }
 
       /**
-     * Access token login member verification
+     * Access token login member verification to verified member
      *
-     * @param  [int] token
+     * @param  string|null $token
+     * @var boolean $access
+     * @param  \Illuminate\Http\Request  $request
      *
-     * @return [string] access_token
-     * @return [string] token_type
-     * @return [string] expires_at
+     * @return mixed|boolean $access
+     * @return mixed|boolean
      */
 
-    public function accessTokenMemberVerification($token=null,Request $request){
+    public function tokenMemberVerification(Request $request, $token = null)
+    {
         
          $request->validate([
             'token' => 'required|string'
-        ]);
+         ]);
 
-         if($token){
-            $request->merge(['token' => $token]); 
-
+        if (!is_null($token)) {
+            $request->merge(['token' => $token]);
         }
 
         $access = $this->findToken($request->token);
 
-
-         
-        if($access){
+        if (!is_null($access)) {
             $user = $this->members->findForTokenAccess($access->member_id);
 
-            if($user){
-
+            if (!is_null($user)) {
                 $tokenResult = $user->createToken('Member Grant Client');
                 $token = $tokenResult->token;
 
@@ -209,63 +216,56 @@ class ApiMembershipController extends Controller
                     'expires_at' => Carbon::parse(
                         $tokenResult->token->expires_at
                     )->toDateTimeString()
-                ],200);
+                ], 200);
             }
-
         }
         
 
         $response = "Token does not exist.";
-        return response($response, 422);     
-
+        return response($response, 422);
     }
 
      /**
-     * Access hadnler token  verification
+     * Access handler token  verification
      *
-     * @param  [int] token
-     *
-     * @return [string] access_token
-     * @return [string] token_type
-     * @return [string] expires_at
+     * @var  \Modules\Membership\Http\findToken $access
+     * @param  \Illuminate\Http\Request  $request
+     * @return mixed|boolean
      */
 
-     public function verificationMemberhandler(Request $request){
+    public function verificationMemberHandle(Request $request)
+    {
 
         $request->validate([
-            'token' => 'required|string'
+           'token' => 'required|string'
         ]);
 
-        $response = response("Invalid token", 422); 
+        $response = response("Invalid token", 422);
 
         $access = $this->findToken($request->token);
-        if($access){
-        
+        if (!is_null($access)) {
             $this->members->memberVerification($access->member_id);
 
-            $response = $this->accessTokenMemberVerification($access->token,$request);
+            $response = $this->tokenMemberVerification($request, $access->token);
 
             $this->access_token->expiringToken($access->token);
         }
 
         return $response;
-            
-     }
+    }
 
      /**
      * Access hadnler token  verification
      *
-     * @param  [int] auth token
-     *
-     * @return [string] access_token
+     * @return mixed
      *
      *
      */
-     public function requestToken(request $request){
-       $user = Auth::user(); 
-       $response = $this->accessTokenMember($user->id);
-        return response()->json(['access_token'=>$response], 200); 
-     }
-
-
+    public function requestToken()
+    {
+        /** @var \App\User */
+        $user = Auth::user();
+        $response = $this->accessTokenMember($user->id);
+        return response()->json(['access_token'=>$response], 200);
+    }
 }

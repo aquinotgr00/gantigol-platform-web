@@ -1,13 +1,13 @@
 <?php
 
 return [
-	'guards' => [
-		    'api' => [
-		        'driver' => 'passport',
-		        'provider' => 'members',
-		    ],
-		],
-	'providers' => [
+    'guards' => [
+            'api' => [
+                'driver' => 'passport',
+                'provider' => 'members',
+            ],
+        ],
+    'providers' => [
         'members' => [
             'driver' => 'eloquent',
             'model' => Modules\Membership\Member::class,
@@ -21,4 +21,4 @@ return [
         ],
     ],
 
-	];
+    ];

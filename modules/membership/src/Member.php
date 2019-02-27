@@ -41,19 +41,40 @@ class Member extends Authenticatable
         'remember_token',
     ];
 
-    public function findForPassport($identifier) {
+    /**
+     * find user by username or email using passport
+     *
+     * @param  mixed $identifier
+     *
+     * @return mixed
+     */
+    public function findForPassport($identifier)
+    {
         return $this->orWhere('email', $identifier)->orWhere('username', $identifier)->first();
     }
 
-    public function findForTokenAccess($id) {
-        return $this->where('id',$id)->first();
+    /**
+     * find user token
+     *
+     * @param  int $id
+     *
+     * @return mixed
+     */
+    public function findForTokenAccess($id)
+    {
+        return $this->where('id', $id)->first();
     }
 
-    public function memberVerification($id){
-        return $this->where('id',$id)
-                    ->update([
-                            'verification'=>'verified'
-                        ]);
+    /**
+     * find user token verification
+     *
+     * @param  int $id
+     *
+     * @return bool
+     */
+    public function memberVerification($id)
+    {
+        return $this->where('id', $id)
+                    ->update(['verification'=>'verified']);
     }
 }
-

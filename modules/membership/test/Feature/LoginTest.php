@@ -13,22 +13,23 @@ class LoginTest extends TestCase
 {
      use RefreshDatabase;
 
-     public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->artisan('passport:install');
     }
      /**
      * @test
      */
-    public function login_using_username_success(): void
+    public function loginUsingUsernameSuccess(): void
     {
         $member = factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> $member->username,
-				"password"=> "open1234",
-				"verification"=> "verified"
+                "username"=> $member->username,
+                "password"=> "open1234",
+                "verification"=> "verified"
         ]);
 
         $response->assertStatus(200);
@@ -37,15 +38,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_email_success(): void
+    public function loginUsingEmailSuccess(): void
     {
         $member = factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> $member->email,
-				"password"=> "open1234",
-				"verification"=> "verified"
+                "username"=> $member->email,
+                "password"=> "open1234",
+                "verification"=> "verified"
         ]);
 
         $response->assertStatus(200);
@@ -54,15 +55,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_username_failed_unverified(): void
+    public function loginUsingUsernameFailedUnverified(): void
     {
         $member = factory(Member::class)->create(['verification'=>'unverified']);
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> $member->username,
-				"password"=> "open1234",
-				"verification"=>"verified"
+                "username"=> $member->username,
+                "password"=> "open1234",
+                "verification"=>"verified"
         ]);
         $response->assertStatus(422);
     }
@@ -70,15 +71,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_email_failed_unverified(): void
+    public function loginUsingEmailFailedUnverified(): void
     {
         $member = factory(Member::class)->create(['verification'=>'unverified']);
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> $member->email,
-				"password"=> "open1234",
-				"verification"=>"verified"
+                "username"=> $member->email,
+                "password"=> "open1234",
+                "verification"=>"verified"
         ]);
         $response->assertStatus(422);
     }
@@ -86,15 +87,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_username_failed(): void
+    public function loginUsingUsernameFailed(): void
     {
-        $member = factory(Member::class)->create();
+        factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> "notregistered",
-				"password"=> "open1234",
-				"verification"=>"verified"
+                "username"=> "notregistered",
+                "password"=> "open1234",
+                "verification"=>"verified"
         ]);
         $response->assertStatus(422);
     }
@@ -103,15 +104,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_email_failed(): void
+    public function loginUsingEmailFailed(): void
     {
-        $member = factory(Member::class)->create();
+        factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> "notregistered@test.com",
-				"password"=> "open1234",
-				"verification"=>"verified"
+                "username"=> "notregistered@test.com",
+                "password"=> "open1234",
+                "verification"=>"verified"
         ]);
         $response->assertStatus(422);
     }
@@ -119,15 +120,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_password_failed(): void
+    public function loginUsingPasswordFailed(): void
     {
-        $member = factory(Member::class)->create();
+        factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> "notregistered@test.com",
-				"password"=> "errorpassword",
-				"verification"=>"verified"
+                "username"=> "notregistered@test.com",
+                "password"=> "errorpassword",
+                "verification"=>"verified"
         ]);
         $response->assertStatus(422);
     }
@@ -135,15 +136,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_password_empty_failed(): void
+    public function loginUsingPasswordEmptyFailed(): void
     {
-        $member = factory(Member::class)->create();
+        factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> "notregistered@test.com",
-				"password"=> "",
-				"verification"=>"verified"
+                "username"=> "notregistered@test.com",
+                "password"=> "",
+                "verification"=>"verified"
         ]);
         $response->assertSessionHasErrors(['password']);
     }
@@ -151,15 +152,15 @@ class LoginTest extends TestCase
      /**
      * @test
      */
-    public function login_using_username_empty_failed(): void
+    public function loginUsingUsernameEmptyFailed(): void
     {
-        $member = factory(Member::class)->create();
+        factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> "",
-				"password"=> "open1234",
-				"verification"=>"verified"
+                "username"=> "",
+                "password"=> "open1234",
+                "verification"=>"verified"
         ]);
         $response->assertSessionHasErrors(['username']);
     }
@@ -167,62 +168,16 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function login_using_username_password_empty_failed(): void
+    public function loginUsingUsernamePasswordEmptyFailed(): void
     {
-        $member = factory(Member::class)->create();
+        factory(Member::class)->create();
 
         $response = $this->post(route('auth.signin'), [
             
-				"username"=> "",
-				"password"=> "",
-				"verification"=>"verified"
+                "username"=> "",
+                "password"=> "",
+                "verification"=>"verified"
         ]);
         $response->assertSessionHasErrors(['username','password']);
     }
-
-     /**
-     * @test
-     */
-    public function login_token_success(): void
-    {
-        $member = factory(Member::class)->create();
-        $token = factory(AccessToken::class)->create(['member_id'=>$member->id,'token'=>sha1(Carbon::now()->timestamp."".$member->id)]);
-        $response = $this->post(route('auth.token.signin'), [
-            
-			"token"=>$token->token
-        ]);
-
-        $this->assertTrue(true);
-	}
-
-	/**
-     * @test
-     */
-    public function login_token_empty_failed(): void
-    {
-        $member = factory(Member::class)->create();
-        $token = factory(AccessToken::class)->create(['member_id'=>$member->id,'token'=>sha1(Carbon::now()->timestamp."".$member->id)]);
-        $response = $this->post(route('auth.token.signin'), [
-            
-			"token"=>""
-        ]);
-
-         $response->assertSessionHasErrors(['token']);
-	}
-
-	/**
-     * @test
-     */
-    public function login_token_wrong_failed(): void
-    {
-        $member = factory(Member::class)->create();
-        $token = factory(AccessToken::class)->create(['member_id'=>$member->id,'token'=>sha1(Carbon::now()->timestamp."".$member->id)]);
-        $response = $this->post(route('auth.token.signin'), [
-            
-			"token"=>"wrongtoken"
-        ]);
-
-         $response->assertStatus(422);
-	}
-
 }

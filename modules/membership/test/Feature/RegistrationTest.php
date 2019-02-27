@@ -16,48 +16,48 @@ class RegistrationTest extends TestCase
      *
      * @return void
      */
-    public function registration_success()
+    public function registrationSuccess()
     {
-    	$response = $this->post(route('auth.signup'), [
-            	"name"=> "test postman",
-				"username"=> "postman",
-				"email"=> "test@postman.com",
-				"phone"=> "+2298929992",
-				"dob"=> "27/01/1991",
-				"gender"=>"male",
-				"address"=> "yogyakarta",
-				"province"=>"yogyakarta",
-				"city"=>"Yogyakarta",
-				"subdistrict"=>"yogyakarta",
-				"postal_code"=>"yogyakarta",
-				"password"=> "open1234",
-				"password_confirmation"=>"open1234"
+        $response = $this->post(route('auth.signup'), [
+                "name"=> "test postman",
+                "username"=> "postman",
+                "email"=> "test@postman.com",
+                "phone"=> "+2298929992",
+                "dob"=> "27/01/1991",
+                "gender"=>"male",
+                "address"=> "yogyakarta",
+                "province"=>"yogyakarta",
+                "city"=>"Yogyakarta",
+                "subdistrict"=>"yogyakarta",
+                "postal_code"=>"yogyakarta",
+                "password"=> "open1234",
+                "password_confirmation"=>"open1234"
         ]);
-        $this->assertTrue(true);
+        $response->assertStatus(201);
     }
 
      /**
      * @test
      */
-    public function registration_failed_email_already_used(): void
+    public function registrationFailedEmailAlreadyUsed(): void
     {
         $member = factory(Member::class)->create();
 
         $response = $this->post(route('auth.signup'), [
             
-            	"name"=> "test postman",
-				"username"=> "postman",
-				'email' => $member->email,
-				"phone"=> "+2298929992",
-				"dob"=> "27/01/1991",
-				"gender"=>"male",
-				"address"=> "yogyakarta",
-				"province"=>"yogyakarta",
-				"city"=>"Yogyakarta",
-				"subdistrict"=>"yogyakarta",
-				"postal_code"=>"yogyakarta",
-				"password"=> "open1234",
-				"password_confirmation"=>"open1234"
+                "name"=> "test postman",
+                "username"=> "postman",
+                'email' => $member->email,
+                "phone"=> "+2298929992",
+                "dob"=> "27/01/1991",
+                "gender"=>"male",
+                "address"=> "yogyakarta",
+                "province"=>"yogyakarta",
+                "city"=>"Yogyakarta",
+                "subdistrict"=>"yogyakarta",
+                "postal_code"=>"yogyakarta",
+                "password"=> "open1234",
+                "password_confirmation"=>"open1234"
         ]);
 
         $response->assertSessionHasErrors(['email']);
@@ -66,24 +66,24 @@ class RegistrationTest extends TestCase
      /**
      * @test
      */
-    public function registration_failed_email_wrong_format(): void
+    public function registrationFailedEmailWrongFormat(): void
     {
 
         $response = $this->post(route('auth.signup'), [
             
-            	"name"=> "test postman",
-				"username"=> "postman",
-				'email' => "wrong fo",
-				"phone"=> "+2298929992",
-				"dob"=> "27/01/1991",
-				"gender"=>"male",
-				"address"=> "yogyakarta",
-				"province"=>"yogyakarta",
-				"city"=>"Yogyakarta",
-				"subdistrict"=>"yogyakarta",
-				"postal_code"=>"yogyakarta",
-				"password"=> "open1234",
-				"password_confirmation"=>"open1234"
+                "name"=> "test postman",
+                "username"=> "postman",
+                'email' => "wrong fo",
+                "phone"=> "+2298929992",
+                "dob"=> "27/01/1991",
+                "gender"=>"male",
+                "address"=> "yogyakarta",
+                "province"=>"yogyakarta",
+                "city"=>"Yogyakarta",
+                "subdistrict"=>"yogyakarta",
+                "postal_code"=>"yogyakarta",
+                "password"=> "open1234",
+                "password_confirmation"=>"open1234"
         ]);
 
         $response->assertSessionHasErrors(['email']);
@@ -92,25 +92,25 @@ class RegistrationTest extends TestCase
      /**
      * @test
      */
-    public function registration_failed_username_already_used(): void
+    public function registrationFailedUsernameAlreadyUsed(): void
     {
         $member = factory(Member::class)->create();
 
         $response = $this->post(route('auth.signup'), [
             
-            	"name"=> "test postman",
-				"username"=> $member->username,
-				'email' => "test@postman.com",
-				"phone"=> "+2298929992",
-				"dob"=> "27/01/1991",
-				"gender"=>"male",
-				"address"=> "yogyakarta",
-				"province"=>"yogyakarta",
-				"city"=>"Yogyakarta",
-				"subdistrict"=>"yogyakarta",
-				"postal_code"=>"yogyakarta",
-				"password"=> "open1234",
-				"password_confirmation"=>"open1234"
+                "name"=> "test postman",
+                "username"=> $member->username,
+                'email' => "test@postman.com",
+                "phone"=> "+2298929992",
+                "dob"=> "27/01/1991",
+                "gender"=>"male",
+                "address"=> "yogyakarta",
+                "province"=>"yogyakarta",
+                "city"=>"Yogyakarta",
+                "subdistrict"=>"yogyakarta",
+                "postal_code"=>"yogyakarta",
+                "password"=> "open1234",
+                "password_confirmation"=>"open1234"
         ]);
 
         $response->assertSessionHasErrors(['username']);
@@ -119,28 +119,27 @@ class RegistrationTest extends TestCase
      /**
      * @test
      */
-    public function registration_failed_phone_already_used(): void
+    public function registrationFailedPhoneAlreadyUsed(): void
     {
         $member = factory(Member::class)->create();
 
         $response = $this->post(route('auth.signup'), [
             
-            	"name"=> "test postman",
-				"username"=> "testpostman",
-				'email' => "test@postman.com",
-				"phone"=> $member->phone,
-				"dob"=> "27/01/1991",
-				"gender"=>"male",
-				"address"=> "yogyakarta",
-				"province"=>"yogyakarta",
-				"city"=>"Yogyakarta",
-				"subdistrict"=>"yogyakarta",
-				"postal_code"=>"yogyakarta",
-				"password"=> "open1234",
-				"password_confirmation"=>"open1234"
+                "name"=> "test postman",
+                "username"=> "testpostman",
+                'email' => "test@postman.com",
+                "phone"=> $member->phone,
+                "dob"=> "27/01/1991",
+                "gender"=>"male",
+                "address"=> "yogyakarta",
+                "province"=>"yogyakarta",
+                "city"=>"Yogyakarta",
+                "subdistrict"=>"yogyakarta",
+                "postal_code"=>"yogyakarta",
+                "password"=> "open1234",
+                "password_confirmation"=>"open1234"
         ]);
 
         $response->assertSessionHasErrors(['phone']);
     }
-
 }

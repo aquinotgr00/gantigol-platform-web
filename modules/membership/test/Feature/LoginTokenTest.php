@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Carbon\Carbon;
 
-class VerificationTest extends TestCase
+class LoginTokenTest extends TestCase
 {
      use RefreshDatabase;
 
@@ -18,19 +18,19 @@ class VerificationTest extends TestCase
         parent::setUp();
         $this->artisan('passport:install');
     }
-     /**
+    
+    /**
      * @test
      */
-    public function verificationTokenSuccess(): void
+    public function loginTokenSuccess(): void
     {
-        Carbon::setTestNow();
         $member = factory(Member::class)->create();
-        
         $token = factory(AccessToken::class)->create([
             'member_id'=>$member->id,
             'token'=>sha1(Carbon::now()->timestamp."".$member->id)
             ]);
-        $response = $this->post(route('auth.token.verification'), [
+        $response = $this->post(route('auth.token.signin'), [
+            
             "token"=>$token->token
         ]);
 
@@ -40,14 +40,14 @@ class VerificationTest extends TestCase
     /**
      * @test
      */
-    public function verificationTokenEmptyFailed(): void
+    public function loginTokenEmptyFailed(): void
     {
         $member = factory(Member::class)->create();
         factory(AccessToken::class)->create([
             'member_id'=>$member->id,
             'token'=>sha1(Carbon::now()->timestamp."".$member->id)
             ]);
-        $response = $this->post(route('auth.token.verification'), [
+        $response = $this->post(route('auth.token.signin'), [
             
             "token"=>""
         ]);
@@ -58,14 +58,14 @@ class VerificationTest extends TestCase
     /**
      * @test
      */
-    public function verificationTokenWrongSuccess(): void
+    public function loginTokenWrongFailed(): void
     {
         $member = factory(Member::class)->create();
         factory(AccessToken::class)->create([
             'member_id'=>$member->id,
             'token'=>sha1(Carbon::now()->timestamp."".$member->id)
             ]);
-        $response = $this->post(route('auth.token.verification'), [
+        $response = $this->post(route('auth.token.signin'), [
             
             "token"=>"wrongtoken"
         ]);

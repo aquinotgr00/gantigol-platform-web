@@ -4,18 +4,29 @@ namespace Modules\Membership;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Routing\Router;
+use Illuminate\Routing\RouteRegistrar as Router;
 use Illuminate\Database\Eloquent\Factory;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Route;
 
 class MemberRegistrationServiceProvider extends ServiceProvider
 {
+
+
+    /**
+     * Register any authentication / authorization services.
+     *
+     * @return void
+     */
     public function register()
     {
-        
     }
 
+    /**
+     * Register any authentication / authorization services.
+     *
+     * @return void
+     */
     public function boot(Router $router, Factory $factory)
     {
         $this->loadConfig();
@@ -27,6 +38,11 @@ class MemberRegistrationServiceProvider extends ServiceProvider
         Passport::routes();
     }
 
+    /**
+     * Register any load config.
+     *
+     * @return void
+     */
     private function loadConfig()
     {
         $path = __DIR__.'/../config/member.php';
@@ -39,7 +55,10 @@ class MemberRegistrationServiceProvider extends ServiceProvider
         }
     }
 
-    private function loadRoutes(Router $router)
+     /**
+     * Register any load routes.
+     */
+    private function loadRoutes(Router $router): void
     {
         $router->prefix(config('member.prefix', 'member'))
                ->namespace('Modules\Membership\Http\Controllers')
@@ -48,6 +67,11 @@ class MemberRegistrationServiceProvider extends ServiceProvider
                });
     }
 
+     /**
+     * Register any load view.
+     *
+     * @return void
+     */
     private function loadViews()
     {
         $path = __DIR__.'/../resources/views';
@@ -60,6 +84,11 @@ class MemberRegistrationServiceProvider extends ServiceProvider
         }
     }
 
+     /**
+     * Register any load migrations & factories from module membership.
+     *
+     * @return void
+     */
     private function loadMigrationsAndFactories(Factory $factory)
     {
         if ($this->app->runningInConsole()) {
@@ -69,21 +98,27 @@ class MemberRegistrationServiceProvider extends ServiceProvider
         }
     }
 
+     /**
+     * Merger any auth config from module membership.
+     *
+     * @return void
+     */
     private function mergeAuthConfig()
     {
-        $original = $this->app['config']->get('auth', []);
+        /** @var \Illuminate\Config\Repository */
+        $config = $this->app['config'];
+
+        $original = $config->get('auth', []);
         $toMerge = require __DIR__ . '/../config/auth.php';
 
         $auth = [];
         foreach ($original as $key => $value) {
+            $auth[$key] = $value;
             if (isset($toMerge[$key])) {
                 $auth[$key] = array_merge($value, $toMerge[$key]);
-            } else {
-                $auth[$key] = $value;
             }
         }
 
-        $this->app['config']->set('auth', $auth);
+        $config->set('auth', $auth);
     }
 }
-

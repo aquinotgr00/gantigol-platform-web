@@ -3,4 +3,3 @@
 return [
     'prefix' => 'auth',
 ];
-
