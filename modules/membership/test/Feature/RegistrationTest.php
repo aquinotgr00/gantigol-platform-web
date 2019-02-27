@@ -73,7 +73,7 @@ class RegistrationTest extends TestCase
             
             	"name"=> "test postman",
 				"username"=> "postman",
-				'email' => "wrong format",
+				'email' => "wrong fo",
 				"phone"=> "+2298929992",
 				"dob"=> "27/01/1991",
 				"gender"=>"male",

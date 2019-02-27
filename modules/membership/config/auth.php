@@ -10,7 +10,7 @@ return [
 	'providers' => [
         'members' => [
             'driver' => 'eloquent',
-            'model' => Modules\MemberRegistration\Member::class,
+            'model' => Modules\Membership\Member::class,
         ],
     ],
     'passwords' => [

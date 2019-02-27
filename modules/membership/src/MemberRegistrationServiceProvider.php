@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Database\Eloquent\Factory;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\Route;
 
 class MemberRegistrationServiceProvider extends ServiceProvider
 {
@@ -42,7 +43,6 @@ class MemberRegistrationServiceProvider extends ServiceProvider
     {
         $router->prefix(config('member.prefix', 'member'))
                ->namespace('Modules\Membership\Http\Controllers')
-               ->middleware(['api'])
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
                });
@@ -55,8 +55,8 @@ class MemberRegistrationServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => resource_path('views/vendor/admins'),
-            ], 'admins:views');
+                $path => resource_path('views/modules/membership'),
+            ], 'membership:views');
         }
     }
 

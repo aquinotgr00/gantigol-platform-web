@@ -16,6 +16,7 @@ $factory->define(Member::class, function (Faker $faker) {
 				"city"=>"Yogyakarta",
 				"subdistrict"=>"yogyakarta",
 				"postal_code"=>"yogyakarta",
+				"verification"=>"verified",
 				"password"=> bcrypt("open1234")
     ];
 });

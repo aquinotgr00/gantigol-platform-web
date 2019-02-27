@@ -26,7 +26,7 @@ class CreateTableMember extends Migration
             $table->string('province')->nullable();
             $table->string('postal_code')->nullable();
             $table->enum('gender', ['male ', 'female'])->nullable();
-            $table->enum('verified', ['verified ', 'unverified'])->default('verified');
+            $table->enum('verification', ['verified ', 'unverified'])->default('unverified');
             $table->string('password');
             $table->string('reset_token')->nullable();
             $table->rememberToken();

@@ -27,6 +27,7 @@ class Member extends Authenticatable
         'subdistrict',
         'city',
         'province',
+        'verified',
         'postal_code'
     ];
 
@@ -42,6 +43,17 @@ class Member extends Authenticatable
 
     public function findForPassport($identifier) {
         return $this->orWhere('email', $identifier)->orWhere('username', $identifier)->first();
-}
+    }
+
+    public function findForTokenAccess($id) {
+        return $this->where('id',$id)->first();
+    }
+
+    public function memberVerification($id){
+        return $this->where('id',$id)
+                    ->update([
+                            'verification'=>'verified'
+                        ]);
+    }
 }
 
