@@ -16,7 +16,7 @@ class LoginTokenTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->artisan('passport:install', ['--length' => 32]);
+        $this->artisan('passport:install', ['--length' => 512]);
     }
     
     /**
