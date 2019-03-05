@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Modules\Medias\Content;
+use Modules\Medias\MediaCategories;
+use Modules\Medias\Media;
 use Tests\TestCase;
 
 class MediaFunctionTest extends TestCase
@@ -17,40 +19,66 @@ class MediaFunctionTest extends TestCase
 
     /**
      * @test
+     * @return void
      */
-    public function media_upload()
+    public function mediaLibrary()
     {
         $this->withoutExceptionHandling();
-        $media = factory(Content::class)->create();
+        factory(Content::class)->create();
+        /** @var Content */
         $model = Content::first();
         Storage::fake('avatars');
 
          $file =  UploadedFile::fake()->image('avatar.png');
-
+     
         $model->addMedia($file)
             ->toMediaCollection();
 
-        $response = $this->get(route('media.view.content', ['model'=>'content']));
-        $this->assertEquals(1, count($response->original['media']));
+        $response = $this->get(route('media.library', ['model'=>'content']));
+        $response->assertViewHas('media');
     }
 
     /**
      * @test
+     * @return void
      */
-    public function media_destroy()
+    public function mediaLibraryAjax()
     {
         $this->withoutExceptionHandling();
-        $media = factory(Content::class)->create();
+        factory(Content::class)->create();
+        /** @var Content */
         $model = Content::first();
         Storage::fake('avatars');
 
          $file =  UploadedFile::fake()->image('avatar.png');
-
+     
         $model->addMedia($file)
             ->toMediaCollection();
 
-        $model->clearMediaCollection();
-        $response = $this->get(route('media.view.content', ['model'=>'content']));
-        $this->assertEquals(0, count($response->original['media']));
+        $response = $this->post(route('projects.store', ['documents[]'=>$file->getClientOriginalName()]));
+        $response->assertRedirect('media/library');
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function mediaAddCategory()
+    {
+       
+        $response = $this->post(route('media.storeCategory', ['title'=>'test']));
+        $response->assertStatus(200);
+    }
+
+     /**
+     * @test
+     * @return void
+     */
+    public function mediaAssignCategory()
+    {
+        $categories = factory(MediaCategories::class)->create();
+        $medias = factory(Media::class)->create();
+        $response = $this->post(route('media.assignMediaCategory'), ['id'=>$medias->id,'category'=>$categories->id]);
+        $response->assertStatus(200);
     }
 }

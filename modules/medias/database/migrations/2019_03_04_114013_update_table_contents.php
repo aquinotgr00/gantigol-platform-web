@@ -4,19 +4,17 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableContent extends Migration
+class UpdateTableContents extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('contents', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->timestamps();
+        Schema::table('media', function (Blueprint $table) {
+            $table->string('category')->nullable();
         });
     }
 
@@ -27,6 +25,8 @@ class CreateTableContent extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contents');
+        Schema::table('media', function (Blueprint $table) {
+            $table->dropColumn('category');
+        });
     }
 }

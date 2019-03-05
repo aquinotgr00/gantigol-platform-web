@@ -4,18 +4,20 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableContent extends Migration
+class CreateTableTokenLogin extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('contents', function (Blueprint $table) {
+        Schema::create('access_token', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
+            $table->string('token');
+            $table->integer('member_id');
+            $table->timestamp('expired_at');
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ class CreateTableContent extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contents');
+        Schema::dropIfExists('access_token');
     }
 }

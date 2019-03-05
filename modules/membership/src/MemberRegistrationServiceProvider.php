@@ -1,15 +1,17 @@
 <?php
 
-namespace Modules\Medias;
+namespace Modules\Membership;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\RouteRegistrar as Router;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Factory;
+use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\Route;
 
-class MediaServiceProvider extends ServiceProvider
+class MemberRegistrationServiceProvider extends ServiceProvider
 {
+
 
     /**
      * Register any authentication / authorization services.
@@ -31,6 +33,9 @@ class MediaServiceProvider extends ServiceProvider
         $this->loadRoutes($router);
         $this->loadViews();
         $this->loadMigrationsAndFactories($factory);
+        $this->mergeAuthConfig();
+
+        Passport::routes();
     }
 
     /**
@@ -40,31 +45,29 @@ class MediaServiceProvider extends ServiceProvider
      */
     private function loadConfig()
     {
-        $path = __DIR__.'/../config/medias.php';
-        $this->mergeConfigFrom($path, 'medias');
+        $path = __DIR__.'/../config/member.php';
+        $this->mergeConfigFrom($path, 'member');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => config_path('medias.php'),
-            ], 'medias:config');
+                $path => config_path('member.php'),
+            ], 'member:config');
         }
     }
 
      /**
      * Register any load routes.
-     * @return void
      */
-    private function loadRoutes(Router $router)
+    private function loadRoutes(Router $router): void
     {
-        $router->prefix(config('medias.prefix', 'medias'))
-               ->namespace('Modules\Medias\Http\Controllers')
-               ->middleware(['web'])
+        $router->prefix(config('member.prefix', 'member'))
+               ->namespace('Modules\Membership\Http\Controllers')
                ->group(function () {
-                   $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+                   $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
                });
     }
 
-    /**
+     /**
      * Register any load view.
      *
      * @return void
@@ -72,12 +75,12 @@ class MediaServiceProvider extends ServiceProvider
     private function loadViews()
     {
         $path = __DIR__.'/../resources/views';
-        $this->loadViewsFrom($path, 'medias');
+        $this->loadViewsFrom($path, 'membership');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => resource_path('views/vendor/admins'),
-            ], 'medias:views');
+                $path => resource_path('views/modules/membership'),
+            ], 'membership:views');
         }
     }
 
@@ -93,5 +96,29 @@ class MediaServiceProvider extends ServiceProvider
 
             $factory->load(__DIR__.'/../database/factories');
         }
+    }
+
+     /**
+     * Merger any auth config from module membership.
+     *
+     * @return void
+     */
+    private function mergeAuthConfig()
+    {
+        /** @var \Illuminate\Config\Repository */
+        $config = $this->app['config'];
+
+        $original = $config->get('auth', []);
+        $toMerge = require __DIR__ . '/../config/auth.php';
+
+        $auth = [];
+        foreach ($original as $key => $value) {
+            $auth[$key] = $value;
+            if (isset($toMerge[$key])) {
+                $auth[$key] = array_merge($value, $toMerge[$key]);
+            }
+        }
+
+        $config->set('auth', $auth);
     }
 }

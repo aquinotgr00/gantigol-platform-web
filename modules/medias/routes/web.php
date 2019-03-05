@@ -1,5 +1,7 @@
 <?php
 
-Route::get('/{model}', 'MediaController@mediaUp')->name('media.view.content');
-Route::resource('content', 'ContentMediaController', ['only' => ['store', 'destroy'], 'as' => 'content']);
-Route::delete('content', 'ContentMediaController@destroyAll')->name('content.media.destroy_all');
+Route::get('/library', 'MediaController@mediaLibrary')->name('media.library');
+Route::post('/category/add', 'MediaController@createMediaCategory')->name('media.storeCategory');
+Route::post('/category/assign', 'MediaController@assignCategory')->name('media.assignMediaCategory');
+Route::post('/projects/media', 'ContentMediaController@storeMedia')->name('projects.storeMedia');
+Route::post('/projects/store', 'ContentMediaController@store')->name('projects.store');

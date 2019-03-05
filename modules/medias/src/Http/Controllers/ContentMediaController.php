@@ -8,8 +8,20 @@ use Illuminate\Http\Request;
 
 class ContentMediaController extends Controller
 {
+
+
+    /**
+     * Create a new parameter.
+     *
+     * @var mixed contentalbum
+     */
     protected $contentalbum;
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->contentalbum = Content::first();
@@ -18,39 +30,45 @@ class ContentMediaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeMedia(Request $request)
+    {
+        $path = storage_path('tmp/uploads');
+
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        /** @var \Illuminate\Http\UploadedFile **/
+        $file = $request->file('file');
+        /** @var string **/
+        $original_name = $file->getClientOriginalName();
+        $name = uniqid() . '_' . trim($original_name);
+
+        $file->move($path, $name);
+
+        return response()->json([
+            'name'          => $name,
+            'original_name' => $original_name,
+            'path' => $path
+        ], 200);
+    }
+
+     /**
+     * Store a newly created resource in storage in to databases.
+     *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        $this->contentalbum
-            ->addMedia($request->file)
-            ->toMediaCollection();
 
-        return redirect()->back()->with('status', 'Media files added to photo album!');
-    }
+        foreach ($request->input('document', []) as $file) {
+            $this->contentalbum->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection();
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $mediaId
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($mediaId)
-    {
-        $this->contentalbum
-            ->getMedia()
-            ->keyBy('id')
-            ->get($mediaId)
-            ->delete();
-
-        return redirect()->back()->with('status', 'Media file deleted!');
-    }
-
-    public function destroyAll()
-    {
-        $this->contentalbum->clearMediaCollection();
-
-        return redirect()->back()->with('status', 'All media deleted!');
+        return redirect()->route('media.library');
     }
 }
