@@ -11,13 +11,19 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
     
-    public function showLoginForm() {
-        return view('admin::auth.login');;
+    protected function showLoginForm()
+    {
+        return view('admin::auth.login');
     }
     
     protected function guard()
     {
         return Auth::guard('admin');
+    }
+    
+    protected function redirectTo()
+    {
+        return route('admin.dashboard', [], false);
     }
     
     /**

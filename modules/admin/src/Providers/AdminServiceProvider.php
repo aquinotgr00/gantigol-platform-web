@@ -28,7 +28,6 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        
     }
 
     /**
@@ -38,6 +37,7 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot(Router $router, Factory $factory)
     {
+        $this->loadConfig();
         $this->loadHelper();
         $this->loadMigrations();
         $this->loadFactories($factory);
@@ -45,6 +45,12 @@ class AdminServiceProvider extends ServiceProvider
         $this->loadViews();
         $this->mergeAuthConfig();
         $this->aliasMiddlewares($router);
+    }
+    
+    private function loadConfig()
+    {
+        $path = __DIR__.'/../../config/admin.php';
+        $this->mergeConfigFrom($path, 'admin');
     }
     
     private function loadRoutes(Router $router)
@@ -105,5 +111,4 @@ class AdminServiceProvider extends ServiceProvider
             require_once($file);
         }
     }
-    
 }

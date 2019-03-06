@@ -8,14 +8,12 @@ Route::middleware('admin_guest')->group(function () {
 Route::middleware('auth:admin')->group(function () {
     Route::post('/logout', 'Auth\LoginController@logout')->name('admin.logout');
 
-    Route::view('/','admin::dashboard')->name('admin.dashboard');
+    Route::view('/', 'admin::dashboard')->name('admin.dashboard');
 
     Route::resource('users', 'UserController');
 });
 
 if (!Route::has('login')) {
-    Route::get('/blank', function () {})->name('login');
+    Route::get('/blank', function () {
+    })->name('login');
 }
-    
-    
-    

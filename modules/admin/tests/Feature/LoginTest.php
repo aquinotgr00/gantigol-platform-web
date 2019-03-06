@@ -23,17 +23,17 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function get_login_route_should_render_login_view(): void
+    public function get_login_route_should_render_login_view()
     {
         $response = $this->get(route('admin.login'));
 
-        $response->assertViewIs('admin::login');
+        $response->assertViewIs('admin::auth.login');
     }
 
     /**
      * @test
      */
-    public function post_login_route_with_empty_data_should_return_redirect_back_response(): void
+    public function post_login_route_with_empty_data_should_return_redirect_back_response()
     {
         $this->get(route('admin.login'));
         $response = $this->post(route('admin.login'), []);
@@ -44,7 +44,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_empty_data_should_return_response_with_validation_error(): void
+    public function post_login_route_with_empty_data_should_return_response_with_validation_error()
     {
         $response = $this->post(route('admin.login'), []);
 
@@ -54,7 +54,7 @@ class LoginTest extends TestCase
     /**
      * test
      */
-    public function post_login_route_with_unregistered_email_should_return_response_with_validation_error(): void
+    public function post_login_route_with_unregistered_email_should_return_response_with_validation_error()
     {
         $response = $this->post(route('admin.login'), [
             'email' => 'guest@example.com',
@@ -67,27 +67,42 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_invalid_password_should_return_redirect_response(): void
+    public function post_login_route_with_invalid_password_should_return_redirect_response()
     {
-        $admin = factory(Admin::class)->create(['password' => bcrypt('secret')]);
+        $admin = factory(Admin::class)->create(['active'=>true]);
 
-        $response = $this->post(route('admins.login'), [
+        $response = $this->post(route('admin.login'), [
             'email' => $admin->email,
             'password' => 'invalid'
         ]);
 
         $response->assertSessionHasErrors(['email']);
     }
+    
+    /**
+     * @test
+     */
+    public function post_login_route_with_inactive_admin_should_return_response_with_validation_error()
+    {
+        $admin = factory(Admin::class)->create(['active'=>false]);
+
+        $response = $this->post(route('admin.login'), [
+            'email' => $admin->email,
+            'password' => 'secret'
+        ]);
+
+        $response->assertSessionHasErrors(['active']);
+    }
 
     /**
      * @test
      */
-    public function post_login_route_with_valid_data_should_authenticate_admin(): void
+    public function post_login_route_with_valid_data_should_authenticate_admin()
     {
         $password = 'secret';
-        $admin = factory(Admin::class)->create(['password' => bcrypt($password)]);
+        $admin = factory(Admin::class)->create(['active'=>true]);
 
-        $this->post(route('admins.login'), [
+        $this->post(route('admin.login'), [
             'email' => $admin->email,
             'password' => $password
         ]);
@@ -99,10 +114,10 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_valid_data_should_return_redirect_response(): void
+    public function post_login_route_with_valid_data_should_return_redirect_response()
     {
         $password = 'secret';
-        $admin = factory(Admin::class)->create(['password' => bcrypt($password)]);
+        $admin = factory(Admin::class)->create(['active'=>true]);
 
         $response = $this->post(route('admin.login'), [
             'email' => $admin->email,
@@ -115,7 +130,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_logout_route_should_log_admin_out(): void
+    public function post_logout_route_should_log_admin_out()
     {
         $this->actingAs(factory(Admin::class)->create(), 'admin')
              ->post(route('admin.logout'));
@@ -126,7 +141,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function should_bypass_login_page_if_already_authenticated(): void
+    public function should_bypass_login_page_if_already_authenticated()
     {
         $admin = factory(Admin::class)->create();
 

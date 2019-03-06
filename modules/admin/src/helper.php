@@ -2,7 +2,7 @@
 
 /**
  * merge configuration array with custom configuration
- * 
+ *
  * @param array $defaultConfig
  * @param array $customConfig
  * @return array
