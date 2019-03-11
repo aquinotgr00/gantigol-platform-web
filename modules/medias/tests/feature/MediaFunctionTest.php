@@ -17,6 +17,7 @@ class MediaFunctionTest extends TestCase
 {
     use RefreshDatabase;
 
+
     /**
      * @test
      * @return void
@@ -36,6 +37,18 @@ class MediaFunctionTest extends TestCase
 
         $response = $this->get(route('media.library', ['model'=>'content']));
         $response->assertViewHas('media');
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function mediaLibraryTemp()
+    {
+        Storage::fake('avatars');
+        $path = UploadedFile::fake()->image('avatar.png');
+        $response = $this->postJson(route('projects.storeMedia'), ['file'=>$path]);
+        $response->assertStatus(200);
     }
 
     /**
