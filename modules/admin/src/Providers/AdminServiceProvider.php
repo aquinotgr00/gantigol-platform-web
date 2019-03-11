@@ -6,8 +6,11 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Support\Facades\Blade;
 use Modules\Admin\Http\Middleware\RedirectIfAuthenticated;
 use Modules\Admin\Exceptions\ExceptionHandler as AdminHandler;
+
+use Modules\Admin\Admin;
 
 class AdminServiceProvider extends ServiceProvider
 {
@@ -45,21 +48,31 @@ class AdminServiceProvider extends ServiceProvider
         $this->loadViews();
         $this->mergeAuthConfig();
         $this->aliasMiddlewares($router);
+        $this->publishPublicAssets();
+        $this->loadBladeAliases();
+        $this->loadBreadcrumbs();
     }
     
     private function loadConfig()
     {
         $path = __DIR__.'/../../config/admin.php';
         $this->mergeConfigFrom($path, 'admin');
+        
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                $path => config_path('admins.php'),
+            ], 'admin:config');
+        }
     }
     
     private function loadRoutes(Router $router)
     {
+        
         $router->prefix(config('admin.prefix', 'admin'))
                ->namespace('Modules\Admin\Http\Controllers')
                ->middleware(['web'])
                ->group(function () {
-                   $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+                    $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
                });
     }
     
@@ -109,6 +122,44 @@ class AdminServiceProvider extends ServiceProvider
         $file = __DIR__.'/../helper.php';
         if (file_exists($file)) {
             require_once($file);
+        }
+    }
+    
+    private function publishPublicAssets()
+    {
+        if ($this->app->runningInConsole()) {
+            $path = __DIR__.'/../../resources';
+            $this->publishes([
+                $path.'/js' => public_path('vendor/admin/js'),
+                $path.'/css' => public_path('vendor/admin/css'),
+            ], 'admin:public');
+        }
+    }
+    
+    private function loadBladeAliases()
+    {
+        Blade::component('admin::components.modal', 'modal');
+        Blade::component('admin::components.page-heading', 'pageHeading');
+        
+        Blade::include('admin::includes.content', 'content');
+        Blade::include('admin::includes.sidebar', 'sidebar');
+        Blade::include('admin::includes.sidebar-divider', 'sidebarDivider');
+        Blade::include('admin::includes.sidebar-toggler', 'sidebarToggler');
+        Blade::include('admin::includes.topbar', 'topbar');
+        Blade::include('admin::includes.topbar-sidebar-toggler', 'topbarSidebarToggler');
+        Blade::include('admin::includes.topbar-search', 'topbarSearch');
+        Blade::include('admin::includes.topbar-navbar', 'topbarNavbar');
+        Blade::include('admin::includes.scroll-to-top', 'scrollToTop');
+        Blade::include('admin::includes.footer', 'footer');
+        Blade::include('admin::includes.small-round-button', 'smallRoundButton');
+    }
+    
+    private function loadBreadcrumbs()
+    {
+        config(['breadcrumbs.view'=>'admin::components.breadcrumbs']);
+        
+        if (class_exists('Breadcrumbs')) {
+            require __DIR__ . '/../../routes/breadcrumbs.php';
         }
     }
 }

@@ -69,7 +69,7 @@ class LoginTest extends TestCase
      */
     public function post_login_route_with_invalid_password_should_return_redirect_response()
     {
-        $admin = factory(Admin::class)->create(['active'=>true]);
+        $admin = factory(Admin::class)->create(['password'=>bcrypt('secret'),'active'=>true]);
 
         $response = $this->post(route('admin.login'), [
             'email' => $admin->email,
@@ -84,11 +84,12 @@ class LoginTest extends TestCase
      */
     public function post_login_route_with_inactive_admin_should_return_response_with_validation_error()
     {
-        $admin = factory(Admin::class)->create(['active'=>false]);
+        $password = 'secret';
+        $admin = factory(Admin::class)->create(['password'=>bcrypt($password),'active'=>false]);
 
         $response = $this->post(route('admin.login'), [
             'email' => $admin->email,
-            'password' => 'secret'
+            'password' => $password
         ]);
 
         $response->assertSessionHasErrors(['active']);
@@ -100,7 +101,7 @@ class LoginTest extends TestCase
     public function post_login_route_with_valid_data_should_authenticate_admin()
     {
         $password = 'secret';
-        $admin = factory(Admin::class)->create(['active'=>true]);
+        $admin = factory(Admin::class)->create(['password'=>bcrypt($password),'active'=>true]);
 
         $this->post(route('admin.login'), [
             'email' => $admin->email,

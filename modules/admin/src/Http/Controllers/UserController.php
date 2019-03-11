@@ -15,6 +15,8 @@ class UserController extends Controller
      */
     public function index()
     {
+        $users = Admin::where('email','<>','admin@mail.com')->paginate(15);
+        return view('admin::user.index', compact('users'));
     }
 
     /**
@@ -24,6 +26,7 @@ class UserController extends Controller
      */
     public function create()
     {
+        return view('admin::user.edit');
     }
 
     /**
@@ -39,28 +42,30 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Admin  $admin
+     * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function show(Admin $admin)
     {
+        dump($admin);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Admin  $admin
+     * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function edit(Admin $admin)
     {
+        return view('admin::user.edit', $admin);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Admin  $admin
+     * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Admin $admin)
@@ -70,7 +75,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Admin  $admin
+     * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function destroy(Admin $admin)
