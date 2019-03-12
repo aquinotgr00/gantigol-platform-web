@@ -35,6 +35,9 @@ RUN apk add --no-cache --virtual .build-deps \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
         )" \
     && apk add --virtual .phpext-rundeps $runDeps \
+    && apk del .build-deps
+    
+RUN apk add --no-cache libpng libpng-dev && docker-php-ext-install gd && apk del libpng-dev
     && apk del autoconf g++ libtool make .build-deps \
     && rm -rf /var/cache/apk/*
 

@@ -175,8 +175,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Modules\Medias\MediaServiceProvider::class,
         Modules\Membership\MemberRegistrationServiceProvider::class,
-
     ],
 
     /*
