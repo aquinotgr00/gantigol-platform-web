@@ -28,6 +28,13 @@ class ApiMembershipController extends Controller
     protected $access_token;
 
     /**
+     * Create a new parameter.
+     *
+     * @var mixed jobs
+     */
+    protected $jobs;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -47,6 +54,7 @@ class ApiMembershipController extends Controller
     {
         return Auth::guard('api');
     }
+
     /**
      * Create member
      *
@@ -85,10 +93,28 @@ class ApiMembershipController extends Controller
         ]);
         $member->save();
         $response = $this->accessTokenMember($member->id);
+        $data=[
+            'email'=>$request->email,
+            'content'=>$response
+        ];
+        $this->sendEmailAndToken($data);
         return response()->json([
             'access_token'=>$response
         ], 201);
     }
+
+    /**
+     * sending email and access token to login / verification
+     *
+     * @param  array  $data
+     *
+     * @return void
+     */
+    public function sendEmailAndToken($data)
+    {
+        dispatch(new \Modules\Membership\Jobs\SendEmailMembership($data));
+    }
+
 
     /**
      * Login member and create token
