@@ -11,6 +11,8 @@
 
 @section('content')
 
+
+
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">
@@ -24,24 +26,22 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Active</th>
+                        <th>Enable / Disable</th>
                         <th></th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Active</th>
-                        <th></th>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @foreach($users as $user)
                     <tr class="{{ $user->active?'':'bg-gray-100' }}">
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ $user->active }}</td>
+                        <td>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input user-activation" data-user-id="{{ $user->id }}" id="switch-{{ $user->id }}" {{ $user->active?'checked':'' }}>
+                                <label class="custom-control-label" for="switch-{{ $user->id }}" >Account : {{ $user->active?'Enabled':'Disabled' }}</label>
+                            </div>
+                        </td>
                         <td>
                             @smallRoundButton(['icon'=>'fa-pen','title'=>'Edit','route'=>route('users.edit',['user'=>$user])])
                             @smallRoundButton(['icon'=>'fa-user-lock','title'=>'Privilege'])
@@ -55,3 +55,12 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+	$('.toast').toast('show')
+			$('input.user-activation[type="checkbox"]').change(function() {
+	$('<form></form>').appendTo('body').submit()
+	})
+</script>
+@endpush

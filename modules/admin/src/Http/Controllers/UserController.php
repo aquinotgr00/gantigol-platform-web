@@ -24,9 +24,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Admin $user)
     {
-        return view('admin::user.edit');
+        return view('admin::user.edit', compact('user'));
     }
 
     /**
@@ -37,6 +37,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        
     }
 
     /**
@@ -45,9 +46,9 @@ class UserController extends Controller
      * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
-    public function show(Admin $admin)
+    public function show(Admin $user)
     {
-        dump($admin);
+        
     }
 
     /**
@@ -56,9 +57,9 @@ class UserController extends Controller
      * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
-    public function edit(Admin $admin)
+    public function edit(Admin $user)
     {
-        return view('admin::user.edit', $admin);
+        return view('admin::user.edit', compact('user'));
     }
 
     /**
@@ -68,7 +69,7 @@ class UserController extends Controller
      * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Admin $admin)
+    public function update(Request $request, Admin $user)
     {
     }
 
@@ -78,7 +79,7 @@ class UserController extends Controller
      * @param  Modules\Admin\Admin  $admin
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Admin $admin)
+    public function destroy(Admin $user)
     {
     }
 }

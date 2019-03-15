@@ -140,6 +140,7 @@ class AdminServiceProvider extends ServiceProvider
     {
         Blade::component('admin::components.modal', 'modal');
         Blade::component('admin::components.page-heading', 'pageHeading');
+        Blade::component('admin::components.toast', 'toast');
         
         Blade::include('admin::includes.content', 'content');
         Blade::include('admin::includes.sidebar', 'sidebar');
