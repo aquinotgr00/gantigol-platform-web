@@ -5,6 +5,7 @@ namespace Modules\Membership\Tests\Feature;
 use Tests\TestCase;
 use Modules\Membership\Member;
 use Modules\Membership\AccessToken;
+use Modules\Membership\PasswordReset;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Carbon\Carbon;
@@ -67,9 +68,41 @@ class VerificationTest extends TestCase
             ]);
         $response = $this->post(route('auth.token.verification'), [
             
-            "token"=>"wrongtoken"
+            "token"=>"wrong token"
         ]);
 
          $response->assertStatus(422);
+    }
+
+    /**
+     * @test
+     */
+    public function resetPasswordRequest(): void
+    {
+        $member = factory(Member::class)->create();
+        $response = $this->post(route('auth.token.password.reset'), [
+            "email"=>$member->email,
+            "url_act"=>"testing.test"
+            ]);
+        $response->assertStatus(200);
+    }
+
+    /**
+     * @test
+     */
+    public function changePassword(): void
+    {
+        $member = factory(Member::class)->create();
+        $token = factory(PasswordReset::class)->create([
+            "email"=>$member->email
+            ]);
+
+        $response = $this->post(route('auth.token.password.change'), [
+            "password"=>"open1234",
+            "email"=>$token->email,
+            "token"=>$token->token,
+            "url_act"=>"testing.test/change"
+            ]);
+        $response->assertStatus(200);
     }
 }

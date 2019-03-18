@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Membership\Member;
 use Modules\Membership\AccessToken;
+use Modules\Membership\PasswordReset;
 use Carbon\Carbon;
 use Hash;
 
@@ -28,14 +29,29 @@ class ApiMembershipController extends Controller
     protected $access_token;
 
     /**
+     * Create a new parameter.
+     *
+     * @var mixed jobs
+     */
+    protected $jobs;
+
+    /**
+     * Create a new parameter.
+     *
+     * @var mixed password_reset
+     */
+    protected $password_reset;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(Member $memberModel, AccessToken $accessTokenModel)
+    public function __construct(Member $memberModel, AccessToken $accessTokenModel, PasswordReset $passwordreset)
     {
         $this->members = $memberModel;
         $this->access_token = $accessTokenModel;
+        $this->password_reset =$passwordreset;
     }
 
     /**
@@ -47,6 +63,7 @@ class ApiMembershipController extends Controller
     {
         return Auth::guard('api');
     }
+
     /**
      * Create member
      *
@@ -85,10 +102,31 @@ class ApiMembershipController extends Controller
         ]);
         $member->save();
         $response = $this->accessTokenMember($member->id);
+        if (!is_null($request->url_act)) {
+            $data=[
+            'email'=>$request->email,
+            'content'=>$request->url_act."/".$response
+            ];
+            $this->sendEmailAndToken($data);
+        }
+       
         return response()->json([
             'access_token'=>$response
         ], 201);
     }
+
+    /**
+     * sending email and access token to login / verification
+     *
+     * @param  array  $data
+     *
+     * @return void
+     */
+    public function sendEmailAndToken($data)
+    {
+        dispatch(new \Modules\Membership\Jobs\SendEmailMembership($data));
+    }
+
 
     /**
      * Login member and create token
@@ -161,21 +199,6 @@ class ApiMembershipController extends Controller
         return $access_token->token;
     }
 
-        /**
-     * Access token login member verification
-     *
-     * @param  string $token
-     *
-     * @return mixed $response
-     */
-    public function findToken($token)
-    {
-
-        $response = $this->access_token->verifiedToken($token);
-
-        return $response;
-    }
-
       /**
      * Access token login member verification to verified member
      *
@@ -198,7 +221,7 @@ class ApiMembershipController extends Controller
             $request->merge(['token' => $token]);
         }
 
-        $access = $this->findToken($request->token);
+        $access = $this->access_token->verifiedToken($request->token);
 
         if (!is_null($access)) {
             $user = $this->members->findForTokenAccess($access->member_id);
@@ -228,7 +251,7 @@ class ApiMembershipController extends Controller
      /**
      * Access handler token  verification
      *
-     * @var  \Modules\Membership\Http\findToken $access
+     * @var  string $access
      * @param  \Illuminate\Http\Request  $request
      * @return mixed|boolean
      */
@@ -242,7 +265,7 @@ class ApiMembershipController extends Controller
 
         $response = response("Invalid token", 422);
 
-        $access = $this->findToken($request->token);
+        $access = $this->access_token->verifiedToken($request->token);
         if (!is_null($access)) {
             $this->members->memberVerification($access->member_id);
 
@@ -267,5 +290,69 @@ class ApiMembershipController extends Controller
         $user = Auth::user();
         $response = $this->accessTokenMember($user->id);
         return response()->json(['access_token'=>$response], 200);
+    }
+
+     /**
+     * requets to generate token for forgot password member using api and generate email
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return mixed
+     *
+     *
+     */
+    public function createTokenForgotPassword(Request $request)
+    {
+         $request->validate([
+            'email' => 'required|string|email',
+         ]);
+        $code = 404;
+        $response = [
+            'message'=>'Email not found'
+            ];
+        $member = $this->members->findForPassport($request->email);
+        if (!is_null($member)) {
+            $token = sha1(Carbon::now()->timestamp."".$member->id);
+            $this->password_reset->insert(['token'=>$token,'email'=>$request->email]);
+
+            $response = [
+                'access_token'=>$token
+            ];
+            if (!is_null($request->url_act)) {
+                $data=[
+                    'email'=>$request->email,
+                    'content'=>$request->url_act."/".$token
+                    ];
+                $this->sendEmailAndToken($data);
+            }
+            $code = 200;
+        }
+        
+        return response()->json(['data'=>$response], $code);
+    }
+
+     /**
+     * change password using verified token
+     *
+     * @param   \Illuminate\Http\Request  $request
+     * @return mixed
+     *
+     *
+     */
+    public function changePassword(Request $request)
+    {
+        $response = ["message"=>"Email / token not valid"];
+        $code = 400;
+        $check = $this->password_reset->where('token', $request->token)->first();
+        if (!is_null($check)) {
+            $member = $this->members->findForPassport($check->email);
+            $this->members->where('email', $check->email)->update(['password'=>$request->password]);
+            $token = $this->accessTokenMember($member->id);
+            $response = ["message"=>"Success change password",
+                        "access_token"=>$token
+                        ];
+            $code = 200;
+        }
+         return response()->json(['data'=>$response], $code);
     }
 }
