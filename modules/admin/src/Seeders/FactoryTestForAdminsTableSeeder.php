@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\Admin;
+namespace Modules\Admin\Seeders;
 use Illuminate\Database\Seeder;
 
-class AdminsTableSeeder extends Seeder
+class FactoryTestForAdminsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.

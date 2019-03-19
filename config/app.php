@@ -180,7 +180,7 @@ return [
          * Module Service Providers
          */
         Modules\Admin\Providers\AdminServiceProvider::class,
-
+        Modules\Admin\Providers\AuthServiceProvider::class,
     ],
 
     /*

@@ -19,8 +19,15 @@ class CreateAdminsTable extends Migration
             $table->string('email', 150)->unique();
             $table->string('password');
             $table->boolean('active')->default(true);
+            $table->unsignedInteger('role_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
+        });
+        
+        Schema::table('admins', function (Blueprint $table) {
+            $table->foreign('role_id')
+                    ->references('id')->on('roles')
+                    ->onDelete('set null');
         });
     }
 

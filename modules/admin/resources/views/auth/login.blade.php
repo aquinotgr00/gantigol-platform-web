@@ -21,12 +21,14 @@
                                 <form class="user" method="post" action="{{ route('admin.login') }}">
                                     @csrf
                                     <div class="form-group">
-                                        <input type="email" class="form-control-user form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" id="email" aria-describedby="emailHelp" placeholder="E-Mail Address" name="email" value="{{ old('email') }}" autofocus>
-                                        @if ($errors->has('email'))
+                                        <input type="email" class="form-control-user form-control{{ ($errors->has('email') || $errors->has('active')) ? ' is-invalid' : '' }}" id="email" aria-describedby="emailHelp" placeholder="E-Mail Address" name="email" value="{{ old('email') }}" autofocus>
+                                        
+                                        @if ($errors->has('email') || $errors->has('active'))
                                             <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('email') }}</strong>
+                                                <strong>{{ $errors->has('email')?$errors->first('email'):$errors->first('active') }}</strong>
                                             </span>
                                         @endif
+                                        
                                     </div>
                                     <div class="form-group">
                                         <input type="password" class="form-control-user form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" id="password" placeholder="Password" name="password">

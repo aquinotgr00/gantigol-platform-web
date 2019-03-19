@@ -11,12 +11,12 @@
 
 @section('content')
 
-
-
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">
+            @can('add-user')
             <a class="btn btn-outline-primary btn-sm" href="{{ route('users.create') }}">Add User</a>
+            @endcan
         </h6>
     </div>
     <div class="card-body">
@@ -26,8 +26,15 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Enable / Disable</th>
+                        <th>Role</th>
+                        
+                        @can('update-status-user')
+                        <th>Account Status</th>
+                        @endcan
+                        
+                        @can('edit-user')
                         <th></th>
+                        @endcan
                     </tr>
                 </thead>
 
@@ -36,16 +43,22 @@
                     <tr class="{{ $user->active?'':'bg-gray-100' }}">
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>{{ $user->role->name }}</td>
+                        
+                        @can('update-status-user')
                         <td>
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input user-activation" data-user-id="{{ $user->id }}" id="switch-{{ $user->id }}" {{ $user->active?'checked':'' }}>
-                                <label class="custom-control-label" for="switch-{{ $user->id }}" >Account : {{ $user->active?'Enabled':'Disabled' }}</label>
+                                <input type="checkbox" class="custom-control-input user-activation" data-user="{{ $user->id }}" id="switch-{{ $user->id }}" {{ $user->active?'checked':'' }} {{ Auth::id()===$user->id?'disabled':'' }}>
+                                <label class="custom-control-label" for="switch-{{ $user->id }}" >{{ $user->active?'Enabled':'Disabled' }}</label>
                             </div>
                         </td>
+                        @endcan
+                        
+                        @can('edit-user')
                         <td>
                             @smallRoundButton(['icon'=>'fa-pen','title'=>'Edit','route'=>route('users.edit',['user'=>$user])])
-                            @smallRoundButton(['icon'=>'fa-user-lock','title'=>'Privilege'])
                         </td>
+                        @endcan
                     </tr>
                     @endforeach
                 </tbody>
@@ -59,8 +72,10 @@
 @push('scripts')
 <script>
 	$('.toast').toast('show')
-			$('input.user-activation[type="checkbox"]').change(function() {
-	$('<form></form>').appendTo('body').submit()
+    
+    $('input.user-activation[type="checkbox"]').change(function() {
+        let action = '{{ route("users.status", "@@") }}'.replace('@@',$(this).data('user'))
+        $('<form method="post" action="'+action+'">@csrf @method("PUT")</form>').appendTo('body').submit()
 	})
 </script>
 @endpush

@@ -1,11 +1,12 @@
 <?php
 
-namespace Modules\Admin;
+namespace Modules\Admin\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
-class SuperuserAdminsTableSeeder extends Seeder
+class SuperuserForAdminsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,7 +19,9 @@ class SuperuserAdminsTableSeeder extends Seeder
             'name'=>'Admin',
             'email'=>'admin@mail.com',
             'password'=>bcrypt('Open1234'),
-            'active'=>true
+            'active'=>true,
+            'created_at'=> Carbon::now(),
+            'updated_at'=> Carbon::now()
         ]);
     }
 }

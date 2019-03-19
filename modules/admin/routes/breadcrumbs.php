@@ -17,5 +17,5 @@ Breadcrumbs::for('users.create', function ($trail) {
 Breadcrumbs::for('users.edit', function ($trail, $user) {
     $trail->parent('admin.dashboard');
     $trail->push('Users', route('users.index'));
-    $trail->push($user->name, route('users.edit',$user), ['icon'=>'far fa-edit']);
+    $trail->push($user->name, route('users.edit',$user));
 });

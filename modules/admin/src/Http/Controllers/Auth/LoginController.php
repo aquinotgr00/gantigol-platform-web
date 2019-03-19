@@ -7,25 +7,22 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class LoginController extends Controller
-{
+class LoginController extends Controller {
+
     use AuthenticatesUsers;
-    
-    protected function showLoginForm()
-    {
+
+    protected function showLoginForm() {
         return view('admin::auth.login');
     }
-    
-    protected function guard()
-    {
+
+    protected function guard() {
         return Auth::guard('admin');
     }
-    
-    protected function redirectTo()
-    {
+
+    protected function redirectTo() {
         return route('admin.dashboard', [], false);
     }
-    
+
     /**
      * Handle a login request to the application.
      *
@@ -34,8 +31,7 @@ class LoginController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function login(Request $request)
-    {
+    public function login(Request $request) {
         $this->validateLogin($request);
 
         if ($this->hasTooManyLoginAttempts($request)) {
@@ -56,9 +52,9 @@ class LoginController extends Controller
                 // login form with an error message.
                 $this->incrementLoginAttempts($request);
                 return redirect()
-                    ->back()
-                    ->withInput($request->only($this->username(), 'remember'))
-                    ->withErrors(['active' => 'Account disabled']);
+                                ->back()
+                                ->withInput($request->only($this->username(), 'remember'))
+                                ->withErrors(['active' => 'Account disabled']);
             }
         }
 
@@ -66,4 +62,9 @@ class LoginController extends Controller
 
         return $this->sendFailedLoginResponse($request);
     }
+
+    protected function loggedOut(Request $request) {
+        return redirect()->route('admin.login');
+    }
+
 }

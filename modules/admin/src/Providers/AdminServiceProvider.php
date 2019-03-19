@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Blade;
 use Modules\Admin\Http\Middleware\RedirectIfAuthenticated;
 use Modules\Admin\Exceptions\ExceptionHandler as AdminHandler;
 
-use Modules\Admin\Admin;
+use Modules\Admin\Privilege;
 
 class AdminServiceProvider extends ServiceProvider
 {
