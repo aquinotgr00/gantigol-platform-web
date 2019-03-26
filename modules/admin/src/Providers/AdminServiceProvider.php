@@ -9,8 +9,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Blade;
 use Modules\Admin\Http\Middleware\RedirectIfAuthenticated;
 use Modules\Admin\Exceptions\ExceptionHandler as AdminHandler;
-
-use Modules\Admin\Privilege;
+use Illuminate\Support\Facades\Response;
 
 class AdminServiceProvider extends ServiceProvider
 {
@@ -40,17 +39,19 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot(Router $router, Factory $factory)
     {
+        $this->aliasMiddlewares($router);
+        $this->loadBladeAliases();
+        $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadHelper();
-        $this->loadMigrations();
         $this->loadFactories($factory);
+        $this->loadMigrations();
         $this->loadRoutes($router);
         $this->loadViews();
         $this->mergeAuthConfig();
-        $this->aliasMiddlewares($router);
+        
         $this->publishPublicAssets();
-        $this->loadBladeAliases();
-        $this->loadBreadcrumbs();
+        
     }
     
     private function loadConfig()
@@ -67,7 +68,6 @@ class AdminServiceProvider extends ServiceProvider
     
     private function loadRoutes(Router $router)
     {
-        
         $router->prefix(config('admin.prefix', 'admin'))
                ->namespace('Modules\Admin\Http\Controllers')
                ->middleware(['web'])

@@ -15,20 +15,39 @@ class AdminForRolePrivilegeTableSeeder extends Seeder
      */
     public function run()
     {
-        $timestamp = [ 'created_at'=> Carbon::now(), 'updated_at'=> Carbon::now() ];
-        
-        DB::table('roles')->insert([array_merge(['name'=>'Admin'],$timestamp)]);
-        
-        $adminRole = DB::table('roles')->where('name','admin')->value('id');
-        $canViewUsers = DB::table('privileges')->where('name','view users')->value('id');
-        $canAddUser = DB::table('privileges')->where('name','add user')->value('id');
-        $canEditUser = DB::table('privileges')->where('name','edit user')->value('id');
-        $canManageProductVariant = DB::table('privileges')->where('name','manage product variant')->value('id');
-        DB::table('role_privilege')->insert([
-            array_merge(['role_id'=>$adminRole,'privilege_id'=>$canViewUsers],$timestamp),
-            array_merge(['role_id'=>$adminRole,'privilege_id'=>$canAddUser],$timestamp),
-            array_merge(['role_id'=>$adminRole,'privilege_id'=>$canEditUser],$timestamp),
-            array_merge(['role_id'=>$adminRole,'privilege_id'=>$canManageProductVariant],$timestamp)
+        $this->definePrivilegesForRole('Admin', [
+            'view users',
+            'add user',
+            'edit user',
+            'edit user privileges',
+            'manage product variant'
         ]);
+    }
+    
+    private function definePrivilegesForRole($roleName, $privileges)
+    {
+        $timestamp = $this->getTimestamp();
+        $role = $this->createRole($roleName);
+                
+        DB::table('role_privilege')->insert(
+                DB::table('privileges')
+                ->selectRaw('? as role_id, id',[$role])
+                ->whereIn('name',$privileges)
+                ->get()
+                ->map(function($privilege) use($timestamp) {
+                    return array_merge(['role_id'=>$privilege->role_id,'privilege_id'=>$privilege->id],$timestamp);
+                })->all());
+    }
+    
+    private function getTimestamp()
+    {
+        return [ 'created_at'=> Carbon::now(), 'updated_at'=> Carbon::now() ];
+    }
+    
+    private function createRole($roleName)
+    {
+        DB::table('roles')->insert([array_merge(['name'=>$roleName],$this->getTimestamp())]);
+        
+        return DB::table('roles')->where('name',$roleName)->value('id');
     }
 }

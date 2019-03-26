@@ -27,11 +27,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
-                        
-                        @can('update-status-user')
                         <th>Account Status</th>
-                        @endcan
-                        
                         @can('edit-user')
                         <th></th>
                         @endcan
@@ -44,16 +40,12 @@
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->role->name }}</td>
-                        
-                        @can('update-status-user')
                         <td>
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input user-activation" data-user="{{ $user->id }}" id="switch-{{ $user->id }}" {{ $user->active?'checked':'' }} {{ Auth::id()===$user->id?'disabled':'' }}>
+                                <input type="checkbox" class="custom-control-input user-activation" data-user="{{ $user->id }}" id="switch-{{ $user->id }}" {{ $user->active?'checked':'' }} @cannot('update-status-user', $user) disabled @endcannot>
                                 <label class="custom-control-label" for="switch-{{ $user->id }}" >{{ $user->active?'Enabled':'Disabled' }}</label>
                             </div>
                         </td>
-                        @endcan
-                        
                         @can('edit-user')
                         <td>
                             @smallRoundButton(['icon'=>'fa-pen','title'=>'Edit','route'=>route('users.edit',['user'=>$user])])

@@ -22,3 +22,14 @@ if (!function_exists('merge_config')) {
         return $merged;
     }
 }
+
+if (!function_exists('redirect_success')) {
+    function redirect_success($routeName, $messageTitle, $messageBody)
+    {
+        return redirect()->route($routeName)->with('notify',[
+            'type'=>'success',
+            'title'=>$messageTitle,
+            'body'=>$messageBody
+        ]);
+    }
+}

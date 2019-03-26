@@ -42,7 +42,7 @@
     @endphp
 
                 <div class="custom-control custom-checkbox">
-                    <input type="checkbox" name="privilege[][privilege_id]" value="{{ $privilege->id }}" class="custom-control-input chk-privilege" id="chk-{{ $privilegeSlug }}" {{$checked}}>
+                    <input type="checkbox" name="privilege[][privilege_id]" value="{{ $privilege->id }}" class="custom-control-input chk-privilege" id="chk-{{ $privilegeSlug }}" {{$checked}} @cannot('edit-user-privileges',$user) disabled @endcannot>
                     <label class="custom-control-label" for="chk-{{ $privilegeSlug }}">{{ $privilege->name }}</label>
                 </div>
 

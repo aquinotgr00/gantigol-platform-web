@@ -7,43 +7,55 @@
     
     @if($user->id)
     @method('PUT')
+    <input type="hidden" name="id" value="{{$user->id}}" />
     @endif
     
     <div class="form-group row">
         <label for="name" class="col-sm-2 col-form-label">Name</label>
         <div class="col-sm-10">
-            <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" id="name" value="{{$user->name}}" autofocus>
+            <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" id="name" value="{{ old('name') ?? $user->name}}" autofocus>
             @if ($errors->has('name'))
             <div class="invalid-feedback">{{ $errors->first('name') }}</div>
             @endif
         </div>
-
     </div>
     <div class="form-group row">
         <label for="email" class="col-sm-2 col-form-label">Email</label>
         <div class="col-sm-10">
-            <input type="email" name="email" class="form-control" id="email" value="{{$user->email}}">
+            <input type="email" name="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" id="email" value="{{ old('email') ?? $user->email}}">
+            @if ($errors->has('email'))
+            <div class="invalid-feedback">{{ $errors->first('email') }}</div>
+            @endif
         </div>
     </div>
     <div class="form-group row">
         <label for="password" class="col-sm-2 col-form-label">Password</label>
         <div class="col-sm-10">
-            <input type="password" name="password" class="form-control" id="password">
+            <input type="password" name="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" id="password">
+            @if ($errors->has('password'))
+            <div class="invalid-feedback">{{ $errors->first('password') }}</div>
+            @endif
         </div>
     </div>
     <div class="form-group row">
-        <label for="confirm_password" class="col-sm-2 col-form-label">Confirm Password</label>
+        <label for="password_confirmation" class="col-sm-2 col-form-label">Confirm Password</label>
         <div class="col-sm-10">
-            <input type="password" name="confirm_password" class="form-control" id="confirm_password">
+            <input type="password" name="password_confirmation" class="form-control" id="password_confirmation">
         </div>
     </div>
     
     <hr />
+    
     <h5 class="text-gray-900">Admin Privilege</h5>
+    @if ($errors->has('privilege'))
+    <span class="text-danger">{{ $errors->first('privilege') }}</span>
+    @endif
+    
+    
     <div class="form-group row">
         <label for="select-privilege" class="col-sm-2 col-form-label">Select a role</label>
         <div class="col-sm-10">
-            <select name="role_id" class="custom-select mr-sm-2" id="select-role">
+            <select name="role_id" class="custom-select mr-sm-2" id="select-role" @cannot('edit-user-privileges',$user) disabled @endcannot>
                 <option value="" data-privileges="[]">
                     @if($user->id)
                         Custom

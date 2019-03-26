@@ -7,6 +7,10 @@ use Modules\Admin\Privilege;
 use Modules\Admin\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Modules\Admin\Http\Requests\StoreUser;
+use Modules\Admin\Http\Requests\UpdateUser;
 
 class UserController extends Controller {
 
@@ -26,7 +30,8 @@ class UserController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create(Admin $user) {
-         return $this->form($user);
+        $this->authorize('create', Auth::user());
+        return $this->form($user);
     }
 
     /**
@@ -35,16 +40,18 @@ class UserController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(StoreUser $request) {
+        $this->authorize('create', Auth::user());
+        $request->validated();
         $user = Admin::create($request->only(['name', 'email', 'password', 'role_id']));
         $user->privileges()->createMany($request->privilege);
-        return redirect()->route('users.index');
+        return redirect_success('users.index', 'Success', "User {$user->name} created!");
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  Modules\Admin\Admin  $admin
+     * @param  Modules\Admin\Admin  $user
      * @return \Illuminate\Http\Response
      */
     public function show(Admin $user) {
@@ -54,21 +61,17 @@ class UserController extends Controller {
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Modules\Admin\Admin  $admin
+     * @param  Modules\Admin\Admin  $user
      * @return \Illuminate\Http\Response
      */
     public function edit(Admin $user) {
-        
         $this->authorize('update', $user);
-        
         return $this->form($user);
     }
     
     private function form($user)
     {
-        $privileges = Privilege::with(['privilegeCategory' => function ($query) {
-                        $query->orderBy('created_at', 'desc');
-                    }])->get();
+        $privileges = Privilege::with(['privilegeCategory'])->get();
         $roles = Role::with('privileges')->get();
         return view('admin::user.edit', compact('user','privileges','roles'));
     }
@@ -77,40 +80,44 @@ class UserController extends Controller {
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Modules\Admin\Admin  $admin
+     * @param  Modules\Admin\Admin  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Admin $user) {
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->input('password', $user->password);
-        $user->role_id = $request->role_id;
+    public function update(UpdateUser $request, Admin $user) {
+        $this->authorize('update', $user);
+        $request->validated();
+        $user->fill($request->except('password'));
+        if ($request->filled('password')) {
+            $user->password = $request->password;
+        }
         $user->save();
-        $user->privileges()->delete();
-        $user->privileges()->createMany($request->privilege);
-        return redirect()->route('users.index');
+        if (Gate::allows('edit-user-privileges', $user)) {
+            if ($request->has('privilege')) {
+                $user->privileges()->delete();
+                $user->privileges()->createMany($request->privilege);
+            }
+        }
+        return redirect_success('users.index', 'Success', "User {$user->name} updated!");
     }
 
     /**
      * Update status the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Modules\Admin\Admin  $admin
+     * @param  Modules\Admin\Admin  $user
      * @return \Illuminate\Http\Response
      */
     public function statusUpdate(Request $request, Admin $user) {
-        abort_if($user->id === 1, 403);
-
+        $this->authorize('statusUpdate', $user);
         $user->active = !$user->active;
         $user->save();
-
-        return redirect()->route('users.index');
+        return redirect_success('users.index', 'Success', 'User '."{$user->name} ".($user->active?'enabled':'disabled').'!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Modules\Admin\Admin  $admin
+     * @param  Modules\Admin\Admin  $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(Admin $user) {

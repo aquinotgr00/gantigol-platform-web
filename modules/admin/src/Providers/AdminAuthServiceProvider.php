@@ -8,7 +8,7 @@ use Modules\Admin\Admin;
 use Modules\Admin\Privilege;
 use Modules\Admin\Policies\ManageUserPolicy;
 
-class AuthServiceProvider extends ServiceProvider {
+class AdminAuthServiceProvider extends ServiceProvider {
 
     /**
      * The policy mappings for the application.
@@ -45,11 +45,15 @@ class AuthServiceProvider extends ServiceProvider {
         });
         
         Gate::define('edit-user', function ($admin) {
-            return $admin->privileges->contains('privilege_id', Privilege::where('name','add user')->value('id'));
+            return $admin->privileges->contains('privilege_id', Privilege::where('name','edit user')->value('id'));
         });
         
-        Gate::define('update-status-user', function ($admin) {
-            return $admin->privileges->contains('privilege_id', Privilege::where('name','enable/disable user')->value('id'));
+        Gate::define('update-status-user', function ($admin, $user) {
+            return $admin->id!==$user->id && $admin->privileges->contains('privilege_id', Privilege::where('name','enable/disable user')->value('id'));
+        });
+        
+        Gate::define('edit-user-privileges', function($admin, $user) {
+            return !$user->id || ($admin->id!==$user->id && $admin->privileges->contains('privilege_id', Privilege::where('name','edit user privileges')->value('id')));
         });
     }
 

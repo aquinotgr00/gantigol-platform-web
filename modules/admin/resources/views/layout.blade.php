@@ -47,6 +47,10 @@
         @yield('content')
         @endguest
         
+        @toast(['title'=>session('notify')['title'] ])
+        {{ session('notify')['body'] }}
+        @endtoast
+        
         @include('admin::includes.core-javascript')
         
         @stack('scripts')
