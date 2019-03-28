@@ -20,7 +20,7 @@ class CreateRolePrivilegeTable extends Migration
             $table->timestamps();
         });
         
-        Schema::table('role_privilege', function(Blueprint $table) {
+        Schema::table('role_privilege', function (Blueprint $table) {
             $table->foreign('role_id')
                     ->references('id')->on('roles')
                     ->onDelete('cascade');

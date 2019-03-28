@@ -3,25 +3,16 @@
 namespace Modules\Admin\Providers;
 
 use Illuminate\Routing\Router;
+use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Blade;
 use Modules\Admin\Http\Middleware\RedirectIfAuthenticated;
 use Modules\Admin\Exceptions\ExceptionHandler as AdminHandler;
-use Illuminate\Support\Facades\Response;
 
 class AdminServiceProvider extends ServiceProvider
 {
-    
-    /**
-     * All of the container singletons that should be registered.
-     *
-     * @var array
-     */
-    public $singletons = [
-        ExceptionHandler::class => AdminHandler::class,
-    ];
     
     /**
      * Register services.
@@ -30,6 +21,7 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(ExceptionHandler::class, AdminHandler::class);
     }
 
     /**
@@ -51,10 +43,9 @@ class AdminServiceProvider extends ServiceProvider
         $this->mergeAuthConfig();
         
         $this->publishPublicAssets();
-        
     }
     
-    private function loadConfig()
+    private function loadConfig(): void
     {
         $path = __DIR__.'/../../config/admin.php';
         $this->mergeConfigFrom($path, 'admin');
@@ -66,9 +57,9 @@ class AdminServiceProvider extends ServiceProvider
         }
     }
     
-    private function loadRoutes(Router $router)
+    private function loadRoutes(Router $route): void
     {
-        $router->prefix(config('admin.prefix', 'admin'))
+        $route->prefix(config('admin.prefix', 'admin'))
                ->namespace('Modules\Admin\Http\Controllers')
                ->middleware(['web'])
                ->group(function () {
@@ -76,7 +67,7 @@ class AdminServiceProvider extends ServiceProvider
                });
     }
     
-    private function loadViews()
+    private function loadViews(): void
     {
         $path = __DIR__.'/../../resources/views';
         $this->loadViewsFrom($path, 'admin');
@@ -88,7 +79,7 @@ class AdminServiceProvider extends ServiceProvider
         }
     }
     
-    private function mergeAuthConfig()
+    private function mergeAuthConfig(): void
     {
         $default = config('auth', []);
         $custom = require __DIR__ . '/../../config/auth.php';
@@ -98,26 +89,26 @@ class AdminServiceProvider extends ServiceProvider
         config(['auth'=>$auth]);
     }
     
-    private function aliasMiddlewares(Router $router)
+    private function aliasMiddlewares(Router $router): void
     {
         $router->aliasMiddleware('admin_guest', RedirectIfAuthenticated::class);
     }
     
-    private function loadMigrations()
+    private function loadMigrations(): void
     {
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
         }
     }
     
-    private function loadFactories(Factory $factory)
+    private function loadFactories(Factory $factory): void
     {
         if ($this->app->runningInConsole()) {
             $factory->load(__DIR__.'/../../database/factories');
         }
     }
     
-    private function loadHelper()
+    private function loadHelper(): void
     {
         $file = __DIR__.'/../helper.php';
         if (file_exists($file)) {
@@ -125,7 +116,7 @@ class AdminServiceProvider extends ServiceProvider
         }
     }
     
-    private function publishPublicAssets()
+    private function publishPublicAssets(): void
     {
         if ($this->app->runningInConsole()) {
             $path = __DIR__.'/../../resources';
@@ -136,7 +127,7 @@ class AdminServiceProvider extends ServiceProvider
         }
     }
     
-    private function loadBladeAliases()
+    private function loadBladeAliases(): void
     {
         Blade::component('admin::components.modal', 'modal');
         Blade::component('admin::components.page-heading', 'pageHeading');
@@ -155,7 +146,7 @@ class AdminServiceProvider extends ServiceProvider
         Blade::include('admin::includes.small-round-button', 'smallRoundButton');
     }
     
-    private function loadBreadcrumbs()
+    private function loadBreadcrumbs(): void
     {
         config(['breadcrumbs.view'=>'admin::components.breadcrumbs']);
         

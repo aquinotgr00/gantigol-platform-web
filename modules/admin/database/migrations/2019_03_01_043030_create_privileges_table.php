@@ -15,7 +15,7 @@ class CreatePrivilegesTable extends Migration
     {
         Schema::create('privileges', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name',60)->unique();
+            $table->string('name', 60)->unique();
             $table->unsignedInteger('privilege_category_id');
             $table->timestamps();
         });
@@ -23,7 +23,6 @@ class CreatePrivilegesTable extends Migration
         Schema::table('privileges', function (Blueprint $table) {
             $table->foreign('privilege_category_id')->references('id')->on('privilege_categories')->onDelete('cascade');
         });
-        
     }
 
     /**

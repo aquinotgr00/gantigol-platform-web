@@ -11,7 +11,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::view('/', 'admin::dashboard')->name('admin.dashboard');
 
     Route::resource('users', 'UserController');
-    Route::put('/users/{user}/status','UserController@statusUpdate')->name('users.status');
+    Route::put('/users/{user}/status', 'UserController@statusUpdate')->name('users.status');
 });
 
 if (!Route::has('login')) {

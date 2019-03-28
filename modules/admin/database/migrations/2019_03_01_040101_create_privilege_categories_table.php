@@ -15,7 +15,7 @@ class CreatePrivilegeCategoriesTable extends Migration
     {
         Schema::create('privilege_categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name',30)->unique();
+            $table->string('name', 30)->unique();
             $table->timestamps();
         });
     }

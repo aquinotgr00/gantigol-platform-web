@@ -13,7 +13,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function get_login_page_should_return_ok_response()
+    public function get_login_page_should_return_ok_response(): void
     {
         $response = $this->get(route('admin.login'));
 
@@ -23,7 +23,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function get_login_route_should_render_login_view()
+    public function get_login_route_should_render_login_view(): void
     {
         $response = $this->get(route('admin.login'));
 
@@ -33,7 +33,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_empty_data_should_return_redirect_back_response()
+    public function post_login_route_with_empty_data_should_return_redirect_back_response(): void
     {
         $this->get(route('admin.login'));
         $response = $this->post(route('admin.login'), []);
@@ -44,7 +44,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_empty_data_should_return_response_with_validation_error()
+    public function post_login_route_with_empty_data_should_return_response_with_validation_error(): void
     {
         $response = $this->post(route('admin.login'), []);
 
@@ -54,7 +54,7 @@ class LoginTest extends TestCase
     /**
      * test
      */
-    public function post_login_route_with_unregistered_email_should_return_response_with_validation_error()
+    public function post_login_route_with_unregistered_email_should_return_response_with_validation_error(): void
     {
         $response = $this->post(route('admin.login'), [
             'email' => 'guest@example.com',
@@ -67,7 +67,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_invalid_password_should_return_redirect_response()
+    public function post_login_route_with_invalid_password_should_return_redirect_response(): void
     {
         $admin = factory(Admin::class)->create(['password'=>'secret','active'=>true]);
 
@@ -82,7 +82,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_inactive_admin_should_return_response_with_validation_error()
+    public function post_login_route_with_inactive_admin_should_return_response_with_validation_error(): void
     {
         $password = 'secret';
         $admin = factory(Admin::class)->create(['password'=>$password,'active'=>false]);
@@ -98,7 +98,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_valid_data_should_authenticate_admin()
+    public function post_login_route_with_valid_data_should_authenticate_admin(): void
     {
         $password = 'secret';
         $admin = factory(Admin::class)->create(['password'=>$password,'active'=>true]);
@@ -115,7 +115,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_login_route_with_valid_data_should_return_redirect_response()
+    public function post_login_route_with_valid_data_should_return_redirect_response(): void
     {
         $password = 'secret';
         $admin = factory(Admin::class)->create(['password'=>$password,'active'=>true]);
@@ -131,7 +131,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function post_logout_route_should_log_admin_out()
+    public function post_logout_route_should_log_admin_out(): void
     {
         $this->actingAs(factory(Admin::class)->create(), 'admin')
              ->post(route('admin.logout'));
@@ -142,7 +142,7 @@ class LoginTest extends TestCase
     /**
      * @test
      */
-    public function should_bypass_login_page_if_already_authenticated()
+    public function should_bypass_login_page_if_already_authenticated(): void
     {
         $admin = factory(Admin::class)->create();
 

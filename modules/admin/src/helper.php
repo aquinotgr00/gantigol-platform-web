@@ -1,21 +1,20 @@
 <?php
 
-/**
- * merge configuration array with custom configuration
- *
- * @param array $defaultConfig
- * @param array $customConfig
- * @return array
- */
 if (!function_exists('merge_config')) {
-    function merge_config(array $defaultConfig, array $customConfig)
+    /**
+    * merge configuration array with custom configuration
+    *
+    * @param array $defaultConfig
+    * @param array $customConfig
+    * @return array
+    */
+    function merge_config(array $defaultConfig, array $customConfig): array
     {
         $merged = [];
         foreach ($defaultConfig as $key => $value) {
+            $merged[$key] = $value;
             if (isset($customConfig[$key])) {
                 $merged[$key] = array_merge($value, $customConfig[$key]);
-            } else {
-                $merged[$key] = $value;
             }
         }
 
@@ -24,9 +23,12 @@ if (!function_exists('merge_config')) {
 }
 
 if (!function_exists('redirect_success')) {
-    function redirect_success($routeName, $messageTitle, $messageBody)
+    /**
+    * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+    */
+    function redirect_success(string $routeName, string $messageTitle, string $messageBody)
     {
-        return redirect()->route($routeName)->with('notify',[
+        return redirect()->route($routeName)->with('notify', [
             'type'=>'success',
             'title'=>$messageTitle,
             'body'=>$messageBody

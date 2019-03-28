@@ -1,7 +1,9 @@
 <?php
 
 namespace Modules\Admin\Seeders;
+
 use Illuminate\Database\Seeder;
+use Modules\Admin\Admin;
 
 class FactoryTestForAdminsTableSeeder extends Seeder
 {

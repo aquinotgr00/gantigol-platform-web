@@ -4,14 +4,16 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAdminPrivilegesTable extends Migration {
+class CreateAdminPrivilegesTable extends Migration
+{
 
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         Schema::create('admin_privileges', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('admin_id');
@@ -19,7 +21,7 @@ class CreateAdminPrivilegesTable extends Migration {
             $table->timestamps();
         });
 
-        Schema::table('admin_privileges', function(Blueprint $table) {
+        Schema::table('admin_privileges', function (Blueprint $table) {
             $table->foreign('admin_id')
                     ->references('id')->on('admins')
                     ->onDelete('cascade');
@@ -35,8 +37,8 @@ class CreateAdminPrivilegesTable extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         Schema::dropIfExists('admin_privileges');
     }
-
 }

@@ -17,7 +17,7 @@ class UserForPrivilegesTableSeeder extends Seeder
      */
     public function run()
     {
-        $this->definePrivilegesForCategory('User',[
+        $this->definePrivilegesForCategory('User', [
             'View users',
             'Add user',
             'Edit user',
@@ -25,7 +25,7 @@ class UserForPrivilegesTableSeeder extends Seeder
             'Edit user privileges'
         ]);
         
-        $this->definePrivilegesForCategory('Product Variant',[
+        $this->definePrivilegesForCategory('Product Variant', [
             'Manage product variant',
             'Add product variant',
             'Edit product variant',
@@ -33,25 +33,29 @@ class UserForPrivilegesTableSeeder extends Seeder
         ]);
     }
     
-    private function definePrivilegesForCategory($categoryName, $privileges)
+    private function definePrivilegesForCategory(string $categoryName, array $privileges): void
     {
         $timestamp = $this->getTimestamp();
         $category = $this->createCategory($categoryName);
         
-        DB::table('privileges')->insert(collect($privileges)->map(function($privilegeName) use ($category, $timestamp) {
-            return array_merge(['name'=>$privilegeName,'privilege_category_id'=>$category],$timestamp);
-        })->all());
+        DB::table('privileges')->insert(
+            collect($privileges)
+                ->map(function ($privilegeName) use ($category, $timestamp) {
+                    return array_merge(['name'=>$privilegeName,'privilege_category_id'=>$category], $timestamp);
+                })
+            ->all()
+        );
     }
     
-    private function getTimestamp()
+    private function getTimestamp(): array
     {
         return [ 'created_at'=> Carbon::now(), 'updated_at'=> Carbon::now() ];
     }
     
-    private function createCategory($categoryName)
+    private function createCategory(string $categoryName): int
     {
-        DB::table('privilege_categories')->insert([array_merge(['name'=>$categoryName],$this->getTimestamp())]);
+        DB::table('privilege_categories')->insert([array_merge(['name'=>$categoryName], $this->getTimestamp())]);
         
-        return DB::table('privilege_categories')->where('name',$categoryName)->value('id');
+        return DB::table('privilege_categories')->where('name', $categoryName)->value('id');
     }
 }

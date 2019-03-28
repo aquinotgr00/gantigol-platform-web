@@ -13,7 +13,7 @@ class DashboardTest extends TestCase
     /**
      * @test
      */
-    public function admin_should_have_access()
+    public function admin_should_have_access(): void
     {
         $response = $this->actingAs(factory(Admin::class)->create(), 'admin')
             ->get(route('admin.dashboard'));
@@ -24,7 +24,7 @@ class DashboardTest extends TestCase
     /**
      * @test
      */
-    public function not_admin_should_be_redirected_to_admin_login_page()
+    public function not_admin_should_be_redirected_to_admin_login_page(): void
     {
         $response = $this->get(route('admin.dashboard'));
 
