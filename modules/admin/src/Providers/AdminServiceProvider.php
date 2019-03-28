@@ -3,7 +3,7 @@
 namespace Modules\Admin\Providers;
 
 use Illuminate\Routing\Router;
-use Illuminate\Routing\Route;
+use Illuminate\Routing\RouteRegistrar;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -29,7 +29,7 @@ class AdminServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(Router $router, Factory $factory)
+    public function boot(RouteRegistrar $routeRegistrar, Router $router, Factory $factory)
     {
         $this->aliasMiddlewares($router);
         $this->loadBladeAliases();
@@ -38,7 +38,7 @@ class AdminServiceProvider extends ServiceProvider
         $this->loadHelper();
         $this->loadFactories($factory);
         $this->loadMigrations();
-        $this->loadRoutes($router);
+        $this->loadRoutes($routeRegistrar);
         $this->loadViews();
         $this->mergeAuthConfig();
         
@@ -57,9 +57,9 @@ class AdminServiceProvider extends ServiceProvider
         }
     }
     
-    private function loadRoutes(Router $route): void
+    private function loadRoutes(RouteRegistrar $routeRegistrar): void
     {
-        $route->prefix(config('admin.prefix', 'admin'))
+        $routeRegistrar->prefix(config('admin.prefix', 'admin'))
                ->namespace('Modules\Admin\Http\Controllers')
                ->middleware(['web'])
                ->group(function () {

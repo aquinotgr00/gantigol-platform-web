@@ -12,6 +12,3 @@ parameters:
         - '#Dynamic call to static method Illuminate\\Database\\[a-zA-Z\\]+::[a-zA-Z]+\(\)\.#'
         - '#Call to an undefined static method Illuminate\\[a-zA-Z\\]+::assert[a-zA-Z]+\(\)\.#'
         - '#Access to an undefined property Faker\\Generator::\$[a-zA-Z1-9_]+\.#'
-        - '#Dynamic call to static method Illuminate\\Auth\\SessionGuard::getLastAttempted\(\)\.#'
-        - '#Call to protected method prefix\(\) of class Illuminate\\Routing\\Router\.#'
-        - '#Cannot call method namespace\(\) on string\.#'

@@ -5,6 +5,7 @@ namespace Modules\Admin\Http\Controllers\Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -51,7 +52,9 @@ class LoginController extends Controller
         }
 
         if ($this->guard()->validate($this->credentials($request))) {
-            $user = $this->guard()->getLastAttempted();
+            /** @var \Illuminate\Auth\SessionGuard */
+            $guard = $this->guard();
+            $user = $guard->getLastAttempted();
 
             // Make sure the user is active
             if ($user->active && $this->attemptLogin($request)) {
