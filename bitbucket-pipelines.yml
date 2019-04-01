@@ -1,0 +1,32 @@
+image: php:7.2.15-cli-alpine3.9
+
+pipelines:
+    default:
+        - step:
+            caches:
+                - composer
+            script:
+                - apk add --update autoconf dpkg-dev dpkg file g++ gcc libc-dev make pkgconf re2c imagemagick-dev libtool freetype-dev libjpeg-turbo-dev libpng-dev zlib-dev nodejs nodejs-npm
+                - docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+                - docker-php-ext-install pdo_mysql zip gd pcntl exif
+                - pecl install xdebug imagick
+                - docker-php-ext-enable xdebug imagick
+                - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+                - composer install --no-progress --no-suggest --prefer-dist
+                - cp .env.bitbucket .env
+                - php artisan key:generate
+                - npm install
+                - npm run production
+                - composer run check
+            services:
+                - mysql
+
+definitions:
+  services:
+    mysql:
+      image: mysql:5.7
+      environment:
+        MYSQL_DATABASE: 'homestead'
+        MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+        MYSQL_USER: 'homestead'
+        MYSQL_PASSWORD: 'secret'

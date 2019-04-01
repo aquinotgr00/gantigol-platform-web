@@ -7,11 +7,12 @@ services:
             - .:/app
             - ${HOME}/.composer:/tmp
         ports:
-            - ${APP_PORT}:8000
+            - ${APP_PORT:-8000}:8000
         command: php artisan serve --host 0.0.0.0 --port 8000
         depends_on:
             - mysql
             - mysqltest
+            - mailhog
     mysql:
         image: mysql:5.7
         environment:
@@ -21,6 +22,10 @@ services:
             MYSQL_PASSWORD: ${DB_PASSWORD}
         volumes:
             - devdata:/var/lib/mysql
+    mailhog:
+        image: mailhog/mailhog
+        ports:
+            - 8025:8025
     mysqltest:
         image: mysql:5.7
         environment:

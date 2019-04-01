@@ -181,6 +181,8 @@ return [
          */
         Modules\Admin\Providers\AdminServiceProvider::class,
         Modules\Admin\Providers\AdminAuthServiceProvider::class,
+        Modules\Medias\MediaServiceProvider::class,
+        Modules\Membership\MemberRegistrationServiceProvider::class,
     ],
 
     /*
