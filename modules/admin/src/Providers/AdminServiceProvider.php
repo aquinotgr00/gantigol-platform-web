@@ -52,7 +52,7 @@ class AdminServiceProvider extends ServiceProvider
         
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => config_path('admins.php'),
+                $path => config_path('admin.php'),
             ], 'admin:config');
         }
     }

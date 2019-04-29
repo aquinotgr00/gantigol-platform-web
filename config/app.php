@@ -183,6 +183,8 @@ return [
         Modules\Admin\Providers\AdminAuthServiceProvider::class,
         Modules\Medias\MediaServiceProvider::class,
         Modules\Membership\MemberRegistrationServiceProvider::class,
+        Modules\ProductCategory\Providers\ProductCategoryServiceProvider::class,
+        
     ],
 
     /*

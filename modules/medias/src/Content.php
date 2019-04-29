@@ -22,6 +22,6 @@ class Content extends Model implements HasMedia
         /** @var Content **/
         $content = $this->find(1);
 
-        return $content->media()->where('collection_name', 'default')->paginate(16);
+        return $content->media()->where('collection_name', 'default')->latest()->paginate(16);
     }
 }

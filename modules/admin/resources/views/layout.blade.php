@@ -40,7 +40,10 @@
 
         <!-- Logout Modal-->
         @include('admin::auth.confirm-logout')
-
+        
+        <!-- Other Modals -->
+        @yield('modals')
+        
         @endauth
 
         @guest('admin')
@@ -52,6 +55,10 @@
         @endtoast
         
         @include('admin::includes.core-javascript')
+        
+        <script>
+            $('.toast').toast('show')
+        </script>
         
         @stack('scripts')
     </body>
