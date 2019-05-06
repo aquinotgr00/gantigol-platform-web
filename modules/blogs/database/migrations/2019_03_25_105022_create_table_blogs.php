@@ -4,21 +4,19 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableContent extends Migration
+class CreateTableBlogs extends Migration
 {
-     /**
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('contents', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->text('description');
-            $table->timestamps();
-        });
+        // Schema::create('table_blogs', function (Blueprint $table) {
+        //     $table->increments('id');
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -28,6 +26,6 @@ class CreateTableContent extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contents');
+        // Schema::dropIfExists('table_blogs');
     }
 }

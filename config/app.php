@@ -174,9 +174,12 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        /*
+         * Module Service Providers...
+         */
         Modules\Medias\MediaServiceProvider::class,
         Modules\Membership\MemberRegistrationServiceProvider::class,
+        Modules\Blogs\BlogServiceProvider::class,
     ],
 
     /*

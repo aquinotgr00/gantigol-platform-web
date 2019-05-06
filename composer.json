@@ -49,6 +49,7 @@
         "psr-4": {
             "Modules\\Medias\\": "modules/medias/src",
             "Modules\\Membership\\": "modules/membership/src",
+            "Modules\\Blogs\\": "modules/blogs/src",
             "App\\": "app/"
         },
         "classmap": [
@@ -60,6 +61,7 @@
         "psr-4": {
             "Modules\\Medias\\Tests\\": "modules/medias/tests",
             "Modules\\Membership\\Tests\\": "modules/membership/tests",
+            "Modules\\Blogs\\Tests\\": "modules/blogs/tests",
             "Tests\\": "tests/"
         }
     },
