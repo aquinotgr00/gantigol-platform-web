@@ -54,7 +54,8 @@
 			"Modules\\Admin\\": "modules/admin/src",
             "Modules\\Medias\\": "modules/medias/src",
             "Modules\\Membership\\": "modules/membership/src",
-			"Modules\\ProductCategory\\": "modules/product-category/src",
+            "Modules\\ProductCategory\\": "modules/product-category/src",
+            "Modules\\ProductManagement\\": "modules/product-management/src",
             "App\\": "app/"
         },
         "classmap": [

@@ -184,6 +184,7 @@ return [
         Modules\Medias\MediaServiceProvider::class,
         Modules\Membership\MemberRegistrationServiceProvider::class,
         Modules\ProductCategory\Providers\ProductCategoryServiceProvider::class,
+        Modules\ProductManagement\Providers\ProductManagementServiceProvider::class,
         
     ],
 
