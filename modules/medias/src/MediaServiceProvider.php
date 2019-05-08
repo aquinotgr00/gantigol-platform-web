@@ -76,7 +76,7 @@ class MediaServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => resource_path('views/vendor/admins'),
+                $path => resource_path('views/vendor/media'),
             ], 'medias:views');
         }
     }

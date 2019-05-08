@@ -1,6 +1,14 @@
 <?php
 
+//Post
 Route::get('/', 'BlogController@index')->name('blog.index');
+Route::get('/post','BlogController@create')->name('blog.post.create');
+Route::get('/post/edit/{id}','BlogController@edit')->name('blog.post.edit');
+Route::get('/post/list','BlogController@list')->name('blog.post.list');
+Route::post('/post/store','BlogController@store')->name('blog.post.store');
+Route::post('/post/update','BlogController@update')->name('blog.post.update');
+Route::post('/post/publish/{id}','BlogController@publish')->name('blog.post.publish');
+
 
 //blogcategory
 Route::get('/category','BlogCategoryController@index')->name('blog.category.index');

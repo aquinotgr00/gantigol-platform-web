@@ -76,7 +76,7 @@ class BlogServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => resource_path('views/vendor/admins'),
+                $path => resource_path('views/vendor/blog'),
             ], 'blogs:views');
         }
     }

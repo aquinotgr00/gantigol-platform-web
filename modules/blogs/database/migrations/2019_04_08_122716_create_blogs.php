@@ -18,8 +18,8 @@ class CreateBlogs extends Migration
             $table->string('title');
             $table->string('image')->nullable();
             $table->date('publish_date')->nullable();
-            $table->integer('category_id');
-            $table->text('body');
+            $table->integer('category_id')->nullable();
+            $table->text('body')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
