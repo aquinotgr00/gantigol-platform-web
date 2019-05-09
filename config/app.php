@@ -166,6 +166,8 @@ return [
          * Package Service Providers...
          */
         Conner\Tagging\Providers\TaggingServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -188,6 +190,8 @@ return [
         Modules\Ecommerce\Providers\EcommerceServiceProvider::class,
         Modules\Customers\Providers\CustomerServiceProvider::class,
         
+        Modules\Product\Providers\ProductServiceProvider::class,
+        Modules\Preorder\Providers\PreOrderServiceProvider::class,
     ],
 
     /*
@@ -236,7 +240,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];
