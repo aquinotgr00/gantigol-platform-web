@@ -12,12 +12,7 @@ class ProductCategory extends Model
     /**
      * @var array
      */
-    protected $fillable = ['name','image_id','parent_id'];
-    
-    public function image(): BelongsTo
-    {
-        return $this->belongsTo(Media::class);
-    }
+    protected $fillable = ['name','image','parent_id'];
     
     public function parentCategory() {
         return $this->belongsTo(ProductCategory::class, 'parent_id');

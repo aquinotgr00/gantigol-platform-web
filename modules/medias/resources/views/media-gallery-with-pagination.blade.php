@@ -9,8 +9,7 @@
 
 <div id="media-gallery-with-pagination"
      data-on-media-selected="{{$onMediaSelected??null}}"
-     data-media-library-url="{{route('media.library')}}"
-     data-is-modal="{{$isModal}}">
+     data-media-library-url="{{route('media.library')}}">
     @unless($isModal)
     @include('medias::media-gallery',['isModal'=>$isModal])
     @endunless

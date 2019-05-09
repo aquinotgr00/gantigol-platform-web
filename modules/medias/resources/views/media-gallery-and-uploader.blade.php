@@ -2,7 +2,7 @@
 $isModal = $isModal ?? true;
 @endphp
 
-<ul class="nav nav-pills" id="media-library-tab" role="tablist">
+<ul class="nav nav-pills" role="tablist">
     <li class="nav-item">
         <a class="nav-link active" id="media-tab" data-toggle="tab" href="#media" role="tab" aria-controls="media" aria-selected="true">Media Library</a>
     </li>
@@ -11,7 +11,7 @@ $isModal = $isModal ?? true;
     </li>
 </ul>
 
-<div class="tab-content mt-3" id="media-library-tab-content">
+<div class="tab-content mt-3" id="media-library" data-is-modal="{{$isModal}}">
     <div class="tab-pane fade show active" id="media" role="tabpanel" aria-labelledby="media-tab">
         <div class="row">
             <div class="@if($isModal) col-md-12 @else col-md-9 @endif list-media">
