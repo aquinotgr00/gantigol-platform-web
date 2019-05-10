@@ -24,7 +24,7 @@
             "order": [[4, "desc"]],
             "columns": [
                 {
-                    "data": "product.first_image",
+                    "data": "product.image",
                     "render": function (data, type, row) {
                         if (data == null) {
                             return '-';

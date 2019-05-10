@@ -13,7 +13,7 @@ class PreOrder extends Model
      *
      * @var array
      */
-    protected $fillable = ['product_id', 'quota', 'end_date'];
+    protected $fillable = ['product_id', 'quota','start_date','end_date'];
 
     /**
      * product relationship

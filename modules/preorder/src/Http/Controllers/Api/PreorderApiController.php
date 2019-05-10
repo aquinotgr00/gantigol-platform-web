@@ -10,7 +10,7 @@ use Modules\Preorder\Http\Resources\PreOrderResource;
 use Modules\Preorder\PreOrder;
 use Modules\Product\Product;
 use Modules\Product\ProductImage;
-use Modules\Product\ProductSubVariant;
+use Modules\Product\ProductSize;
 use Modules\Product\ProductVariant;
 use Validator;
 
@@ -57,57 +57,26 @@ class PreorderApiController extends Controller
             return new PreOrderResource($validator->messages());
         }
 
-        $new_product = Product::create($request->only('name', 'price', 'description', 'weight', 'status'));
+        $new_product = Product::create($request->only('name', 'price', 'description', 'weight'));
 
         $request->request->add(['product_id' => $new_product->id]);
 
-        $preOrder = PreOrder::create($request->only('product_id', 'quota', 'end_date'));
+        $preOrder = PreOrder::create($request->only('product_id', 'quota', 'end_date', 'status','start_date'));
 
         // add product images
         if ($request->hasFile('images')) {
             foreach ($request->images as $image) {
                 $image = $image->store('public/images');
-                ProductImage::create([
-                    'product_id' => $new_product->id,
-                    'image' => $image,
-                ]);
+                $new_product->image = $image;
+                $new_product->update();
+                
+                $newImage = new ProductImage;
+                $newImage->product_id   = $new_product->id;
+                $newImage->image        = $image;
+                $newImage->save();
             }
         }
-        // add product variant
-        $variant_exist = null;
-        $variant_id = null;
-        foreach ($request->sub_variant as $key => $value) {
-            if (is_null($request->variant[$key])) {
-                if (!is_null($variant_exist)) {
-                    $find_variant = ProductVariant::where('name', $variant_exist)->first();
-                    if (!is_null($find_variant)) {
-                        $variant_id = $find_variant->id;
-                    }
-                }
-            } else {
-                if ($variant_exist != $request->variant[$key]) {
-                    $variant_id = null;
-                }
-                if ($key != 0) {
-                    if (is_null($variant_id)) {
-                        $new_variant = ProductVariant::create([
-                            'product_id' => $new_product->id,
-                            'name' => $request->variant[$key],
-                            'price' => $request->price_variant[$key],
-                        ]);
-                        $variant_exist = $new_variant->name;
-                        $variant_id = $new_variant->id;
-                    }
-                }
-            }
-            if (!is_null($variant_id)) {
-                ProductSubVariant::create([
-                    'product_variant_id' => $variant_id,
-                    'name' => $value,
-                    'price' => $request->price_variant[$key],
-                ]);
-            }
-        }
+       
         return new PreOrderResource($preOrder);
     }
     /**
