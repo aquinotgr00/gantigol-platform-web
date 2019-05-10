@@ -374,7 +374,7 @@ class ProductImagesTableSeeder extends Seeder
 
         
         foreach($product_images as $image) {
-            App\ProductImage::create($image);
+            \Modules\Product\ProductImage::create($image);
         }
 
     }

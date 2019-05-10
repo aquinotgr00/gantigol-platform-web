@@ -21,7 +21,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 135000,
                 "weight" => 100,
                 "category_id" => 5,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -31,7 +30,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 135000,
                 "weight" => 100,
                 "category_id" => 5,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -41,7 +39,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 135000,
                 "weight" => 100,
                 "category_id" => 5,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -51,7 +48,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 135000,
                 "weight" => 100,
                 "category_id" => 5,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -61,7 +57,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 195000,
                 "weight" => 200,
                 "category_id" => 6,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -71,7 +66,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 250000,
                 "weight" => 1000,
                 "category_id" => 7,
-                "size_id" => 2,
                 "status" => 1,
             ),
             array(
@@ -81,7 +75,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 300000,
                 "weight" => 1000,
                 "category_id" => 7,
-                "size_id" => 2,
                 "status" => 1,
             ),
             array(
@@ -91,7 +84,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 310000,
                 "weight" => 1000,
                 "category_id" => 7,
-                "size_id" => 2,
                 "status" => 1,
             ),
             array(
@@ -101,7 +93,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 250000,
                 "weight" => 1000,
                 "category_id" => 7,
-                "size_id" => 2,
                 "status" => 0,
             ),
             array(
@@ -111,7 +102,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 100000,
                 "weight" => 1000,
                 "category_id" => 7,
-                "size_id" => 2,
                 "status" => 0,
             ),
             array(
@@ -121,7 +111,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 270000,
                 "weight" => 250,
                 "category_id" => 8,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -131,7 +120,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 270000,
                 "weight" => 250,
                 "category_id" => 8,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -141,7 +129,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 325000,
                 "weight" => 1000,
                 "category_id" => 9,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -151,7 +138,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 295000,
                 "weight" => 1000,
                 "category_id" => 9,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -161,7 +147,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 350000,
                 "weight" => 1000,
                 "category_id" => 9,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -171,7 +156,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 410000,
                 "weight" => 1000,
                 "category_id" => 9,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -181,7 +165,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 325000,
                 "weight" => 100,
                 "category_id" => 9,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -191,7 +174,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 140000,
                 "weight" => 500,
                 "category_id" => 10,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -201,7 +183,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 140000,
                 "weight" => 500,
                 "category_id" => 10,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -211,7 +192,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 150000,
                 "weight" => 500,
                 "category_id" => 10,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -221,7 +201,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 135000,
                 "weight" => 500,
                 "category_id" => 10,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -231,7 +210,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 135000,
                 "weight" => 500,
                 "category_id" => 10,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -241,7 +219,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 120000,
                 "weight" => 500,
                 "category_id" => 10,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -251,7 +228,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 115000,
                 "weight" => 100,
                 "category_id" => 11,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -261,7 +237,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 120000,
                 "weight" => 500,
                 "category_id" => 12,
-                "size_id" => 1,
                 "status" => 0,
             ),
             array(
@@ -271,7 +246,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 120000,
                 "weight" => 500,
                 "category_id" => 12,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -281,7 +255,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 240000,
                 "weight" => 1000,
                 "category_id" => 13,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -291,7 +264,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 240000,
                 "weight" => 1000,
                 "category_id" => 13,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -301,7 +273,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 240000,
                 "weight" => 1000,
                 "category_id" => 13,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -311,7 +282,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 240000,
                 "weight" => 1000,
                 "category_id" => 13,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -321,7 +291,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 220000,
                 "weight" => 500,
                 "category_id" => 13,
-                "size_id" => 3,
                 "status" => 0,
             ),
             array(
@@ -331,7 +300,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 220000,
                 "weight" => 150,
                 "category_id" => 13,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -341,7 +309,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 225000,
                 "weight" => 500,
                 "category_id" => 16,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -351,7 +318,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 75000,
                 "weight" => 500,
                 "category_id" => 22,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -361,7 +327,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 75000,
                 "weight" => 500,
                 "category_id" => 22,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -371,7 +336,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 75000,
                 "weight" => 500,
                 "category_id" => 23,
-                "size_id" => 3,
                 "status" => 0,
             ),
             array(
@@ -381,7 +345,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 70000,
                 "weight" => 500,
                 "category_id" => 24,
-                "size_id" => 3,
                 "status" => 1,
             ),
             array(
@@ -391,7 +354,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 330000,
                 "weight" => 1000,
                 "category_id" => 15,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -401,7 +363,6 @@ class ProductsTableSeeder extends Seeder
                 "price" => 295000,
                 "weight" => 1000,
                 "category_id" => 15,
-                "size_id" => 1,
                 "status" => 1,
             ),
             array(
@@ -411,13 +372,12 @@ class ProductsTableSeeder extends Seeder
                 "price" => 325000,
                 "weight" => 1000,
                 "category_id" => 15,
-                "size_id" => 1,
                 "status" => 1,
             ),
         );
         
         foreach($products as $product) {
-            App\Product::create($product);
+            \Modules\Product\Product::create($product);
         }
 
     }

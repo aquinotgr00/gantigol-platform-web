@@ -15,7 +15,7 @@ class Product extends Model
 
 
     public function category() {
-        return $this->belongsTo('\Modules\Product\ProductCategory','category_id');
+        return $this->belongsTo('\Modules\ProductCategory\ProductCategory','category_id');
     }
 
     public function size() {
@@ -74,9 +74,4 @@ class Product extends Model
     public function getSizeAvailableAttribute() {
         return [];
     }
-
-    public function orders() {
-        return $this->hasManyThrough('\Modules\Product\OrderItem', '\Modules\Product\ProductVariant', 'product_id', 'productvariant_id')->with('order');
-    }
-
 }

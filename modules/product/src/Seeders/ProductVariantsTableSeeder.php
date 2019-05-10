@@ -777,7 +777,7 @@ class ProductVariantsTableSeeder extends Seeder
         );
         
         foreach($product_variants as $variant) {
-            \App\ProductVariant::create($variant);
+            \Modules\Product\ProductVariant::create($variant);
         }
     }
 }

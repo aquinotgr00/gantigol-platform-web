@@ -58,6 +58,12 @@ class ProductServiceProvider extends ServiceProvider
             ->group(function () {
                 $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
             });
+        $routeRegistrar->prefix('api-product')
+            ->namespace('Modules\Product\Http\Controllers')
+            ->middleware(['api'])
+            ->group(function () {
+                $this->loadRoutesFrom(__DIR__ . '/../../routes/api.php');
+            });
     }
 
     private function loadViews(): void
