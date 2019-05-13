@@ -56,6 +56,7 @@
             "Modules\\Membership\\": "modules/membership/src",
             "Modules\\ProductCategory\\": "modules/product-category/src",
             "Modules\\Product\\": "modules/product/src",
+            "Modules\\Ecommerce\\": "modules/ecommerce/src",
             "App\\": "app/"
         },
         "classmap": [

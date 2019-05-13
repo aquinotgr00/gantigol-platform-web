@@ -185,6 +185,7 @@ return [
         Modules\Membership\MemberRegistrationServiceProvider::class,
         Modules\ProductCategory\Providers\ProductCategoryServiceProvider::class,
         Modules\Product\Providers\ProductServiceProvider::class,
+        Modules\Ecommerce\Providers\EcommerceServiceProvider::class,
         
     ],
 

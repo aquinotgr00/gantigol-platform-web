@@ -131,6 +131,7 @@ class MediaServiceProvider extends ServiceProvider
     private function loadBladeAliases(): void
     {
         Blade::include('medias::includes.media-library-modal', 'mediaLibraryModal');
+        Blade::include('medias::components.media-picker', 'mediaPicker');
     }
     
     private function publishPublicAssets(): void
@@ -138,6 +139,7 @@ class MediaServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $path = __DIR__.'/../resources';
             $this->publishes([
+                $path.'/css' => public_path('vendor/media/css'),
                 $path.'/js' => public_path('vendor/media/js'),
                 $path.'/img' => public_path('vendor/media/img'),
             ], 'media:public');
