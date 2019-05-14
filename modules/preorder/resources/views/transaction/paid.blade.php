@@ -100,10 +100,12 @@
                 </div>
                 <div class="col">
                     <div class="text-right">
+                        @can('create-batch')
                         <button type="button" data-target="#exampleModal" data-toggle="modal"
                             class="btn btn-outline-primary">
                             Create Batch
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>

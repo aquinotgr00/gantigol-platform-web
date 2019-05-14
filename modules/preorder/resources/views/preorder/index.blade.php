@@ -79,6 +79,7 @@
 
             </div>
             <div class="col-md-2">
+                @can('create-preorder')
                 <!-- start tools -->
                 <tool class="navbar navbar-expand-lg float-right">
                     <a class="btn sub-circle my-2 my-sm-0" href="{{ route('list-preorder.create') }}" role="button">
@@ -86,6 +87,7 @@
                     </a>
                 </tool>
                 <!-- end tools -->
+                @endcan
             </div>
         </div>
         <hr>

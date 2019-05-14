@@ -74,10 +74,12 @@
                         button += "<i class='fa fa-print'></i>&nbsp;";
                         button += "Print";
                         button += "</a>&nbsp;&nbsp;";
+                        @can('view-batch')
                         button += "<a href='{{ url('admin/shipping-transaction') }}/"+data+"' class='btn btn-primary'>";
                         button += "<i class='fa fa-info'></i>&nbsp;";
                         button += "Details";
                         button += "</a>";
+                        @endcan
                         return button;
                     }
                 }

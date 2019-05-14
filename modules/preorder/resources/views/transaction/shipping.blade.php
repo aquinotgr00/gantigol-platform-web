@@ -133,11 +133,13 @@
                 <a href="{{ route('batch.transaction',$preOrder->id) }}" class="btn btn-default">
                     Back
                 </a>
+                @can('edit-shipping')
                 <a href="{{ route('shipping-edit.transaction',$production_batch->id) }}"
                     class="btn btn-outline-primary">
                     <i class="fa fa-pencil"></i>&nbsp;
                     Edit
                 </a>
+                @endcan
             </div>
         </div>
         <hr>

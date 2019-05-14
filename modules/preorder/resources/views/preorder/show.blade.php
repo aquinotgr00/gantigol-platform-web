@@ -61,12 +61,18 @@
                     Close preorder
                 </a>
                 @endif
+                
+                @can('edit-preorder')
                 <a class="btn btn-outline-primary btn-sm" href="{{ route('list-preorder.edit',$preOrder) }}">
                     Edit Preorder
                 </a>
+                @endcan
+
+                @can('view-transaction')
                 <a class="btn btn-primary btn-sm" href="{{ route('pending.transaction',$preOrder) }}">
                     Transaction
                 </a>
+                @endcan
             </div>
         </div>
     </div>

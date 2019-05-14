@@ -93,7 +93,11 @@
                 </div>
                 <div class="col">
                     <div class="text-right">
-                        <a href="{{ route('transaction.send-reminder',$preOrder->id) }}" class="btn btn-sm btn-outline-primary">Send reminder</a>
+                        @can('send-reminder')
+                        <a href="{{ route('transaction.send-reminder',$preOrder->id) }}" 
+                            class="btn btn-sm btn-outline-primary">Send reminder
+                        </a>
+                        @endcan
                     </div>
                 </div>
             </div>
