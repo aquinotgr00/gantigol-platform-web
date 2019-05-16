@@ -16,7 +16,7 @@ class LoginController extends Controller
 
     protected function showLoginForm(): View
     {
-        return view('admin::auth.login');
+        return view('admin::auth.login-nassau');
     }
 
     /**
