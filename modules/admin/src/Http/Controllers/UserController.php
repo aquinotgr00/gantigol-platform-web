@@ -24,8 +24,11 @@ class UserController extends Controller
     {
         $this->authorize('index', Auth::user());
         
-        $users = Admin::where('email', '<>', 'admin@mail.com')->paginate(15);
-        return view('admin::user.index', compact('users'));
+        $users  = Admin::where('email', '<>', 'admin@mail.com')->paginate(15);
+        $data   = [
+            'title' => 'Administrators'
+        ];
+        return view('admin::user.nassau.index', compact('users','data'));
     }
 
     /**
@@ -100,8 +103,12 @@ class UserController extends Controller
     private function form($user)
     {
         $privileges = Privilege::with(['privilegeCategory'])->get();
-        $roles = Role::with('privileges')->get();
-        return view('admin::user.edit', compact('user', 'privileges', 'roles'));
+        $roles  = Role::with('privileges')->get();
+        $data   = [
+            'title' => 'Edit User',
+            'back' => route('users.index')
+        ];
+        return view('admin::user.nassau.edit', compact('user', 'privileges', 'roles','data'));
     }
 
     /**
