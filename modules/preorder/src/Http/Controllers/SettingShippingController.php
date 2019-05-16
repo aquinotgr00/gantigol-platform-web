@@ -8,21 +8,6 @@ use PDF;
 
 class SettingShippingController extends Controller
 {
-    /**
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
-    {
-        $courier    = config('preorder.courier');
-        $setting    = SettingShipping::first();
-        $data       = [
-            'courier' => $courier,
-            'setting' => $setting
-        ];
-        return view('preorder::setting.shipping')->with($data);
-    }
-
     public function preview()
     {
         $setting    = SettingShipping::first();
@@ -53,6 +38,6 @@ class SettingShippingController extends Controller
                 'height' => $request->height
             ]);
         }
-        return redirect()->route('setting-shipping.index');
+        return redirect()->route('setting-preorder.index');
     }
 }

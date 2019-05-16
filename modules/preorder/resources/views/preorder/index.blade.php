@@ -1,9 +1,7 @@
-@extends('preorder::layout')
+@extends('admin::layout-nassau')
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="https://cdn.datatables.net/select/1.3.0/css/select.bootstrap4.min.css" rel="stylesheet">
-
 @endpush
 
 @push('scripts')
@@ -21,7 +19,7 @@
                     'status': 'publish'
                 }
             },
-            "order": [[4, "desc"]],
+            "order": [[2, "asc"]],
             "columns": [
                 {
                     "data": "product.image",
@@ -29,11 +27,16 @@
                         if (data == null) {
                             return '-';
                         } else {
-                            return '<img src="' + data.product_id + '" style="width:100%;height:100%;" />';
+                            return '<img src="{{ asset("storage") }}/' + data + '" style="width:100%;height:100%;" />';
                         }
                     }
                 },
-                { "data": "product.name" },
+                {
+                    "data": "product.name",
+                    "render": function (data, type, row) {
+                        return '<a href="{{ url("admin/preorder-transaction") }}/' + row.id + '">' + data + '</a>';
+                    }
+                },
                 { "data": "end_date" },
                 { "data": "order_received" },
                 {
@@ -41,71 +44,76 @@
                     "render": function (data, type, row) {
                         return "Rp " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        var button = '';
+                        if ($('input[name="edit-preorder"]').length == 1) {
+                            button += '<a href="{{ url("admin/list-preorder/") }}/' + data + '/edit" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>';
+                        }
+                        button += '<a href="#" class="btn btn-table circle-table show-table" data-id="' + data + '" data-toggle="tooltip" data-placement="top" title="" data-original-title="Hide On Website" aria-describedby="tooltip856046"></a>';
+
+                        return button;
+                    }
                 }
-            ],
-            select: true
+
+            ]
         });
-        datatables
-            .on('click', 'tr', function () {
-                var selected = datatables.row(this).data();
-                window.location.href = "{{ url('admin/list-preorder') }}" + "/" + selected.id;
-            });
+        
+        $('#dataTable_filter').css('display','none');
+
+        $('#search').on('keyup', function () {
+            
+            datatables.search(this.value).draw();
+        });
     });
 </script>
 @endpush
 
 @section('content')
 
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h3>Published Preorder</h3>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <ul class="nav nav-pills nav-fill">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('list-preorder.index') }}">Publish</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('list-preorder.draft') }}">Draft</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('list-preorder.closed') }}">Closed</a>
-                    </li>
-                </ul>
+@can('edit-preorder')
+<input type="hidden" name="edit-preorder" value="1">
+@endcan
+<!-- start tools -->
+<div>
+    <tool class="navbar navbar-expand-lg">
+        <form class="form-inline my-2 my-lg-0">
+            <div class="input-group srch">
+                <input type="search" id="search" class="form-control search-box" placeholder="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-search" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
             </div>
-            <div class="col-md-6">
-
-            </div>
-            <div class="col-md-2">
-                @can('create-preorder')
-                <!-- start tools -->
-                <tool class="navbar navbar-expand-lg float-right">
-                    <a class="btn sub-circle my-2 my-sm-0" href="{{ route('list-preorder.create') }}" role="button">
-                        <img class="add-svg" src="{{ asset('vendor/preorder/images/Add.svg') }}" alt="add-image">
-                    </a>
-                </tool>
-                <!-- end tools -->
-                @endcan
-            </div>
-        </div>
-        <hr>
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Product Name</th>
-                        <th>Po Due</th>
-                        <th>Order Received</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-            </table>
-        </div>
-    </div>
+            @can('create-preorder')
+            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('list-preorder.create') }}" role="button">
+                <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
+            </a>
+            @endcan
+        </form>
+    </tool>
 </div>
+<!-- end tools -->
+
+<!-- start table -->
+<div class="table-responsive">
+    <table class="table" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Po Due</th>
+                <th>Order Received</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+    </table>
+</div>
+<!-- end table -->
 
 @endsection

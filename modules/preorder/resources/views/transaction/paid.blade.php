@@ -1,37 +1,30 @@
-@extends('preorder::layout')
-
-@push('styles')
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="https://cdn.datatables.net/select/1.3.0/css/select.bootstrap4.min.css" rel="stylesheet">
-
-@endpush
-
 @push('scripts')
-<script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.select.min.js') }}"></script>
 <script>
     $(document).ready(function () {
-        var datatables = $('#dataTable').DataTable({
+        var datatables = $('#paidDatatable').DataTable({
             "ajax": "{{ route('transaction.paid',$preOrder->id) }}",
             "order": [[3, "desc"]],
             "columns": [
                 { "data": "created_at" },
                 { "data": "invoice" },
-                { "data": "name" },
                 { 
+                    "data": "name",
+                    "render": function(data, type, row){
+                        return '<a href="{{ url('admin/show-transaction') }}/'+row.id+'?preorder={{ $preOrder->id }}">'+data+'</a>';
+                    } 
+                },
+                {
                     "data": "orders",
-                    "render": function(data,type,row){
-                        var variant_qty ="";
-                        $.each(data, function(key,val) {
-                            variant_qty += val.size.toUpperCase()+" : ";
-                            variant_qty += val.qty+"<br/>";
+                    "render": function (data, type, row) {
+                        var variant_qty = "";
+                        $.each(data, function (key, val) {
+                            variant_qty += val.size.toUpperCase() + " : ";
+                            variant_qty += val.qty + "<br/>";
                         });
                         return variant_qty;
                     }
                 }
             ],
-            select: true,
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 var index = iDisplayIndex + 1;
                 $('td:eq(0)', nRow).html(index);
@@ -39,11 +32,6 @@
             }
 
         });
-        datatables
-            .on('click', 'tr', function () {
-                var selected = datatables.row(this).data();
-                window.location.href = "{{ url('preorder/show-transaction') }}" + "/" + selected.id+"?preorder="+"{{ $preOrder->id }}";
-            });
         
         $('#form-create-batch').submit(function (e) {
             e.preventDefault();
@@ -56,7 +44,7 @@
                 success: function (data) {
                     console.log(data);
                     $('#exampleModal').modal('hide');
-                    window.location.href = "{{ route('batch.transaction',$preOrder->id) }}";
+                    window.location.href = "{{ route('pending.transaction',$preOrder->id) }}";
                 }
             });
 
@@ -64,69 +52,55 @@
     });
 </script>
 @endpush
-
-@section('content')
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <div class="row">
-            <div class="col">
-                <div class="float-left">
-                    <a class="btn btn-default btn-sm" href="{{ route('list-preorder.show',$preOrder->id) }}">Back</a>
-                    &nbsp;
-                    <strong>
-                        {{ (isset($preOrder->product->name))? $preOrder->product->name : '' }}
-                    </strong>
-                </div>
+<div id="paid-pre" class="tab-pane">
+    <div class="row mb-3">
+        <div class="col col-md-4 mt-4">
+            <div>
+                <small>Summary Order :</small>
+                <span class="Summary-ord">M : 10 L : 10 XL : 10</span>
             </div>
-            <div class="col">
-                <div class="text-right">
-                    <nav class="nav nav-pills flex-column flex-sm-row">
-                        <a class="flex-sm-fill text-sm-center nav-link"
-                            href="{{ route('pending.transaction',$preOrder->id) }}">Pending</a>
-                        <a class="flex-sm-fill text-sm-center nav-link active"
-                            href="{{ route('paid.transaction',$preOrder->id) }}">Paid</a>
-                        <a class="flex-sm-fill text-sm-center nav-link"
-                            href="{{ route('batch.transaction',$preOrder->id) }}">Batch</a>
-                    </nav>
+            <div>
+                <small>Total Order : </small>
+                <span class="Summary-ord">30</span>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class=" form-group float-right mr-2">
+                <div>
+                    <label>Export Data</label>
+                </div>
+                <div class="btn-group" role="group" aria-label="#">
+                    <button type="button" class="btn btn-line">PDF</button>
+                    <button type="button" class="btn btn-line">Excel</button>
+                    <button type="button" class="btn btn-line">Print</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <div class="row">
-                <div class="col">
-                    <h4>Paid Transaction</h4>
-                </div>
-                <div class="col">
-                    <div class="text-right">
-                        @can('create-batch')
-                        <button type="button" data-target="#exampleModal" data-toggle="modal"
-                            class="btn btn-outline-primary">
-                            Create Batch
-                        </button>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-            <hr />
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Order Date</th>
-                        <th>Invoice ID</th>
-                        <th>Name</th>
-                        <th>Variant Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-            </table>
+    <div class="table-responsive">
+        <!-- start table -->
+        <table class="table table-bordered" id="paidDatatable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Invoice ID</th>
+                    <th>Name</th>
+                    <th>Variant Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+        </table>
+        <!-- end table -->
+        <hr>
+        <div class="float-right mt-3">
+            @can('create-batch')
+            <a class="btn btn-success ml-4" role="button" data-toggle="modal" data-target="#Makebatch">Make Batch</a>
+            @endcan
         </div>
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="batchModelLabel"
-    aria-hidden="true">
+<div class="modal fade" id="Makebatch" tabindex="-1" role="dialog" aria-labelledby="batchModelLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <form action="{{ route('production-batch.store') }}" id="form-create-batch" method="post">
@@ -160,4 +134,3 @@
         </div>
     </div>
 </div>
-@endsection

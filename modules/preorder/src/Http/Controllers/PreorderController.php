@@ -17,7 +17,8 @@ class PreorderController extends Controller
      */
     public function index()
     {
-        return view('preorder::preorder.index');
+        $data['title'] = 'Preorder';
+        return view('preorder::preorder.index',compact('data'));
     }
     /**
      *
@@ -42,7 +43,11 @@ class PreorderController extends Controller
      */
     public function create()
     {
-        return view('preorder::preorder.create');
+        $data = [
+            'title' => 'Create Preorder',
+            'back' => route('list-preorder.index')
+        ];
+        return view('preorder::preorder.create',compact('data'));
     }
     /**
      * show single pre order

@@ -1,4 +1,4 @@
-@extends('preorder::layout')
+@extends('admin::layout-nassau')
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
@@ -134,93 +134,62 @@
 @endpush
 
 @section('content')
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <div class="row">
-            <div class="col">
-                <div class="float-left">
-                    <a class="btn btn-default btn-sm" href="{{ route('list-preorder.show',$preOrder->id) }}">Back</a>
-                    &nbsp;
-                    <strong>
-                        {{ (isset($preOrder->product->name))? $preOrder->product->name : '' }}
-                    </strong>
-                </div>
+<form id="form-input-shipping-number" action="{{ route('production.save-shipping-number') }}" method="post">
+    @csrf
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Start Production</label>
+                <input type="date" name="start_production_date" class="form-control" />
             </div>
-            <div class="col">
-                <div class="text-right">
-                    <nav class="nav nav-pills flex-column flex-sm-row">
-                        <a class="flex-sm-fill text-sm-center nav-link"
-                            href="{{ route('pending.transaction',$preOrder->id) }}">Pending</a>
-                        <a class="flex-sm-fill text-sm-center nav-link"
-                            href="{{ route('paid.transaction',$preOrder->id) }}">Paid</a>
-                        <a class="flex-sm-fill text-sm-center nav-link active"
-                            href="{{ route('batch.transaction',$preOrder->id) }}">Batch</a>
-                    </nav>
-                </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>End Production</label>
+                <input type="date" name="end_production_date" class="form-control" />
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    @if(isset($status))
+                        @foreach($status as $key => $value)
+                            <option value="{{ $key }}">{{ $value }}</option>
+                        @endforeach
+                    @endif
+                </select>
             </div>
         </div>
     </div>
-    <div class="card-body">
-        <form id="form-input-shipping-number" action="{{ route('production.save-shipping-number') }}" method="post">
-            @csrf
-            <div class="row">
-                <div class="col-md-8">
-                    <h4 class="modal-title"></h4>
-                </div>
-                <div class="col-md-4 text-right">
-                    <input type="hidden" name="batch_id" />
-                    <a href="{{ route('shipping.transaction',$production_batch->id) }}" class="btn btn-outline-warning">
-                        Cancel
-                    </a>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fa fa-save"></i>&nbsp;
-                        Save
-                    </button>
-                </div>
-            </div>
-            <hr>
-
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label>Start Production</label>
-                        <input type="date" name="start_production_date" class="form-control" />
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label>End Production</label>
-                        <input type="date" name="end_production_date" class="form-control" />
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select name="status" class="form-control">
-                            <option value="pending">Pending</option>
-                            <option value="wip">Work in Progress</option>
-                            <option value="done">Done</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered" style="width:100%;" id="datatable-shipping">
-                    <thead>
-                        <tr>
-                            <th>Order Date</th>
-                            <th>Invoice ID</th>
-                            <th>Name</th>
-                            <th>Variant Quantity</th>
-                            <th>Courier</th>
-                            <th>Tracking Number</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+    <div class="table-responsive">
+        <table class="table table-bordered" style="width:100%;" id="datatable-shipping">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Invoice ID</th>
+                    <th>Name</th>
+                    <th>Variant Quantity</th>
+                    <th>Courier</th>
+                    <th>Tracking Number</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+        </table>
     </div>
-    </form>
-</div>
+    <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-4 text-right">
+            <input type="hidden" name="batch_id" />
+            <a href="{{ route('shipping.transaction',$production_batch->id) }}" class="btn btn-outline-warning">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-success">
+                <i class="fa fa-save"></i>&nbsp;
+                Save
+            </button>
+        </div>
+    </div>
+</form>
 <input type="hidden" id="p-production-json" value="{{ (isset($production_json))? $production_json : '[]' }}" readonly />
 @endsection

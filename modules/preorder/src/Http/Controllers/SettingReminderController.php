@@ -10,19 +10,6 @@ class SettingReminderController extends Controller
 {
     /**
      *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
-    {
-        $setting_reminder = SettingReminder::first();
-        //getCurrentSetting();
-        $data = [
-            'setting_reminder' => $setting_reminder
-        ];
-        return view('preorder::setting.reminder')->with($data);
-    }
-    /**
-     *
      * @param   Request  $request
      *
      * @return \Illuminate\Contracts\Support\Renderable
@@ -41,6 +28,6 @@ class SettingReminderController extends Controller
             $request->request->add(['user_id'=> Auth::user()->id ]);
             $setting = SettingReminder::create($request->all());
         }
-        return redirect()->route('setting-reminder.index');
+        return redirect()->route('setting-preorder.index');
     }
 }

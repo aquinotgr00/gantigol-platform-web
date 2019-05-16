@@ -1,4 +1,4 @@
-@extends('preorder::layout')
+@extends('admin::layout-nassau')
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
@@ -11,6 +11,15 @@
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.select.min.js') }}"></script>
 <script>
+    function inputResi(obj) {
+        var id = $(obj).attr('id');
+        if ($(obj).val().length > 0) {
+            $('#btn-tbl-' + id).css('display', 'block');
+        } else {
+            $('#btn-tbl-' + id).css('display', 'none');
+        }
+
+    }
     $(document).ready(function () {
         var production_json = $('#p-production-json').val();
 
@@ -20,8 +29,7 @@
         $('#heading-end-production-date').text(selected.end_production_date);
         $('#heading-status').text(selected.status.toUpperCase());
 
-        $('.modal-title').text('Batch ' + selected.batch_name.toUpperCase());
-        $('#myModal').modal('show');
+
         $('#datatable-shipping').DataTable({
             "data": selected.get_productions,
             "columns": [
@@ -64,7 +72,17 @@
                     }
                 },
                 { "data": "get_transaction.courier_name" },
-                { "data": "tracking_number" },
+                {
+                    "data": "tracking_number",
+                    "render": function (data, type, row) {
+                        var input = '<div class="input-group-append">';
+                        input += "<input type='hidden' value='" + row.id + "' name='production_id[]' />";
+                        input += '<input type="text" onkeyup="inputResi(this)" name="tracking_number[]" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
+                        input += '<button class="btn btn-tbl" id="btn-tbl-' + row.id + '" data-toggle="tooltip" data-placement="top" title="" data-original-title="Submit" style="display:none;">';
+                        input += '</button></div>';
+                        return input;
+                    }
+                },
                 {
                     "data": "status",
                     "render": function (data, type, row) {
@@ -98,88 +116,56 @@
 @endpush
 
 @section('content')
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <div class="row">
-            <div class="col">
-                <div class="float-left">
-                    <a class="btn btn-default btn-sm" href="{{ route('batch.transaction',$preOrder->id) }}">Back</a>
-                    &nbsp;
-                    <strong>
-                        {{ (isset($preOrder->product->name))? $preOrder->product->name : '' }}
-                    </strong>
-                </div>
-            </div>
-            <div class="col">
-                <div class="text-right">
-                    <nav class="nav nav-pills flex-column flex-sm-row">
-                        <a class="flex-sm-fill text-sm-center nav-link"
-                            href="{{ route('pending.transaction',$preOrder->id) }}">Pending</a>
-                        <a class="flex-sm-fill text-sm-center nav-link"
-                            href="{{ route('paid.transaction',$preOrder->id) }}">Paid</a>
-                        <a class="flex-sm-fill text-sm-center nav-link active"
-                            href="{{ route('batch.transaction',$preOrder->id) }}">Batch</a>
-                    </nav>
-                </div>
-            </div>
+<!-- start tools -->
+
+<div class="row mb-3">
+    <div class="col col-md-4 mt-4">
+        <div>
+            <small>Summary Order :</small>
+            <span class="Summary-ord">M : 10 L : 10 XL : 10</span>
+        </div>
+        <div>
+            <small>Total Order : </small>
+            <span class="Summary-ord">30</span>
         </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-8">
-                <h4 class="modal-title"></h4>
+    <div class="col-md-8">
+        <div class=" form-group float-right mr-2">
+            <div>
+                <label>Export Data</label>
             </div>
-            <div class="col-md-4 text-right">
-                <a href="{{ route('batch.transaction',$preOrder->id) }}" class="btn btn-default">
-                    Back
-                </a>
-                @can('edit-shipping')
-                <a href="{{ route('shipping-edit.transaction',$production_batch->id) }}"
-                    class="btn btn-outline-primary">
-                    <i class="fa fa-pencil"></i>&nbsp;
-                    Edit
-                </a>
-                @endcan
+            <div class="btn-group" role="group" aria-label="#">
+                <button type="button" class="btn btn-line">PDF</button>
+                <button type="button" class="btn btn-line">Excel</button>
+                <button type="button" class="btn btn-line">Print</button>
             </div>
-        </div>
-        <hr>
-
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label>Start Production</label>
-                    <h4 id="heading-start-production-date"></h4>
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label>End Production</label>
-                    <h4 id="heading-end-production-date"></h4>
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label>Status</label>
-                    <h4 id="heading-status"></h4>
-                </div>
-            </div>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-bordered" style="width:100%;" id="datatable-shipping">
-                <thead>
-                    <tr>
-                        <th>Order Date</th>
-                        <th>Invoice ID</th>
-                        <th>Name</th>
-                        <th>Variant Quantity</th>
-                        <th>Courier</th>
-                        <th>Tracking Number</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-            </table>
         </div>
     </div>
 </div>
+<!-- end tools -->
+
+<!-- start table -->
+<div class="table-responsive">
+    <table class="table" id="datatable-shipping">
+        <thead>
+            <tr>
+                <th scope="col">Order Date</th>
+                <th scope="col">Invoice ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Variant Quantity</th>
+                <th scope="col">Courier</th>
+                <th scope="col">Tracking Number</th>
+                <th scope="col">Status</th>
+
+            </tr>
+        </thead>
+    </table>
+</div>
+<!-- end table -->
+<hr>
+<div class="float-right mt-3">
+    <a class="btn btn-success ml-4" role="button">Send Tracking Number</a>
+</div>
+
 <input type="hidden" id="p-production-json" value="{{ (isset($production_json))? $production_json : '[]' }}" readonly />
 @endsection
