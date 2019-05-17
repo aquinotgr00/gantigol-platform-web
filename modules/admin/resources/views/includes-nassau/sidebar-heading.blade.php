@@ -14,7 +14,7 @@
                 {{ Auth::user()->name }}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Setting</a>
+                <a class="dropdown-item" href="{{ route('admin.setting-dashboard') }}">Setting</a>
                 <a class="dropdown-item" data-toggle="modal" data-target="#logoutModal" href="#">Logout</a>
             </div>
         </div>
