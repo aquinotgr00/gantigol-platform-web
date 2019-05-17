@@ -186,6 +186,7 @@ return [
         Modules\ProductCategory\Providers\ProductCategoryServiceProvider::class,
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Ecommerce\Providers\EcommerceServiceProvider::class,
+        Modules\Customers\Providers\CustomerServiceProvider::class,
         
     ],
 

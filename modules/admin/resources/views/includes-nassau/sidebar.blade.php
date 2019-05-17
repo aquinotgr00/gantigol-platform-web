@@ -8,10 +8,20 @@
         </li>
         <!-- Nav Item - Users -->
         @can('view-users')
-        <li class="nav-item{{ Route::is('users.index')?' active':'' }}">
-            <a class="nav-link" href="{{ route('users.index') }}">
-                <i class="fas fa-users"></i>
-                <span>Users</span></a>
+        <li>
+            <a href="#userSubmenu" data-toggle="collapse" aria-expanded="false">User Management</a>
+            <ul class="collapse list-unstyled" id="userSubmenu">
+                <li>
+                    <a href="{{ route('list-customer.index') }}" {{ Route::is('list-customer.index')? 'class=active' :'' }}>
+                        Customers
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('users.index') }}" {{ Route::is('users.index')? 'class=active' :'' }}>
+                        Administrator
+                    </a>
+                </li>
+            </ul>
         </li>
         @endcan
     </ul>

@@ -57,6 +57,7 @@
             "Modules\\ProductCategory\\": "modules/product-category/src",
             "Modules\\Product\\": "modules/product/src",
             "Modules\\Ecommerce\\": "modules/ecommerce/src",
+            "Modules\\Customers\\": "modules/customers/src",
             "App\\": "app/"
         },
         "classmap": [
