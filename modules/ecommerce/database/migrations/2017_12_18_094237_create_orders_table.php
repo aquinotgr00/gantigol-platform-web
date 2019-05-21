@@ -40,18 +40,19 @@ class CreateOrdersTable extends Migration
             $table->string('shipment_id')->nullable();
             $table->string('shipment_name')->nullable();
             $table->unsignedInteger('shipping_cost');
-            $table->unsignedInteger('total_amount');
             $table->string('payment_type')->nullable();
-            $table->boolean('prism_checkout');
             $table->unsignedTinyInteger('order_status')->nullable();
             $table->string('shipping_tracking_number')->nullable();
             $table->unsignedInteger('admin')->nullable();
             $table->text('notes')->nullable();
+            $table->unsignedInteger('admin_fee')->default(0)->change();
+            $table->unsignedInteger('total_amount')->default(0)->change();
+            $table->boolean('prism_checkout')->default(false)->change();
             $table->timestamps();
             
-            $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('billing_subdistrict_id')->references('id')->on('subdistricts');
-            $table->foreign('shipping_subdistrict_id')->references('id')->on('subdistricts');
+            //$table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
+            //$table->foreign('billing_subdistrict_id')->references('id')->on('subdistricts');
+            //$table->foreign('shipping_subdistrict_id')->references('id')->on('subdistricts');
         });
     }
 

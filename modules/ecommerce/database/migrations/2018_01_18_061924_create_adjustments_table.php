@@ -22,8 +22,8 @@ class CreateAdjustmentsTable extends Migration
             $table->unsignedTinyInteger('type');
             $table->unsignedInteger('users_id');
             $table->timestamps();
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('product_variants_id')->references('id')->on('product_variants')->onDelete('cascade');
+            //$table->foreign('users_id')->references('id')->on('users')->onDelete('cascade');
+            //$table->foreign('product_variants_id')->references('id')->on('product_variants')->onDelete('cascade');
         });
     }
 

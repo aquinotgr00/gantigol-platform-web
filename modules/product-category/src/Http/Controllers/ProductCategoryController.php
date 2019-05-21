@@ -19,7 +19,10 @@ class ProductCategoryController extends Controller
         //$this->authorize('index', Auth::user());
         
         $categories = ProductCategory::all();
-        return view('product-category::index', compact('categories'));
+        $data = [
+            'title' => ucwords('product categories')
+        ];
+        return view('product-category::nassau.index', compact('categories','data'));
     }
 
     /**
@@ -92,8 +95,11 @@ class ProductCategoryController extends Controller
         if($category->id) {
             $parentCategoriesModel = $parentCategoriesModel->where('','');
         }
-        
-        return view('product-category::edit', compact('category'));
+        $data = [
+            'title' => 'Add New Product Categories',
+            'back' => route('product-categories.index')
+        ];
+        return view('product-category::nassau.edit', compact('category','data'));
     }
 
     /**

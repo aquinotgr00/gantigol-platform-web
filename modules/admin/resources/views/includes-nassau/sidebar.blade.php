@@ -24,6 +24,10 @@
             </ul>
         </li>
         @endcan
+
+        @if(class_exists('\Modules\Product\Product'))
+            @include('product::includes.sidebar-nav-item')
+        @endif
     </ul>
 </nav>
 <!-- end sidebar -->

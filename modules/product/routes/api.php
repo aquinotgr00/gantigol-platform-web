@@ -11,3 +11,4 @@
 |
  */
 Route::apiResource('items', 'Api\\ProductApiController');
+Route::post('/upload/image-product','Api\\ProductApiController@uploadImage')->name('upload.image-product');

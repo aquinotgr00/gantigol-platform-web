@@ -22,8 +22,8 @@ class CreateStockOpnameListTable extends Migration
             $table->text('note')->nullable();
             $table->timestamps();
 
-            $table->foreign('stock_opname_id')->references('id')->on('stock_opname')->onDelete('cascade');
-            $table->foreign('product_variants_id')->references('id')->on('product_variants')->onDelete('cascade');
+           // $table->foreign('stock_opname_id')->references('id')->on('stock_opname')->onDelete('cascade');
+            //$table->foreign('product_variants_id')->references('id')->on('product_variants')->onDelete('cascade');
         });
     }
 

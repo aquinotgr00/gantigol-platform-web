@@ -3,12 +3,11 @@
 namespace Modules\Product;
 
 use Illuminate\Database\Eloquent\Model;
-use Collective\Html\Eloquent\FormAccessible;
-
+use DB;
 class Product extends Model
-{
-    use FormAccessible;
-    
+{   
+    use \Conner\Tagging\Taggable;
+
     protected $casts = [ 'size_codes' => 'array' ];
     protected $fillable = ['name', 'description', 'image', 'category_id', 'price', 'weight', 'size_id', 'status'];
     protected $appends = ['size_available'];
@@ -73,5 +72,12 @@ class Product extends Model
     
     public function getSizeAvailableAttribute() {
         return [];
+    }
+
+    public static function getNextID()
+    {
+        $statement = DB::select("SHOW TABLE STATUS LIKE 'products'");
+        $nextId = $statement[0]->Auto_increment;
+        return $nextId;
     }
 }

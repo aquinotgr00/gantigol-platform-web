@@ -22,9 +22,13 @@ class CreateOrderItemsTable extends Migration
             $table->unsignedInteger('priceupdate_id')->nullable();
             $table->unsignedInteger('discount')->nullable();
             $table->unsignedInteger('discountupdate_id')->nullable();
+            $table->text('review')->nullable();
+            $table->dateTime('review_date')->nullable();
+            $table->boolean('review_status')->default(0);
+            $table->unsignedInteger('rating')->default(0);
             $table->timestamps();
             
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            //$table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             //$table->foreign('productvariant_id')->references('id')->on('product_variants')->onDelete('cascade');
         });
     }

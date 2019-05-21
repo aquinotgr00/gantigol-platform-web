@@ -3,7 +3,7 @@
 namespace Modules\Product;
 
 use Illuminate\Database\Eloquent\Model;
-use Collective\Html\Eloquent\FormAccessible;
+//use Collective\Html\Eloquent\FormAccessible;
 
 class ProductVariant extends Model
 {
@@ -11,7 +11,7 @@ class ProductVariant extends Model
     protected $appends = ['name','description','price','stock','currency_code', 'image_urls'];
     protected $casts = ['id'=>'string'];
     
-    use FormAccessible;
+    //use FormAccessible;
     
     public function product() {
         return $this->belongsTo("\Modules\Product\Product");

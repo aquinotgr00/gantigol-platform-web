@@ -2,14 +2,13 @@
 
 namespace Modules\Product\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Modules\Product\Http\Resources\ProductResource;
 use Modules\Product\Product;
 use Modules\Product\ProductImage;
 use Modules\Product\ProductVariant;
-use Modules\ProductCategory\ProductCategory;
 use Validator;
 
 class ProductApiController extends Controller
@@ -23,12 +22,12 @@ class ProductApiController extends Controller
     {
         $request->validate([
             'category_id' => 'exists:pre_orders,id',
-            'cat' => 'array'
+            'cat' => 'array',
         ]);
         $product = Product::with('variants')
-        ->where('status',1)
-        ->orderBy('created_at','desc')->orderBy('id','desc')->paginate(8);
-        
+            ->where('status', 1)
+            ->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate(8);
+
         return new ProductResource($product);
     }
     /**
@@ -44,26 +43,26 @@ class ProductApiController extends Controller
             'price' => 'required',
             'images' => 'required|array',
             'images.*' => 'required|image|mimes:jpeg,jpg,png|max:2000',
-            'variant' => 'array'
+            'variant' => 'array',
         ]);
-        
+
         if ($validator->fails()) {
             return new ProductResource($validator->messages());
         }
         $Product = Product::create($request->all());
-        
+
         if ($request->hasFile('images')) {
             foreach ($request->images as $key => $image) {
                 $image = $image->store('public/images');
-                
+
                 if ($key == 0) {
                     $Product->image = $image;
                     $Product->update();
                 }
 
                 $newImage = new ProductImage;
-                $newImage->product_id   = $Product->id;
-                $newImage->image        = $image;
+                $newImage->product_id = $Product->id;
+                $newImage->image = $image;
                 $newImage->save();
             }
         }
@@ -75,7 +74,7 @@ class ProductApiController extends Controller
                     'sku' => $value['sku'],
                     'initial_balance' => $value['initial_balance'],
                     'safety_stock' => $value['safety_stock'],
-                    'quantity_on_hand' => $value['quantity_on_hand']
+                    'quantity_on_hand' => $value['quantity_on_hand'],
                 ]);
             }
         }
@@ -88,11 +87,11 @@ class ProductApiController extends Controller
      * @param  \Modules\Product\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request,$id)
+    public function show(Request $request, $id)
     {
         return ['product' => DB::table('products')
-                ->selectRaw("products.id, 
-                    products.name, 
+                ->selectRaw("products.id,
+                    products.name,
                     products.description,
                     products.image,
                     products.price,
@@ -107,18 +106,18 @@ class ProductApiController extends Controller
                     JOIN products ON discount_products.product_id=products.id
                     WHERE NOW() BETWEEN discounts.start_date AND discounts.end_date
                 ) active_discount"),
-                'products.id', '=', 'active_discount.product_id')
+                    'products.id', '=', 'active_discount.product_id')
                 ->join(DB::raw("(
                     SELECT product_variants.product_id,CAST(SUM(product_variants.quantity_on_hand) AS UNSIGNED) AS stock_all_variants
                     FROM product_variants
                     GROUP BY product_variants.product_id
                 ) variants"),
-                'products.id', '=', 'variants.product_id')
-                
-                ->where('id',$id)
+                    'products.id', '=', 'variants.product_id')
+
+                ->where('id', $id)
                 ->first(),
-            'variants'=>DB::table('product_variants')->where('product_id',$id)->get(),
-            'images'=>DB::table('product_images')->select('image')->where('product_id',$id)->get()];
+            'variants' => DB::table('product_variants')->where('product_id', $id)->get(),
+            'images' => DB::table('product_images')->select('image')->where('product_id', $id)->get()];
 
     }
 
@@ -129,7 +128,7 @@ class ProductApiController extends Controller
      * @param  \Modules\Product\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,int $id)
+    public function update(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
             'price' => 'numeric',
@@ -159,15 +158,15 @@ class ProductApiController extends Controller
     public function getAllWithDiscont(Request $request)
     {
         $cat_ids = $request->query('cat');
-        
+
         $products = DB::table('products')
-                ->selectRaw("products.id, 
-                    products.name, 
-                    products.image, 
+            ->selectRaw("products.id,
+                    products.name,
+                    products.image,
                     products.price,
                     COALESCE(active_discount.discount_amount,0) AS discount,
                     variants.stock_all_variants")
-                ->leftJoin(DB::raw("(
+            ->leftJoin(DB::raw("(
                     SELECT discount_products.product_id, CAST(IF(discounts.`type`='percentage',ROUND((discounts.nominal/100)*products.price,0),discounts.nominal) AS UNSIGNED) AS discount_amount
                     FROM discount_products
                     JOIN discounts ON discount_products.discount_id=discounts.id
@@ -175,18 +174,17 @@ class ProductApiController extends Controller
                     WHERE NOW() BETWEEN discounts.start_date AND discounts.end_date
                 ) active_discount"),
                 'products.id', '=', 'active_discount.product_id')
-                ->join(DB::raw("(
+            ->join(DB::raw("(
                     SELECT product_variants.product_id,SUM(product_variants.quantity_on_hand) AS stock_all_variants
                     FROM product_variants
                     GROUP BY product_variants.product_id
                 ) variants"),
                 'products.id', '=', 'variants.product_id');
-        
-        if(is_array($cat_ids)) {
+
+        if (is_array($cat_ids)) {
             $products = $products->whereIn('products.category_id', $cat_ids);
-        }
-        else {
-            if($cat_ids=='sale') {
+        } else {
+            if ($cat_ids == 'sale') {
                 $products = $products->whereRaw('
                     products.id IN (SELECT discount_products.product_id
                     FROM discount_products
@@ -194,6 +192,20 @@ class ProductApiController extends Controller
                     WHERE NOW() BETWEEN discounts.start_date AND discounts.end_date)');
             }
         }
-        return $products->where('status',1)->orderBy('created_at','desc')->orderBy('id','desc')->paginate(8);
+        return $products->where('status', 1)->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate(8);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $product_id     = Product::getNextID();
+        $productImage   = [];
+        if ($request->hasFile('file')) {            
+            $image = $request->file->store('public/images');
+            $productImage = ProductImage::create([
+                'product_id' => $product_id,
+                'image' => $image,
+            ]);   
+        }
+        return response()->json(['data'=>$productImage]);
     }
 }

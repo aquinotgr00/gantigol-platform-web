@@ -29,6 +29,7 @@ class ProductServiceProvider extends ServiceProvider
         $this->loadMigrations();
         $this->loadRoutes($routeRegistrar);
         $this->loadViews();
+        $this->publishPublicAssets();
     }
 
     private function loadConfig(): void
@@ -82,6 +83,18 @@ class ProductServiceProvider extends ServiceProvider
     {
         if (class_exists('Breadcrumbs')) {
             require __DIR__ . '/../../routes/breadcrumbs.php';
+        }
+    }
+
+    private function publishPublicAssets(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $path = __DIR__.'/../../resources';
+            $this->publishes([
+                $path.'/vendor' => public_path('vendor/product/vendor'),
+                $path.'/css' => public_path('vendor/product/css'),
+                $path.'/js' => public_path('vendor/product/js'),
+            ], 'product:public');
         }
     }
 }

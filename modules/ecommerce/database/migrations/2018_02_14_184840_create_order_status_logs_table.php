@@ -20,7 +20,7 @@ class CreateOrderStatusLogsTable extends Migration
             $table->unsignedInteger('admin_id');
             $table->timestamps();
             
-            $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
+            //$table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
