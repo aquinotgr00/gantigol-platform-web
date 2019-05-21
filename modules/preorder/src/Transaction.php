@@ -3,7 +3,7 @@
 namespace Modules\Preorder;
 
 use Illuminate\Database\Eloquent\Model;
-use Modules\Preorder\Order;
+use Modules\Preorder\PreOrdersItems;
 use Modules\Preorder\Production;
 
 class Transaction extends Model
@@ -66,7 +66,7 @@ class Transaction extends Model
      */
     public function orders()
     {
-        return $this->hasMany('\Modules\Preorder\Order', 'transaction_id', 'id');
+        return $this->hasMany('\Modules\Preorder\PreOrdersItems', 'transaction_id', 'id');
     }
     /**
      *

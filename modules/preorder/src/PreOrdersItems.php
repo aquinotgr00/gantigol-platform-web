@@ -5,7 +5,7 @@ namespace Modules\Preorder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Order extends Model
+class PreOrdersItems extends Model
 {
     use SoftDeletes;
     /**

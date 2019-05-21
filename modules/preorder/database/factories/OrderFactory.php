@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(Modules\Preorder\Order::class, function (Faker $faker) {
+$factory->define(Modules\Preorder\PreOrdersItems::class, function (Faker $faker) {
     return [
         'transaction_id' => \Modules\Preorder\Transaction::all()->random()->id,
         'model' => $this->faker->randomElement(['lengan panjang', 'lengan pendek']),

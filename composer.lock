@@ -4,12 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "f6ddbed49a89bfa391bf38b106053fa8",
-    "packages": [
-        {
-=======
-    "content-hash": "5e75e6ed31bea0b443ce4d1e53d81864",
+    "content-hash": "ad96f18ef9652f1dc0b4a2aa1bb02a8c",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -68,7 +63,6 @@
             "time": "2019-02-26T18:07:43+00:00"
         },
         {
->>>>>>> initial with template nassau
             "name": "davejamesmiller/laravel-breadcrumbs",
             "version": "5.2.1",
             "source": {
@@ -1809,16 +1803,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.51",
+            "version": "1.0.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "755ba7bf3fb9031e6581d091db84d78275874396"
+                "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/755ba7bf3fb9031e6581d091db84d78275874396",
-                "reference": "755ba7bf3fb9031e6581d091db84d78275874396",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c5a5097156387970e6f0ccfcdf03f752856f3391",
+                "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391",
                 "shasum": ""
             },
             "require": {
@@ -1889,7 +1883,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-03-30T13:22:34+00:00"
+            "time": "2019-05-20T20:21:14+00:00"
         },
         {
             "name": "league/glide",
@@ -2219,16 +2213,16 @@
         },
         {
             "name": "nexmo/client",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nexmo/nexmo-php.git",
-                "reference": "f74df3e6d3df5edf0474142a99644317e6fd21e9"
+                "reference": "182d41a02ebd3e4be147baea45458ccfe2f528c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nexmo/nexmo-php/zipball/f74df3e6d3df5edf0474142a99644317e6fd21e9",
-                "reference": "f74df3e6d3df5edf0474142a99644317e6fd21e9",
+                "url": "https://api.github.com/repos/Nexmo/nexmo-php/zipball/182d41a02ebd3e4be147baea45458ccfe2f528c4",
+                "reference": "182d41a02ebd3e4be147baea45458ccfe2f528c4",
                 "shasum": ""
             },
             "require": {
@@ -2236,7 +2230,7 @@
                 "php": ">=5.6",
                 "php-http/client-implementation": "^1.0",
                 "php-http/guzzle6-adapter": "^1.0",
-                "zendframework/zend-diactoros": "^1.3"
+                "zendframework/zend-diactoros": "^1.8.4 || ^2.0"
             },
             "require-dev": {
                 "estahn/phpunit-json-assertions": "^1.0.0",
@@ -2263,7 +2257,7 @@
                 }
             ],
             "description": "PHP Client for using Nexmo's API.",
-            "time": "2019-05-07T14:17:17+00:00"
+            "time": "2019-05-13T20:27:43+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -2807,6 +2801,58 @@
             "time": "2017-02-14T16:28:37+00:00"
         },
         {
+            "name": "psr/http-factory",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-factory.git",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "keywords": [
+                "factory",
+                "http",
+                "message",
+                "psr",
+                "psr-17",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2019-04-30T12:38:16+00:00"
+        },
+        {
             "name": "psr/http-message",
             "version": "1.0.1",
             "source": {
@@ -3148,7 +3194,6 @@
             "time": "2018-07-19T23:38:55+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "rtconner/laravel-tagging",
             "version": "3.1.1",
             "source": {
@@ -3184,7 +3229,33 @@
             "autoload": {
                 "psr-4": {
                     "Conner\\Tagging\\": "src/"
-=======
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Robert Conner",
+                    "email": "rtconner+gh@smarter.bz"
+                }
+            ],
+            "description": "Use PHP traits to extend Laravel Eloquent Models to allow Tags. Models can be marked as Taggable.",
+            "homepage": "https://smartersoftware.net/packages/laravel-tagging-taggable",
+            "keywords": [
+                "Taggable",
+                "eloquent",
+                "laravel",
+                "laravel5",
+                "tag",
+                "tagged",
+                "tagging",
+                "tags"
+            ],
+            "time": "2019-03-21T01:31:09+00:00"
+        },
+        {
             "name": "sabberworm/php-css-parser",
             "version": "8.1.0",
             "source": {
@@ -3208,7 +3279,6 @@
             "autoload": {
                 "psr-0": {
                     "Sabberworm\\CSS": "lib/"
->>>>>>> initial with template nassau
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3217,25 +3287,6 @@
             ],
             "authors": [
                 {
-<<<<<<< HEAD
-                    "name": "Robert Conner",
-                    "email": "rtconner+gh@smarter.bz"
-                }
-            ],
-            "description": "Use PHP traits to extend Laravel Eloquent Models to allow Tags. Models can be marked as Taggable.",
-            "homepage": "https://smartersoftware.net/packages/laravel-tagging-taggable",
-            "keywords": [
-                "Taggable",
-                "eloquent",
-                "laravel",
-                "laravel5",
-                "tag",
-                "tagged",
-                "tagging",
-                "tags"
-            ],
-            "time": "2019-03-21T01:31:09+00:00"
-=======
                     "name": "Raphael Schweikert"
                 }
             ],
@@ -3247,20 +3298,19 @@
                 "stylesheet"
             ],
             "time": "2016-07-19T19:14:21+00:00"
->>>>>>> initial with template nassau
         },
         {
             "name": "spatie/image",
-            "version": "1.7.1",
+            "version": "1.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "04fc75fc203d5aa944f3c667d5b55f2203c9d64f"
+                "reference": "61fa48fa4cb85eda4ef4f8f20b1c27edd9d38e85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/04fc75fc203d5aa944f3c667d5b55f2203c9d64f",
-                "reference": "04fc75fc203d5aa944f3c667d5b55f2203c9d64f",
+                "url": "https://api.github.com/repos/spatie/image/zipball/61fa48fa4cb85eda4ef4f8f20b1c27edd9d38e85",
+                "reference": "61fa48fa4cb85eda4ef4f8f20b1c27edd9d38e85",
                 "shasum": ""
             },
             "require": {
@@ -3300,7 +3350,7 @@
                 "image",
                 "spatie"
             ],
-            "time": "2019-04-17T06:45:22+00:00"
+            "time": "2019-05-13T11:38:22+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -4835,38 +4885,41 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.8.6",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "20da13beba0dde8fb648be3cc19765732790f46e"
+                "reference": "37bf68b428850ee26ed7c3be6c26236dd95a95f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/20da13beba0dde8fb648be3cc19765732790f46e",
-                "reference": "20da13beba0dde8fb648be3cc19765732790f46e",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/37bf68b428850ee26ed7c3be6c26236dd95a95f1",
+                "reference": "37bf68b428850ee26ed7c3be6c26236dd95a95f1",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6 || ^7.0",
+                "php": "^7.1",
+                "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0"
             },
             "provide": {
+                "psr/http-factory-implementation": "1.0",
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
+                "http-interop/http-factory-tests": "^0.5.0",
                 "php-http/psr7-integration-tests": "dev-master",
-                "phpunit/phpunit": "^5.7.16 || ^6.0.8 || ^7.2.7",
-                "zendframework/zend-coding-standard": "~1.0"
+                "phpunit/phpunit": "^7.0.2",
+                "zendframework/zend-coding-standard": "~1.0.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8.x-dev",
-                    "dev-develop": "1.9.x-dev",
-                    "dev-release-2.0": "2.0.x-dev"
+                    "dev-master": "2.1.x-dev",
+                    "dev-develop": "2.2.x-dev",
+                    "dev-release-1.8": "1.8.x-dev"
                 }
             },
             "autoload": {
@@ -4886,16 +4939,15 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD-2-Clause"
+                "BSD-3-Clause"
             ],
             "description": "PSR HTTP Message implementations",
-            "homepage": "https://github.com/zendframework/zend-diactoros",
             "keywords": [
                 "http",
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-09-05T19:29:37+00:00"
+            "time": "2019-04-29T21:11:00+00:00"
         }
     ],
     "packages-dev": [
@@ -6817,16 +6869,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.11.6",
+            "version": "0.11.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "7af8b9d02b3ab36444dbf4e1b9ca1c1bd5044d81"
+                "reference": "32d87d746c70785f78d239855782d27cde0eb6ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7af8b9d02b3ab36444dbf4e1b9ca1c1bd5044d81",
-                "reference": "7af8b9d02b3ab36444dbf4e1b9ca1c1bd5044d81",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/32d87d746c70785f78d239855782d27cde0eb6ee",
+                "reference": "32d87d746c70785f78d239855782d27cde0eb6ee",
                 "shasum": ""
             },
             "require": {
@@ -6835,6 +6887,7 @@
                 "nette/bootstrap": "^2.4 || ^3.0",
                 "nette/di": "^2.4.7 || ^3.0",
                 "nette/robot-loader": "^3.0.1",
+                "nette/schema": "^1.0",
                 "nette/utils": "^2.4.5 || ^3.0",
                 "nikic/php-parser": "^4.0.2",
                 "php": "~7.1",
@@ -6886,27 +6939,27 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2019-05-08T16:33:56+00:00"
+            "time": "2019-05-19T17:36:42+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
-            "version": "0.11",
+            "version": "0.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-mockery.git",
-                "reference": "769dbe4100afca87859a60180fdc8604e8066ea4"
+                "reference": "935fdd0fd45d9dee23295d53b83cf33eedf6b00c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-mockery/zipball/769dbe4100afca87859a60180fdc8604e8066ea4",
-                "reference": "769dbe4100afca87859a60180fdc8604e8066ea4",
+                "url": "https://api.github.com/repos/phpstan/phpstan-mockery/zipball/935fdd0fd45d9dee23295d53b83cf33eedf6b00c",
+                "reference": "935fdd0fd45d9dee23295d53b83cf33eedf6b00c",
                 "shasum": ""
             },
             "require": {
                 "nikic/php-parser": "^4.0",
                 "php": "~7.1",
                 "phpstan/phpdoc-parser": "^0.3",
-                "phpstan/phpstan": "^0.11"
+                "phpstan/phpstan": "^0.11.4"
             },
             "require-dev": {
                 "consistence/coding-standard": "^3.0.1",
@@ -6919,10 +6972,15 @@
                 "phpunit/phpunit": "^7.2",
                 "slevomat/coding-standard": "^4.6.3"
             },
-            "type": "library",
+            "type": "phpstan-extension",
             "extra": {
                 "branch-alias": {
                     "dev-master": "0.11-dev"
+                },
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
                 }
             },
             "autoload": {
@@ -6935,27 +6993,27 @@
                 "MIT"
             ],
             "description": "PHPStan Mockery extension",
-            "time": "2019-01-19T20:36:28+00:00"
+            "time": "2019-05-12T16:41:58+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
-            "version": "0.11",
+            "version": "0.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-phpunit.git",
-                "reference": "70c22d44b96a21a4952fc13021a5a63cc83f5c81"
+                "reference": "fbf2ad56c3b13189d29655e226c9b1da47c2fad9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/70c22d44b96a21a4952fc13021a5a63cc83f5c81",
-                "reference": "70c22d44b96a21a4952fc13021a5a63cc83f5c81",
+                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/fbf2ad56c3b13189d29655e226c9b1da47c2fad9",
+                "reference": "fbf2ad56c3b13189d29655e226c9b1da47c2fad9",
                 "shasum": ""
             },
             "require": {
                 "nikic/php-parser": "^4.0",
                 "php": "~7.1",
                 "phpstan/phpdoc-parser": "^0.3",
-                "phpstan/phpstan": "^0.11"
+                "phpstan/phpstan": "^0.11.4"
             },
             "conflict": {
                 "phpunit/phpunit": "<7.0"
@@ -6970,10 +7028,16 @@
                 "satooshi/php-coveralls": "^1.0",
                 "slevomat/coding-standard": "^4.5.2"
             },
-            "type": "library",
+            "type": "phpstan-extension",
             "extra": {
                 "branch-alias": {
                     "dev-master": "0.11-dev"
+                },
+                "phpstan": {
+                    "includes": [
+                        "extension.neon",
+                        "rules.neon"
+                    ]
                 }
             },
             "autoload": {
@@ -6986,26 +7050,26 @@
                 "MIT"
             ],
             "description": "PHPUnit extensions and rules for PHPStan",
-            "time": "2018-12-22T14:05:04+00:00"
+            "time": "2019-05-17T17:50:16+00:00"
         },
         {
             "name": "phpstan/phpstan-strict-rules",
-            "version": "0.11",
+            "version": "0.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-strict-rules.git",
-                "reference": "747a742b26a35ef4e4ebef5ec4490ad74eebcbc0"
+                "reference": "a203a7afdda073d4ea405a6d9007a5b32de3be61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-strict-rules/zipball/747a742b26a35ef4e4ebef5ec4490ad74eebcbc0",
-                "reference": "747a742b26a35ef4e4ebef5ec4490ad74eebcbc0",
+                "url": "https://api.github.com/repos/phpstan/phpstan-strict-rules/zipball/a203a7afdda073d4ea405a6d9007a5b32de3be61",
+                "reference": "a203a7afdda073d4ea405a6d9007a5b32de3be61",
                 "shasum": ""
             },
             "require": {
                 "nikic/php-parser": "^4.0",
                 "php": "~7.1",
-                "phpstan/phpstan": "^0.11"
+                "phpstan/phpstan": "^0.11.4"
             },
             "require-dev": {
                 "consistence/coding-standard": "^3.0.1",
@@ -7016,10 +7080,15 @@
                 "phpunit/phpunit": "^7.0",
                 "slevomat/coding-standard": "^4.5.2"
             },
-            "type": "library",
+            "type": "phpstan-extension",
             "extra": {
                 "branch-alias": {
                     "dev-master": "0.11-dev"
+                },
+                "phpstan": {
+                    "includes": [
+                        "rules.neon"
+                    ]
                 }
             },
             "autoload": {
@@ -7032,7 +7101,7 @@
                 "MIT"
             ],
             "description": "Extra strict and opinionated rules for PHPStan",
-            "time": "2019-01-14T09:56:55+00:00"
+            "time": "2019-05-12T16:59:47+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -7288,16 +7357,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.10",
+            "version": "7.5.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d7d9cee051d03ed98df6023aad93f7902731a780"
+                "reference": "64cb33f5b520da490a7b13149d39b43cf3c890c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d7d9cee051d03ed98df6023aad93f7902731a780",
-                "reference": "d7d9cee051d03ed98df6023aad93f7902731a780",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/64cb33f5b520da490a7b13149d39b43cf3c890c6",
+                "reference": "64cb33f5b520da490a7b13149d39b43cf3c890c6",
                 "shasum": ""
             },
             "require": {
@@ -7368,7 +7437,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-05-09T05:06:47+00:00"
+            "time": "2019-05-14T04:53:02+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
