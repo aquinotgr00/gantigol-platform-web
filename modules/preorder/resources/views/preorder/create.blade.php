@@ -18,9 +18,9 @@
     }
 
     function removeVariant(obj) {
-        var row_number = $(obj).data('id');
-        var row_id = parseInt(row_number) - 1;
-        $('#row' + row_id).remove();
+        var row_number  = $(obj).data('id');
+        var row_id      = parseInt(row_number) - 1;
+        $('#row'+row_id).remove();
     }
     $(document).ready(function () {
         const btnDraftProduct = $('#btn-draft-product');
@@ -79,7 +79,7 @@
                 .attr('id', 'row' + (row++))    // MAKE THE ID UNIQUE
                 .appendTo($('#tableVariant tbody'))  // APPEND TO THE TABLE
                 .show();                        // SHOW IT
-
+            
             template.find('td:last-child').find('a').data('id', row);
             template.find('td:last-child').find('a').css('display', 'block');
         });
@@ -89,86 +89,112 @@
 @endpush
 
 @section('content')
-<!-- start form -->
-<div class="row pl-3">
-    <form class="col-md-6 col-lg7 pl-0">
-        <div class="form-group">
-            <label for="exampleInputCategoryName">Product Title</label>
-            <input type="text" class="form-control" id="exampleInputCategoryName">
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlTextarea1">Description</label>
-            <textarea type="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlTextarea1">Product Properties</label>
-            <div class="form-row inline-form">
-                <div class="col-md-5 mr-3">
-                    <label for="exampleInputCategoryAttribute">Attribute</label>
-                    <input type="text" class="form-control" id="exampleInputCategoryAttribute">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <a class="btn btn-default btn-sm" href="{{ route('list-preorder.index') }}">Back</a>
+        <strong class="card-title">New Preorder</strong>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('preorder.store') }}" method="post" enctype="multipart/form-data">
+            {{ csrf_field() }}
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Product Information</strong>
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" name="name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" name="price" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Weight</label>
+                        <input type="number" name="weight" step="any" class="form-control">
+                    </div>
+                    <strong>Product Variant</strong>
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-right">
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="AddVariant">
+                                    Add Variant
+                                </button>
+                            </div>
+                            <hr>
+                            <table id="tableVariant" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Variant</th>
+                                        <th>Sub-Variant</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="template" style="display:none;">
+                                        <td>
+                                            <input type="text" class="form-control" name="variant[]" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="sub_variant[]" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="price_variant[]" />
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" style="display:none;" data-id="0"
+                                                onclick="removeVariant(this)">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-5 mr-3">
-                    <label for="exampleInputCategoryValue">Value</label>
-                    <input type="text" class="form-control" id="exampleInputCategoryValue">
-                </div>
-                <div class="col-md-1 pt-1">
-                    <label for="exampleAddNewProperties"></label>
-                    <a class="btn sub-circle my-2 my-sm-0" href="#" role="button">
-                        <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
-                    </a>
+
+                <div class="col-md-6">
+                    <strong>Product Images</strong>
+                    <input type="file" id="images" name="images[]" multiple onchange="preview_image()" />
+                    <div id="image_preview"></div>
+                    <hr>
+                    <strong>Preorder Information</strong>
+                    <div class="form-group">
+                        <label>Quota</label>
+                        <input type="number" name="quota" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" class="form-control">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="exampleInputCategoryPrize">Prize</label>
-            <input type="text" class="form-control" id="exampleInputCategoryPrize">
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">Product Category</label>
-            <select class="form-control" id="exampleFormControlSelect1">
-                <option>Select Product Category</option>
-                <option>Men</option>
-                <option>Women</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="exampleInputCategorySKU">SKU</label>
-            <input type="text" class="form-control" id="exampleInputCategorySKU">
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlTextarea1">Keywords</label>
-            <textarea type="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-            <small>separate with commas</small>
-        </div>
-        <div class="form-group">
-            <label for="exampleInputCategoryRelatedTag">Related Tag</label>
-            <input type="text" class="form-control" id="exampleInputCategoryRelatedTag">
-            <small>separate with commas</small>
-        </div>
-        <div class="float-right">
-            <button type="submit" class="btn btn-outline-secondary" formaction="#">Save As Draft</button>
-            <button type="submit" class="btn btn-success ml-4" formaction="#">Publish</button>
-        </div>
-    </form>
-
-    <div id="dropzone" class="col-md-4 col-lg-5 pl-5 grs">
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">Featured Image</label>
-            <form class="dropzone needsclick" id="demo-upload" action="/upload">
-            </form>
-            <small><span>Image size must be 1920x600 with maximum file size</span>
-                <span>400 kb</span></small>
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">Aditional Image</label>
-            <form class="dropzone dropzone-secondary needsclick" id="demo-upload" action="/upload">
-            </form>
-            <small><span>Image size must be 1920x600 with maximum file size</span>
-                <span>400 kb</span></small>
-        </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-right">
+                        <input type="hidden" name="status" value="publish" />
+                        <input type="hidden" name="product_id" />
+                        <button class="btn btn-outline-primary" type="button">
+                            <i class="fa fa-save"></i>&nbsp;
+                            Draft
+                        </button>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-send"></i>&nbsp;
+                            Publish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-
 </div>
-
-<!-- end form -->
 @endsection
