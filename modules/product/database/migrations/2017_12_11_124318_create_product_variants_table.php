@@ -16,6 +16,7 @@ class CreateProductVariantsTable extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('product_id');
+            $table->string('variant')->nullable();
             $table->string('size_code',10);
             $table->string('sku')->nullable();
             $table->unsignedInteger('initial_balance')->default(0);

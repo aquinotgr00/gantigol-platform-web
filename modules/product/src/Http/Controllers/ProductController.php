@@ -90,7 +90,7 @@ class ProductController extends Controller
             'title' => ucwords($product->name),
             'back' => route('product.index')
         ];
-        return view("product::product.show",compact('data'));
+        return view("product::product.show",compact('product','data'));
     }
     /**
      * Show the form for editing the specified resource.

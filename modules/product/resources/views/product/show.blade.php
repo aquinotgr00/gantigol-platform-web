@@ -5,11 +5,9 @@
 <div class="row pl-3">
     <form class="col-md-6 col-lg7 pl-0">
         <div class="form-group">
-            <label for="exampleInputCategoryName">Product Title</label>
+            <label for="exampleInputCategoryName">{{ ucwords($product->name) }}</label>
             <p>
-                Update penampilanmu dengan produk dari GANTIGOL. ACM RECORD memadukan desain basic, detail print serta
-                material bahan soft yang telah diproses sehingga menghasilkan kaos lembut serta nyaman dipakai dalam
-                keadaan apapun.
+                {{ $product->description }}
             </p>
             <br />
             <p>- Kaos</p>

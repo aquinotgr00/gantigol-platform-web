@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductVariant extends Model
 {
-    protected $fillable = ['product_id', 'size_code', 'sku', 'initial_balance', 'quantity_on_hand','isPrismSearch'];
+    protected $fillable = ['product_id','variant','size_code', 'sku', 'initial_balance', 'quantity_on_hand','isPrismSearch'];
     protected $appends = ['name','description','price','stock','currency_code', 'image_urls'];
     protected $casts = ['id'=>'string'];
     

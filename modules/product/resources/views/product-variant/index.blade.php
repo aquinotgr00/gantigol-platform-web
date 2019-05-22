@@ -23,7 +23,7 @@
                     </button>
                 </div>
             </div>
-            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('product.create') }}" role="button">
+            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('product-variant.create') }}" role="button">
                 <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
             </a>
         </form>
@@ -36,8 +36,8 @@
     <table class="table" id="dataTable">
         <thead>
             <tr>
-                <th scope="col">Images</th>
                 <th scope="col">Product Name</th>
+                <th scope="col">SKU</th>
                 <th scope="col">Current Stock</th>
                 <th scope="col">Price</th>
                 <th scope="col">Action</th>
@@ -71,7 +71,7 @@
 $(document).ready(function () {
         var datatables = $('#dataTable').DataTable({
             "ajax": {
-                "url": '{{ route("items.index") }}',
+                "url": '{{ route("items-variant.index") }}',
                 "type": 'GET',
                 "data": {
                     'status': 'publish'
@@ -80,23 +80,13 @@ $(document).ready(function () {
             "order": [[1, "desc"]],
             "columns": [
                 { 
-                    "data": "image",
-                    "render": function(data,type,row){
-                        if (data == null) {
-                            return '-';
-                        }else{
-                            var url = data.replace("public", "storage");
-                            return '<img src="{{ url("/") }}'+url+'" style="width:100%;height:100%;" />';
-                        }   
-                    }
-                },
-                { 
                     "data": "name",
                     "render": function(data,type,row){
-                        return '<a href="{{ url("admin/product") }}/'+row.id+'">'+data+'</a>';
+                        return '<a href="{{ url("admin/product-variant") }}/'+row.id+'">'+data+'</a>';
                     }
                 },
-                { "data": "weight" },
+                { "data": "sku" },
+                { "data": "quantity_on_hand" },
                 { 
                     "data": "price",
                     "render": function (data, type, row) {
@@ -104,9 +94,9 @@ $(document).ready(function () {
                     }
                 },
                 { 
-                    "data": "status",
+                    "data": "id",
                     "render": function (data, type, row) {
-                        return (data == 1)? 'publish' : 'draft';
+                        return '<a href="#'+data+'" class="btn btn-table circle-table adjustment-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Adjustment"></a>';
                     }
                 }
             ]
