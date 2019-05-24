@@ -29,7 +29,7 @@ class BlogServiceProvider extends ServiceProvider
     {
         $this->loadConfig();
         $this->loadRoutes($router);
-        $this->loadRoutes($router);
+        $this->loadRoutesApi($router);
         $this->loadViews();
         $this->loadMigrationsAndFactories($factory);
     }
@@ -70,7 +70,7 @@ class BlogServiceProvider extends ServiceProvider
      */
     private function loadRoutesApi(Router $router): void
     {
-         $router->prefix(config('blogs.prefix', 'blogs'))
+         $router->prefix(config('blogs.api', 'api/blogs'))
                ->namespace('Modules\Blogs\Http\Controllers')
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../routes/api.php');

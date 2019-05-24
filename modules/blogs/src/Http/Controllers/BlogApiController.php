@@ -3,11 +3,11 @@
 namespace Modules\Blogs\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Blogs\BlogCategory;
 use Modules\Blogs\Blog;
 use Yajra\Datatables\Datatables;
+use Spatie\Searchable\Search;
 use Carbon\Carbon;
 
 class BlogApiController extends Controller
@@ -36,11 +36,13 @@ class BlogApiController extends Controller
      * @return mixed
      */
     public function getOnePost($id){
-    	$post = $this->blogs->find($id);
-    	$tag = $tagged = $post->tagged;
+    	$post = $this->blogs
+    	->leftjoin('blog_category','blog_category.id','=','blogs.category_id')
+    	->select('blogs.*','blog_category.name as category_name')
+    	->with('tagged')	
+    	->find($id);
     	$data =[
-    		'blog'=>$post,
-    		'tag' =>$tag
+    		'blog'=>$post
     	]; 
 
     	return json_encode($data);
@@ -51,8 +53,37 @@ class BlogApiController extends Controller
      *
      * @return mixed
      */
-    public function getManyPostWithtag($tag,$limit = 20){
-    	$post = $this->blogs->withAnyTag($tag)->limit($limit)->get();
+    public function getManyPostWithTag(Request $request,$limit = 20){
+    	$post = $this->blogs->withAnyTag($request->tag)->limit($limit)->orderBy('created_at', 'desc')->get();
     	return json_encode($post);
     }
+
+    /**
+     * Create a new controller get recent data many post without tag using category.
+     *
+     * @return mixed
+     */
+    public function getManyPostWithCategories(Request $request,$name,$limit = 3){
+    	$post = $this->blogs->leftjoin('blog_category','blog_category.id','=','blogs.category_id')
+    	->where('blog_category.name',$name)
+    	->orderBy('blogs.created_at', 'desc')
+    	->limit($limit)
+    	->get();
+    	return json_encode($post);
+    }
+
+
+    /**
+     * Create a new controller get recent data many post using feature search.
+     *
+     * @return mixed
+     */
+    public function getPostAndProductBySearch($key){
+    	$searchResults = (new Search())
+		   ->registerModel(Blog::class, ['title','created_at'])
+		   ->search($key);
+
+    	return json_encode($searchResults);
+    }
+
 }
