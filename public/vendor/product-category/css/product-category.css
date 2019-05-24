@@ -1,0 +1,17 @@
+#media-picker img {
+	height: 10rem;
+	width: 100%;
+	object-fit: contain;
+}
+
+#media-picker .delete {
+	color: red;
+	display: none;
+	bottom:0;
+	right:0;
+	padding:1rem;
+}
+
+#media-picker:hover .delete.optional {
+	display: block;
+}

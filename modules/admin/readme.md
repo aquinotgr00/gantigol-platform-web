@@ -5,13 +5,20 @@ Gantigol - Admin Module
 migrate
 ```php
 php artisan migrate:refresh
+```
 
 ### Create Superuser account
-```
 run Superuser seeder
 ```php
 php artisan db:seed --class=Modules\\Admin\\Seeders\\SuperuserForAdminsTableSeeder
 ```
+once done with this step, proceed to open **/admin** route
+Please login with the following email/password :  
+```php
+admin@mail.com
+Open1234
+```
+
 publish public asset
 ```php
 php artisan vendor:publish --tag=admin:public

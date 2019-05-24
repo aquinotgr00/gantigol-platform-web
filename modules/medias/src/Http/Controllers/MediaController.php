@@ -54,6 +54,21 @@ class MediaController extends Controller
      */
     public function mediaLibrary(Request $request)
     {
+        if ($request->ajax()) {
+            return [ 'gallery'=>view('medias::media-gallery',['isModal'=>true])->render() ];
+        }
+ 
+        return view('medias::media-library');
+    }
+    
+    /**
+     * view function media library (original).
+     *
+     *
+     * @return mixed
+     */
+    public function mediaLibrary2(Request $request)
+    {
 
         $media = $this->medias->getMediaPaginate();
         $category = $this->getCategory();
@@ -61,7 +76,7 @@ class MediaController extends Controller
             return view('medias::media-library-list', compact('media'))->render();
         }
  
-        return view('medias::media-library', compact('category', 'media'));
+        return view('medias::media-library-ori', compact('category', 'media'));
     }
 
     /**

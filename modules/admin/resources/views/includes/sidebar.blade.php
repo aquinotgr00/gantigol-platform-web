@@ -21,15 +21,11 @@
 
     <!-- Divider -->
     @sidebarDivider
-
-    <!-- Nav Item - Users -->
-    @can('view-users')
-    <li class="nav-item{{ Route::is('users.index')?' active':'' }}">
-        <a class="nav-link" href="{{ route('users.index') }}">
-            <i class="fas fa-users"></i>
-            <span>Users</span></a>
-    </li>
-    @endcan
+    
+    @include('admin::includes.sidebar-nav-item')
+    @include('medias::includes.sidebar-nav-item')
+    @include('product-category::includes.sidebar-nav-item')
+    @include('product::includes.sidebar-nav-item')
 
     <!-- Divider -->
     @sidebarDivider
