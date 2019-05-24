@@ -81,8 +81,6 @@ if(isModal) {
 		self[onMediaSelectedCallback]()
 	}
 	
-	
-	
 	// modal events
 	$('#media-library-modal').on('show.bs.modal', function (event) {
 		resetState()

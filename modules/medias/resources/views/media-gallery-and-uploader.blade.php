@@ -13,7 +13,7 @@
 
 <div class="tab-content mt-3" id="media-gallery-and-uploader" data-is-modal="{{$isModal ?? true}}">
     <div class="tab-pane fade show active" id="media" role="tabpanel" aria-labelledby="media-tab">
-        @include('medias::media-gallery', ['onMediaClick'=>$onMediaClick, 'onMediaDblClick'=>$onMediaDblClick??null])
+        @include('medias::media-gallery', ['onMediaClick'=>$onMediaClick??null, 'onMediaDblClick'=>$onMediaDblClick??null])
     </div>
     <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
         @include('medias::media-uploader',['onSuccessfulUpload'=>$onSuccessfulUpload??null])
