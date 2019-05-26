@@ -25,6 +25,7 @@
     @include('admin::includes.sidebar-nav-item')
     @include('medias::includes.sidebar-nav-item')
     @include('product-category::includes.sidebar-nav-item')
+    @include('product::includes.sidebar-nav-item')
 
     <!-- Divider -->
     @sidebarDivider

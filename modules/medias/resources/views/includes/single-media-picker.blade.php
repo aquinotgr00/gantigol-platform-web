@@ -2,7 +2,7 @@
     <a href="#" 
        data-toggle="modal" 
        data-target="#media-library-modal" 
-       data-single-select="true" 
+       data-single-upload="true" 
        data-on-select="">
         <img 
             data-default-image="{{ asset('vendor/media/img/placeholder.png') }}" 

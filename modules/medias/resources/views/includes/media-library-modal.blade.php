@@ -9,7 +9,7 @@
     </span>
     @endslot
     @slot('body')
-        @include('medias::media-gallery-and-uploader',['isModal'=>true, 'onMediaDblClick'=>'selectMedia', 'onSuccessfulUpload'=>'selectMedia'])
+        @include('medias::media-gallery-and-uploader',['onMediaSelected'=>'onMediaSelected'])
     @endslot
 @endmodal
 
