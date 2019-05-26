@@ -7,9 +7,8 @@ Route::middleware('admin_guest')->group(function () {
 
 Route::middleware('auth:admin')->group(function () {
     Route::post('/logout', 'Auth\LoginController@logout')->name('admin.logout');
-    
-    Route::view('/', 'admin::dashboard-nassau',['data'=> ['title'=>'Summary']])->name('admin.dashboard');
-    Route::view('/setting-dashboard', 'admin::setting-dashboard',['data'=> ['title'=>'Setting']])->name('admin.setting-dashboard');
+
+    Route::view('/', 'admin::dashboard')->name('admin.dashboard');
 
     Route::resource('users', 'UserController');
     Route::put('/users/{user}/status', 'UserController@statusUpdate')->name('users.status');

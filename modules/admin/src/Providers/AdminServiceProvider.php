@@ -33,7 +33,6 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->aliasMiddlewares($router);
         $this->loadBladeAliases();
-        $this->loadBladeAliasesNassau();
         $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadHelper();
@@ -124,8 +123,6 @@ class AdminServiceProvider extends ServiceProvider
             $this->publishes([
                 $path.'/js' => public_path('vendor/admin/js'),
                 $path.'/css' => public_path('vendor/admin/css'),
-                $path.'/images' => public_path('vendor/admin/images'),
-                $path.'/vendor' => public_path('vendor/admin/vendor'),
             ], 'admin:public');
         }
     }
@@ -156,20 +153,5 @@ class AdminServiceProvider extends ServiceProvider
         if (class_exists('Breadcrumbs')) {
             require __DIR__ . '/../../routes/breadcrumbs.php';
         }
-    }
-
-    private function loadBladeAliasesNassau(): void
-    {
-        Blade::include('admin::includes-nassau.content', 'contentNassau');
-        Blade::include('admin::includes-nassau.sidebar', 'sidebarNassau');
-        Blade::include('admin::includes-nassau.sidebar-divider', 'sidebarDividerNassau');
-        Blade::include('admin::includes-nassau.sidebar-toggler', 'sidebarTogglerNassau');
-        Blade::include('admin::includes-nassau.topbar', 'topbarNassau');
-        Blade::include('admin::includes-nassau.topbar-sidebar-toggler', 'topbarSidebarTogglerNassau');
-        Blade::include('admin::includes-nassau.topbar-search', 'topbarSearchNassau');
-        Blade::include('admin::includes-nassau.topbar-navbar', 'topbarNavbarNassau');
-        Blade::include('admin::includes-nassau.scroll-to-top', 'scrollToTopNassau');
-        Blade::include('admin::includes-nassau.footer', 'footerNassau');
-        Blade::include('admin::includes-nassau.small-round-button', 'smallRoundButtonNassau');
     }
 }

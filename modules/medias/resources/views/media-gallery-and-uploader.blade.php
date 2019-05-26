@@ -1,6 +1,6 @@
-@php
-$isModal = $isModal ?? true;
-@endphp
+@push('styles')
+<link href="{{ asset('vendor/media/css/medialib.css') }}" rel="stylesheet">
+@endpush
 
 <ul class="nav nav-pills" role="tablist">
     <li class="nav-item">
@@ -11,27 +11,12 @@ $isModal = $isModal ?? true;
     </li>
 </ul>
 
-<div class="tab-content mt-3" id="media-library" data-is-modal="{{$isModal}}">
+<div class="tab-content mt-3" id="media-gallery-and-uploader" data-is-modal="{{$isModal ?? true}}">
     <div class="tab-pane fade show active" id="media" role="tabpanel" aria-labelledby="media-tab">
-        <div class="row">
-            <div class="@if($isModal) col-md-12 @else col-md-9 @endif list-media">
-                @include('medias::media-gallery-with-pagination')
-            </div>
-            @includeWhen(!$isModal, 'medias::media-category')
-        </div>
+        @include('medias::media-gallery', ['onMediaClick'=>$onMediaClick??null, 'onMediaDblClick'=>$onMediaDblClick??null])
     </div>
     <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
         @include('medias::media-uploader',['onSuccessfulUpload'=>$onSuccessfulUpload??null])
-    </div>
-</div>
-
-<div id="openModalNotification" class="modal fade" role="dialog">
-    <div class="modal-dialog"> 
-        <div class="modal-content">
-            <div class="modal-body">
-                <p id="notification-message"></p>
-            </div>
-        </div>
     </div>
 </div>
 

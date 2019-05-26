@@ -1,9 +1,22 @@
 const headers = {'X-CSRF-TOKEN': $('input[name=_token]').val()}
+const isModal = $('#media-gallery-and-uploader').data('isModal')
+
+const onMediaClickCallback = $('#media-gallery').data('onMediaClick')
+const onMediaDblClickCallback = $('#media-gallery').data('onMediaDblClick')
+const onMediaSelectedCallback = $('#media-gallery').data('onMediaSelected')
 const onSuccessfulUploadCallback = $('#file-uploader').data('onSuccessfulUpload')
-const isModal = $('#media-gallery-with-pagination').data('isModal')
-const onMediaSelectedCallback = $('#media-gallery-with-pagination').data('onMediaSelected')
 
 const tmpUploadUrl = $('#file-uploader').data('tmpUploadUrl')
+
+let selectedMedia = []
+let singleSelect = false
+let modalStateResetHandler = []
+
+const resetState = function() {
+	modalStateResetHandler.forEach(f => f())
+	$('.list-media .card').removeClass('selected')
+	selectedMedia = []
+}
 
 var uploadedDocumentMap = {}
 //dropzone upload
@@ -27,78 +40,4 @@ Dropzone.options.documentDropzone = {
 		$('form').find('input[name="document[]"][value="' + name + '"]').remove()
 	}
 }
-
-$(function() {
-	$('#media-gallery-with-pagination').on('click', '.page-link.ajax', function(event) {
-		event.preventDefault()
-
-		$.get($(this).attr('href')).done(function(data) {
-			const {gallery} = data
-			$('#media-gallery-with-pagination').html(gallery)
-		})
-	})
-
-	$('.list-media').on('dblclick','.card img', function(e) {
-		if(singleFileUpload) {
-			$(this).parent().addClass('selected')
-			selectAndClose()
-		}
-	})
-
-	$('.list-media').on('click','.card', function(e) {
-		if(singleFileUpload) {
-			$('.list-media .card').not(this).removeClass('selected')
-		}
-		$(this).toggleClass('selected')
-	})
-
-	$('#button-select-media').on('click', function (e) {
-		selectAndClose()
-	})
-
-	$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-		$('#button-select-media').toggle(e.target.id!=='upload-tab')
-	})
-
-	const selectAndClose = function() {
-		selectedMedia = $('.list-media .card.selected').map(function() {
-			return {
-				id:$(this).data('imageId'),
-				url:$(this).data('imageUrl')
-			}
-		}).get()
-
-		self[onMediaSelectedCallback]()
-	}
-
-	if(isModal) {
-		modalStateResetHandler.push(function() {
-			$.get($('#media-gallery-with-pagination').data('mediaLibraryUrl')).done(function(data) {
-				const {gallery} = data
-				$('#media-gallery-with-pagination').html(gallery)
-			})
-		})
-
-		$('#file-uploader').submit(function(event) {
-			event.preventDefault();
-
-			const url = $(this).prop('action')
-			const data = new FormData($(this)[0])
-
-			$.ajax({url,data,type:'POST',
-				processData:false,
-				contentType: false,
-				headers
-			}).done(function(response) {
-				const {status, data} = response
-
-				if(status==='success') {
-					window.selectedMedia = data.images
-					self[onSuccessfulUploadCallback]()
-					Dropzone.instances[0].removeAllFiles()
-				}
-			})
-		})
-	}
-});
 
