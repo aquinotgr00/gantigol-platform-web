@@ -12,7 +12,12 @@ class ProductCategory extends Model
     /**
      * @var array
      */
-    protected $fillable = ['name','image','parent_id'];
+    protected $fillable = ['name','image_id','parent_id'];
+    
+    public function image(): BelongsTo
+    {
+        return $this->belongsTo(Media::class);
+    }
     
     public function parentCategory() {
         return $this->belongsTo(ProductCategory::class, 'parent_id');
@@ -24,5 +29,13 @@ class ProductCategory extends Model
     
     public function subcategories() {
         return $this->subcategory()->with('subcategories');
+    }
+
+    public function productItems(): hasMany
+    {
+        if (class_exists('\Modules\Product\Product')) { 
+            return $this->hasMany('\Modules\Product\Product','category_id','id');
+        }
+        return false;
     }
 }

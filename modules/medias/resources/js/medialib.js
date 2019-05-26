@@ -1,15 +1,12 @@
+const isModal = $('#media-gallery').data('isModal')
 const headers = {'X-CSRF-TOKEN': $('input[name=_token]').val()}
-const isModal = $('#media-gallery-and-uploader').data('isModal')
-
-const onMediaClickCallback = $('#media-gallery').data('onMediaClick')
-const onMediaDblClickCallback = $('#media-gallery').data('onMediaDblClick')
-const onMediaSelectedCallback = $('#media-gallery').data('onMediaSelected')
 const onSuccessfulUploadCallback = $('#file-uploader').data('onSuccessfulUpload')
+const onMediaSelectedCallback = $('#media-gallery-with-pagination').data('onMediaSelected')
 
 const tmpUploadUrl = $('#file-uploader').data('tmpUploadUrl')
 
 let selectedMedia = []
-let singleSelect = false
+let singleFileUpload = false
 let modalStateResetHandler = []
 
 const resetState = function() {
@@ -40,6 +37,15 @@ Dropzone.options.documentDropzone = {
 		$('form').find('input[name="document[]"][value="' + name + '"]').remove()
 	}
 }
+
+$('#media-gallery-with-pagination').on('click', '.page-link.ajax', function(event) {
+	event.preventDefault()
+
+	$.get($(this).attr('href')).done(function(data) {
+		const {gallery} = data
+		$('#media-gallery-with-pagination').html(gallery)
+	})
+})
 
 if(isModal) {
 	modalStateResetHandler.push(function() {
@@ -81,19 +87,23 @@ if(isModal) {
 		self[onMediaSelectedCallback]()
 	}
 	
+	$('#button-select-media').on('click', function (e) {
+		selectAndClose()
+	})
+	
 	// modal events
 	$('#media-library-modal').on('show.bs.modal', function (event) {
 		resetState()
 
 		const button = $(event.relatedTarget)
-		singleSelect = button.data('singleSelect')
+		singleFileUpload = button.data('singleUpload')
 		const onSelectCallback = button.data('onSelect')
 
 		$(this).data('onSelect',onSelectCallback)
 		$(this).data('selected',false)
 
 		$('input.dz-hidden-input[type=file]').prop('multiple',true)
-		if(singleSelect) {
+		if(singleFileUpload) {
 			$('input.dz-hidden-input[type=file]').prop('multiple',false)
 		}
 	})
@@ -114,33 +124,22 @@ if(isModal) {
 }
 
 $(function() {
-	$('#media-gallery').on('click','.card', function(e) {
-		if(singleSelect || !isModal) {
-			$('.list-media .card').not(this).removeClass('selected')
-		}
-		$(this).toggleClass('selected')
-	})
-	
-	$('#button-select-media').on('click', function (e) {
-		selectAndClose()
-	})
-	
-	$('#media-gallery').on('dblclick','.card img', function(e) {
+	$('.list-media').on('dblclick','.card img', function(e) {
 		if(isModal) {
-			if(singleSelect) {
+			if(singleFileUpload) {
 				$(this).parent().addClass('selected')
 				selectAndClose()
 			}
 		}
 	})
 
-	$('#media-gallery-with-pagination').on('click', '.page-link.ajax', function(event) {
-		event.preventDefault()
-
-		$.get($(this).attr('href')).done(function(data) {
-			const {gallery} = data
-			$('#media-gallery-with-pagination').html(gallery)
-		})
+	$('.list-media').on('click','.card', function(e) {
+		if(isModal) {
+			if(singleFileUpload) {
+				$('.list-media .card').not(this).removeClass('selected')
+			}
+			$(this).toggleClass('selected')
+		}
 	})
 
 	$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {

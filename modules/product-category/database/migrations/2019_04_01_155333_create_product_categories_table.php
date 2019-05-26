@@ -16,7 +16,7 @@ class CreateProductCategoriesTable extends Migration
         Schema::create('product_categories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 150);
-            $table->string('image')->nullable();
+            $table->unsignedInteger('image_id')->nullable();
             $table->unsignedInteger('parent_id')->nullable();
             $table->timestamps();
             
@@ -25,6 +25,10 @@ class CreateProductCategoriesTable extends Migration
         });
         
         Schema::table('product_categories', function (Blueprint $table) {
+            $table->foreign('image_id')
+                    ->references('id')->on('media')
+                    ->onDelete('set null');
+            
             $table->foreign('parent_id')
                     ->references('id')->on('product_categories')
                     ->onDelete('cascade');
