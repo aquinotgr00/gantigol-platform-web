@@ -49,18 +49,23 @@ if(isModal) {
 		})
 	})
 
-	$('#file-uploader').submit(function(event) {
-		event.preventDefault();
+	$('.list-media').on('dblclick','.card img', function(e) {
+		if(singleFileUpload) {
+			$(this).parent().addClass('selected')
+			selectAndClose()
+		}
+	})
 
-		const url = $(this).prop('action')
-		const data = new FormData($(this)[0])
+	$('.list-media').on('click','.card', function(e) {
+		if(singleFileUpload) {
+			$('.list-media .card').not(this).removeClass('selected')
+		}
+		$(this).toggleClass('selected')
+	})
 
-		$.ajax({url,data,type:'POST',
-			processData:false,
-			contentType: false,
-			headers
-		}).done(function(response) {
-			const {status, data} = response
+	$('#button-select-media').on('click', function (e) {
+		selectAndClose()
+	})
 
 			if(status==='success') {
 				window.selectedMedia = data.images
@@ -69,7 +74,7 @@ if(isModal) {
 			}
 		})
 	})
-	
+
 	const selectAndClose = function() {
 		selectedMedia = $('.list-media .card.selected').map(function() {
 			return {
@@ -111,9 +116,26 @@ if(isModal) {
 		}
 	})
 
-	function onMediaSelected() {
-		$('#media-library-modal').data('selected',true)
-		$('#media-library-modal').modal('hide')
+		$('#file-uploader').submit(function(event) {
+			event.preventDefault();
+
+			const url = $(this).prop('action')
+			const data = new FormData($(this)[0])
+
+			$.ajax({url,data,type:'POST',
+				processData:false,
+				contentType: false,
+				headers
+			}).done(function(response) {
+				const {status, data} = response
+
+				if(status==='success') {
+					window.selectedMedia = data.images
+					self[onSuccessfulUploadCallback]()
+					Dropzone.instances[0].removeAllFiles()
+				}
+			})
+		})
 	}
 }
 
@@ -152,5 +174,4 @@ $(function() {
 	})
 	
 });
-
 
