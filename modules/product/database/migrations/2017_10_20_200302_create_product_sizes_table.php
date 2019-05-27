@@ -17,6 +17,8 @@ class CreateProductSizesTable extends Migration
             $table->increments('id');
             $table->string('name', 150)->unique();
             $table->text('codes');
+            $table->text('charts')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

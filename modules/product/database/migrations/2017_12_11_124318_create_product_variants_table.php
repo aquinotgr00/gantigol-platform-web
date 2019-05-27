@@ -19,6 +19,9 @@ class CreateProductVariantsTable extends Migration
             $table->string('variant')->nullable();
             $table->string('size_code',10);
             $table->string('sku')->nullable();
+            $table->string('image')->nullable();
+            $table->text('description')->nullable();
+            $table->unsignedInteger('price')->nullable();
             $table->unsignedInteger('initial_balance')->default(0);
             $table->unsignedInteger('safety_stock')->default(0);
             $table->unsignedInteger('quantity_on_hand')->default(0);

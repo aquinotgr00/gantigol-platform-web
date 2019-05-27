@@ -76,7 +76,7 @@
     </tool>
 </div>
 <!-- end tools -->
-
+<hr/>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable" width="100%" cellspacing="0">

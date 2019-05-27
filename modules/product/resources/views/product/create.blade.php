@@ -7,7 +7,7 @@
 @section('content')
 <!-- start form -->
 <div class="row pl-3">
-    <form id="form-add-product" class="col-md-6 col-lg7 pl-0" action="{{ route('product.store') }}" method="post">
+    <form id="form-add-product" class="col-md-6 col-lg7 pl-0" action="{{ route('product.store') }}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
             <label for="exampleInputCategoryName">Product Title</label>

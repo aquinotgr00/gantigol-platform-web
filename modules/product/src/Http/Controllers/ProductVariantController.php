@@ -42,7 +42,7 @@ class ProductVariantController extends Controller
      */
     public function index()
     {
-        $data['title'] = 'Product';
+        $data['title'] = 'Product Variants';
         return view("product::product-variant.index", compact('data'));
     }
 
@@ -54,6 +54,7 @@ class ProductVariantController extends Controller
     public function create()
     {
         $data['title'] = 'Add New Product';
+        $data['back'] = route('product-variant.index');
         return view("product::product-variant.create", compact('data'));
     }
 
@@ -65,7 +66,7 @@ class ProductVariantController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'name' => 'required|unique:products',
             'price' => 'required|numeric',
@@ -82,12 +83,12 @@ class ProductVariantController extends Controller
         }
 
         if ($request->has('keyword')) {
-            $keywords = explode(',',$request->keyword);
+            $keywords = explode(',', $request->keyword);
             foreach ($keywords as $key => $value) {
                 $product->tag($value);
             }
         }
-    
+
         $combinations = [];
         if ($request->has('variant')) {
             $catch = array();
@@ -96,8 +97,8 @@ class ProductVariantController extends Controller
             }
             $combinations = combinations($catch);
             foreach ($combinations as $key => $value) {
-                $variant = implode(' ',$value);
-                $productVariant  = ProductVariant::create([
+                $variant = implode(' ', $value);
+                $productVariant = ProductVariant::create([
                     'product_id' => $product->id,
                     'size_code' => '',
                     'variant' => $variant,
@@ -106,10 +107,10 @@ class ProductVariantController extends Controller
         }
         if (!is_null($product->images->first())) {
             $product->update([
-                'image' => $product->images->first()->image
+                'image' => $product->images->first()->image,
             ]);
         }
-        return redirect()->route('product-variant.show',$product->id);
+        return redirect()->route('product-variant.show', $product->id);
     }
 
     /**
@@ -123,32 +124,52 @@ class ProductVariantController extends Controller
         $product = Product::findOrFail($id);
         $data = [
             'title' => ucwords($product->name),
-            'back' => route('product.index')
+            'back' => route('product-variant.index'),
         ];
-        return view("product::product-variant.show",compact('product','data'));
+        return view("product::product-variant.show", compact('product', 'data'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(int $id)
     {
-        //
+        $productVariant = ProductVariant::findOrFail($id);
+        $productVariant->product;
+        $data = [
+            'title' => ucwords($productVariant->product->name),
+            'back' => route('product-variant.index'),
+        ];
+        return view("product::product-variant.edit", compact('productVariant', 'data'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, int $id)
     {
-        //
+        $request->validate([
+            'variant' => 'required',
+            'size_code' => 'required',
+        ]);
+        $productVariant = ProductVariant::findOrFail($id);
+        $productVariant->update([
+            'variant' => $request->variant,
+            'size_code' => $request->size_code,
+            'sku' => $request->sku,
+            'description' => $request->description,
+            'price' => $request->price,
+            'quantity_on_hand' => $request->quantity_on_hand,
+            'safety_stock' => $request->safety_stock
+        ]);
+        return redirect()->route('product-variant.index');
     }
 
     /**

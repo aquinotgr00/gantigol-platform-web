@@ -2,6 +2,7 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -36,7 +37,7 @@
     <table class="table" id="dataTable">
         <thead>
             <tr>
-                <th scope="col">Product Name</th>
+                <th scope="col">Product Variant</th>
                 <th scope="col">SKU</th>
                 <th scope="col">Current Stock</th>
                 <th scope="col">Price</th>
@@ -68,7 +69,14 @@
 
 @push('scripts')
 <script>
-$(document).ready(function () {
+    function deleteItem(id) {
+        if (confirm("Are u sure?")) {
+            console.log(id);
+        }
+    }
+
+    $(document).ready(function () {
+        
         var datatables = $('#dataTable').DataTable({
             "ajax": {
                 "url": '{{ route("items-variant.index") }}',
@@ -79,29 +87,31 @@ $(document).ready(function () {
             },
             "order": [[1, "desc"]],
             "columns": [
-                { 
-                    "data": "name",
-                    "render": function(data,type,row){
-                        return '<a href="{{ url("admin/product-variant") }}/'+row.id+'">'+data+'</a>';
+                {
+                    "data": "variant",
+                    "render": function (data, type, row) {
+                        console.log(data);
+                        return '<a href="{{ url("admin/product-variant") }}/' + row.id + '">' + row.name + ' ' + data.toUpperCase() + '</a>';
                     }
                 },
                 { "data": "sku" },
                 { "data": "quantity_on_hand" },
-                { 
+                {
                     "data": "price",
                     "render": function (data, type, row) {
                         return "Rp " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
                 },
-                { 
+                {
                     "data": "id",
                     "render": function (data, type, row) {
-                        return '<a href="#'+data+'" class="btn btn-table circle-table adjustment-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Adjustment"></a>';
+                        var button = '<a href="{{ url("admin/product-variant") }}/' + data + '/edit" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>';
+                        button += '<button type="button" onclick="deleteItem('+data+')" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"></button>';
+                        return button;
                     }
                 }
             ]
         });
-
     });
 </script>
 @endpush
