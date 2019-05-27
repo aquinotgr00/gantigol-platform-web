@@ -64,11 +64,22 @@ class ContentMediaController extends Controller
      */
     public function store(Request $request)
     {
-
+        $uploadedMedia = [];
         foreach ($request->input('document', []) as $file) {
-            $this->contentalbum->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection();
+            $media = $this->contentalbum->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection();
+            $uploadedMedia[] = [
+                'id'=>$media->id,
+                'url'=>$media->getUrl()
+            ];
         }
-
+        
+        if($request->ajax()) {
+            return response()->json([
+                'status'=>'success',
+                'data'=>['images'=>$uploadedMedia]
+            ]);
+        }
+        
         return redirect()->route('media.library');
     }
 }

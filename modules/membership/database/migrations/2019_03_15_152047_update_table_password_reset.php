@@ -25,7 +25,11 @@ class UpdateTablePasswordReset extends Migration
      */
     public function down()
     {
+<<<<<<< HEAD
         if (Schema::hasColumn('password_resets','updated_at')) {
+=======
+        if (Schema::hasColumn('password_resets', 'updated_at')) {
+>>>>>>> master
             Schema::table('password_resets', function (Blueprint $table) {
                 $table->dropColumn('updated_at');
             });

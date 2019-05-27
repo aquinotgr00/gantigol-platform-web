@@ -1,5 +1,30 @@
-@extends('blogs::blog-index')
+@extends('admin::layout-nassau')
 
+@push('styles')
+<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+@endpush
+
+@push('scripts')
+<!-- data table -->
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+      <script>
+        $(function() {
+            $('#post-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{!! route('blog.post.list') !!}',
+                columns: [
+                    { data: 'title', name: 'title' },
+                    { data: 'name', name: 'name' },
+                    { data: 'create_date', name: 'create_date' },
+                    { data: 'published_date', name: 'published_date' },
+                    { data: 'action', name: 'action' }
+                ]
+            });
+        });
+      </script>
+@endpush
 @section('content')
  <div class="row" style="padding:10px">
       <h3 >New Blog Post </h3> 

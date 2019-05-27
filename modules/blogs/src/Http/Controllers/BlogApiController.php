@@ -41,6 +41,7 @@ class BlogApiController extends Controller
     	->select('blogs.*','blog_category.name as category_name')
     	->with('tagged')	
     	->find($id);
+    	$post->increment('counter');
     	$data =[
     		'blog'=>$post
     	]; 

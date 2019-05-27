@@ -35,7 +35,8 @@ class BlogController extends Controller
      * @return \Illuminate\View\View
      */
     public function index(){
-    	return view('blogs::post.list'); 
+        $data['title'] = 'Post';
+    	return view('blogs::post.list',compact('data')); 
     }
 
     /**

@@ -18,7 +18,9 @@
         "rtconner/laravel-tagging": "~3.1",
         "spatie/laravel-medialibrary": "^7.0.0",
         "spatie/laravel-searchable": "1.2.2",
-        "yajra/laravel-datatables-oracle": "~8.0"
+        "yajra/laravel-datatables-oracle": "~8.0",
+        "laravelcollective/html": "5.7.*",
+        "barryvdh/laravel-dompdf": "^0.8.4"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
@@ -58,6 +60,11 @@
             "Modules\\Medias\\": "modules/medias/src",
             "Modules\\Membership\\": "modules/membership/src",
             "Modules\\Blogs\\": "modules/blogs/src",
+            "Modules\\ProductCategory\\": "modules/product-category/src",
+            "Modules\\Product\\": "modules/product/src",
+            "Modules\\Ecommerce\\": "modules/ecommerce/src",
+            "Modules\\Customers\\": "modules/customers/src",
+            "Modules\\Preorder\\": "modules/preorder/src",
             "App\\": "app/"
         },
         "classmap": [

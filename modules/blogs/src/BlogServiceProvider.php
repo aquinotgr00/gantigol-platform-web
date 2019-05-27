@@ -26,7 +26,8 @@ class BlogServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot(Router $router, Factory $factory)
-    {
+    {   
+        $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadRoutes($router);
         $this->loadRoutesApi($router);
@@ -59,7 +60,7 @@ class BlogServiceProvider extends ServiceProvider
     {
         $router->prefix(config('blogs.prefix', 'blogs'))
                ->namespace('Modules\Blogs\Http\Controllers')
-               ->middleware(['web'])
+               ->middleware(['web','auth:admin'])
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
                });
@@ -95,7 +96,7 @@ class BlogServiceProvider extends ServiceProvider
     }
 
      /**
-     * Register any load migrations & factories from module membership.
+     * Register any load migrations & factories from module BLOGS.
      *
      * @return void
      */
@@ -105,6 +106,34 @@ class BlogServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
             $factory->load(__DIR__.'/../database/factories');
+        }
+    }
+    /**
+     * Register Breadcrumb page from module BLOGS.
+     *
+     * @return void
+     */
+    private function loadBreadcrumbs(): void
+    {
+        if (class_exists('Breadcrumbs')) {
+            require __DIR__ . '/../routes/breadcrumbs.php';
+        }
+    }
+
+    /**
+     * Publish asset  from module BLOGS.
+     *
+     * @return void
+     */
+    private function publishPublicAssets(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $path = __DIR__.'/../../resources';
+            $this->publishes([
+                $path.'/vendor' => public_path('vendor/blog/vendor'),
+                $path.'/css' => public_path('vendor/blog/css'),
+                $path.'/js' => public_path('vendor/blog/js'),
+            ], 'blogs:public');
         }
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\RouteRegistrar as Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 
 class MediaServiceProvider extends ServiceProvider
 {
@@ -31,6 +33,10 @@ class MediaServiceProvider extends ServiceProvider
         $this->loadRoutes($router);
         $this->loadViews();
         $this->loadMigrationsAndFactories($factory);
+        $this->loadBreadcrumbs();
+        $this->loadViewComposers();
+        $this->loadBladeAliases();
+        $this->publishPublicAssets();
     }
 
     /**
@@ -56,7 +62,7 @@ class MediaServiceProvider extends ServiceProvider
      */
     private function loadRoutes(Router $router)
     {
-        $router->prefix(config('medias.prefix', 'medias'))
+        $router->prefix(config('admin.prefix', 'admin'))
                ->namespace('Modules\Medias\Http\Controllers')
                ->middleware(['web'])
                ->group(function () {
@@ -92,6 +98,51 @@ class MediaServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
             $factory->load(__DIR__.'/../database/factories');
+        }
+    }
+    
+    /**
+     * Register breadcrumbs.
+     * @return void
+     */
+    private function loadBreadcrumbs()
+    {
+        if (class_exists('Breadcrumbs')) {
+            require __DIR__ . '/../routes/breadcrumbs.php';
+        }
+    }
+    
+    /**
+     * Register View Composers
+     * https://laravel.com/docs/5.7/views#view-composers
+     * @return void
+     */
+    private function loadViewComposers()
+    {
+        View::composer('medias::media-gallery', 'Modules\Medias\Http\ViewComposers\MediaGalleryViewComposer');
+        View::composer('medias::media-category', 'Modules\Medias\Http\ViewComposers\MediaCategoryViewComposer');
+    }
+    
+    /**
+     * Load Blade templates alias
+     * https://laravel.com/docs/5.7/blade#including-sub-views | Aliasing Includes
+     * @return void
+     */
+    private function loadBladeAliases(): void
+    {
+        Blade::include('medias::includes.media-library-modal', 'mediaLibraryModal');
+        Blade::include('medias::components.media-picker', 'mediaPicker');
+    }
+    
+    private function publishPublicAssets(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $path = __DIR__.'/../resources';
+            $this->publishes([
+                $path.'/css' => public_path('vendor/media/css'),
+                $path.'/js' => public_path('vendor/media/js'),
+                $path.'/img' => public_path('vendor/media/img'),
+            ], 'media:public');
         }
     }
 }

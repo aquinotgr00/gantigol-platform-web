@@ -63,9 +63,7 @@
 
 @push('scripts')
 <script>
-	$('.toast').toast('show')
-    
-    $('input.user-activation[type="checkbox"]').change(function() {
+	$('input.user-activation[type="checkbox"]').change(function() {
         let action = '{{ route("users.status", "@@") }}'.replace('@@',$(this).data('user'))
         $('<form method="post" action="'+action+'">@csrf @method("PUT")</form>').appendTo('body').submit()
 	})
