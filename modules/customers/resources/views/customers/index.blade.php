@@ -24,10 +24,7 @@
         var datatables = $('#dataTable').DataTable({
             "ajax": {
                 "url": '{{ route("customers.index") }}',
-                "type": 'GET',
-                "data": {
-                    'status': 'publish'
-                }
+                "type": 'GET'
             },
             "order": [[2, "asc"]],
             "columns": [

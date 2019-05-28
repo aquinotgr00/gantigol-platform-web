@@ -193,6 +193,7 @@ return [
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Preorder\Providers\PreOrderServiceProvider::class,
         Modules\Preorder\Providers\PreorderAuthServiceProvider::class,
+        Modules\Inventory\Providers\InventoryServiceProvider::class,
     ],
 
     /*

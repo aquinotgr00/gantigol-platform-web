@@ -13,6 +13,11 @@ use Validator;
 
 class ProductApiController extends Controller
 {
+    private $n_pages;
+
+    public function __construct(){
+        $this->n_pages = 6;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +31,7 @@ class ProductApiController extends Controller
         ]);
         $product = Product::with('variants')
             ->where('status', 1)
-            ->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate(8);
+            ->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate($this->n_pages);
 
         return new ProductResource($product);
     }
@@ -192,7 +197,7 @@ class ProductApiController extends Controller
                     WHERE NOW() BETWEEN discounts.start_date AND discounts.end_date)');
             }
         }
-        return $products->where('status', 1)->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate(8);
+        return $products->where('status', 1)->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate($this->n_pages);
     }
 
     public function uploadImage(Request $request)

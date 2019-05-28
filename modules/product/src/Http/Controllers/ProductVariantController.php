@@ -98,11 +98,19 @@ class ProductVariantController extends Controller
             $combinations = combinations($catch);
             foreach ($combinations as $key => $value) {
                 $variant = implode(' ', $value);
+                
                 $productVariant = ProductVariant::create([
-                    'product_id' => $product->id,
-                    'size_code' => '',
+                    'product_id' => $product->id,    
                     'variant' => $variant,
                 ]);
+
+                if (
+                    $index = array_search('size',$value) &&
+                    $index = array_search('ukuran',$value) 
+                    ) {
+                    $productVariant->size_code =  $value[$index];
+                    $productVariant->update();
+                }
             }
         }
         if (!is_null($product->images->first())) {
@@ -167,7 +175,7 @@ class ProductVariantController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'quantity_on_hand' => $request->quantity_on_hand,
-            'safety_stock' => $request->safety_stock
+            'safety_stock' => $request->safety_stock,
         ]);
         return redirect()->route('product-variant.index');
     }
@@ -194,4 +202,6 @@ class ProductVariantController extends Controller
         $array = explode(",", $request->tags);
         $data->retag($array);
     }
+
+    
 }

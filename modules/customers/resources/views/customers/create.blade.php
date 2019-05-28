@@ -1,5 +1,37 @@
 @extends('admin::layout-nassau')
 
+@push('styles')
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    .custom-combobox {
+        position: relative;
+        display: inline-block;
+        padding-left: 0px;
+        margin-bottom: 5px;
+    }
+    .custom-combobox-toggle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin-left: -1px;
+        padding: 0;
+    }
+    .custom-combobox-input {
+        margin: 0;
+        padding: 6px 12px;
+        width: inherit;
+        height: 34px;background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-top-color: rgb(204, 204, 204);
+        border-right-color: rgb(204, 204, 204);
+        border-bottom-color: rgb(204, 204, 204);
+        border-left-color: rgb(204, 204, 204);
+        border-radius: 4px;
+    }
+</style>
+@endpush
+
 @section('content')
 <!-- start form -->
 <div class="row">
@@ -90,3 +122,4 @@
         });
     });
 </script>
+@endpush

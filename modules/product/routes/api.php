@@ -16,3 +16,4 @@ Route::apiResource('items-variant', 'Api\\ProductVariantApiController');
 Route::post('/store-atribute','Api\\ProductVariantApiController@storeAtribute')->name('product.store-atribute');
 Route::get('/get-atribute','Api\\ProductVariantApiController@getAtribute')->name('product.get-atribute');
 Route::apiResource('items-size', 'Api\\ProductSizeChartApiController');
+Route::get('get-variant-by-id', 'Api\\ProductVariantApiController@getProductVariantById')->name('get.variantById');

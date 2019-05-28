@@ -1,4 +1,4 @@
-@extends('preorder::layout')
+@extends('admin::layout-nassau')
 
 @push('styles')
 <style>

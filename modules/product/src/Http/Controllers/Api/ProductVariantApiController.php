@@ -20,7 +20,7 @@ class ProductVariantApiController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        return response()->json($request->all());
     }
 
     public function update()
@@ -54,5 +54,28 @@ class ProductVariantApiController extends Controller
     {
         $productProperties = ProductProperties::all();
         return new ProductResource($productProperties);
+    }
+
+    public function getProductVariantById(Request $request)
+    {
+        $id = $request->input("id");
+
+        if (!empty($id)) {
+            $productVariants = ProductVariant::with(['product.category.parentCategories'])->where('id', $id)->first();
+
+            if (!empty($productVariants)) {
+                $image = url('res/300/auto/' . $productVariants->product->image);
+
+                $data = array('image' => $image, 'stock' => $productVariants->quantity_on_hand, 'product_name' => "{$productVariants->product->name} - {$productVariants->variant} - {$productVariants->sku}");
+
+                $data = array('status' => true, 'msg' => "Success", "data" => $data);
+            } else {
+                $data = array('status' => false, 'msg' => "Not Found Product Variant with ID {$id}.", "data" => array());
+            }
+        } else {
+            $data = array('status' => false, 'msg' => "Not Found Product Variant ID.", "data" => array());
+        }
+
+        return $data;
     }
 }

@@ -3,10 +3,13 @@
 namespace Modules\Ecommerce\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Modules\Ecommerce\Cart;
 use Modules\Ecommerce\CartItems;
 use Modules\Ecommerce\Http\Resources\CartResource;
+use Modules\Membership\Member;
+use Modules\Product\ProductVariant;
 use Validator;
 
 class CartApiController extends Controller
@@ -23,7 +26,22 @@ class CartApiController extends Controller
         $cart = Cart::find($id);
         if (!is_null($cart)) {
             $cart->getItems;
+        } else {
+            $validator = Validator::make($request->all(), [
+                'session' => 'required',
+                //'user_id' => 'exists:states,id',
+            ]);
+
+            if ($validator->fails()) {
+                return new CartResource($validator->messages());
+            }
+
+            $cart = Cart::with('getItems')
+                ->where('session', $request->session)
+            //->where('user_id',$request->user_id)
+                ->get();
         }
+
         return new CartResource($cart);
     }
     /**
@@ -38,6 +56,7 @@ class CartApiController extends Controller
             'items' => 'required|array',
             'session' => 'required',
             'total' => 'required|numeric',
+            'user_id' => 'numeric',
         ]);
 
         if ($validator->fails()) {
@@ -47,13 +66,20 @@ class CartApiController extends Controller
         $existCart = Cart::where('session', $request->session)->first();
         if (is_null($existCart)) {
             $cart = new Cart;
-            $cart->total    = $request->total;
-            $cart->session  = $request->session;
+            $cart->total = $request->total;
+            $cart->session = $request->session;
+            if (isset($request->user_id)) {
+                $member = Member::find($request->user_id);
+                if (!is_null($member)) {
+                    $cart->user_id = $member->id;
+                }
+
+            }
             $cart->save();
         } else {
             $cart = $existCart;
         }
-        
+
         foreach ($request->items as $key => $value) {
 
             $valid = Validator::make($value, [
@@ -68,13 +94,13 @@ class CartApiController extends Controller
                 return new CartResource($valid->messages());
             }
 
-            $cartItemExist = CartItems::where('cart_id',$cart->id)
-            ->where('product_id',$value['product_id'])
-            ->first();
+            $cartItemExist = CartItems::where('cart_id', $cart->id)
+                ->where('product_id', $value['product_id'])
+                ->first();
             if (is_null($cartItemExist)) {
                 $value = array_merge($value, ['cart_id' => $cart->id]);
                 $cartItem = CartItems::create($value);
-            }else{
+            } else {
                 $value = array_merge($value, [
                     'qty' => $cartItemExist->qty + $value['qty'],
                     'subtotal' => $cartItemExist->subtotal + $value['subtotal'],
@@ -140,7 +166,7 @@ class CartApiController extends Controller
 
         $cartItem = CartItems::find($id);
         if (!is_null($cartItem)) {
-            $cartItem->update($request->all());
+            $cartItem->update($request->except('_token', '_method'));
         }
         return new CartResource($cartItem);
     }
@@ -200,5 +226,50 @@ class CartApiController extends Controller
         $cart = Cart::find($id);
         $data = $cart->getItems->where('checked', 'true');
         return new CartResource($data);
+    }
+
+    public function cartGuestLogin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session' => 'required',
+            'user_id' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return new CartResource($validator->messages());
+        }
+        $member = Member::find($request->user_id);
+        $cart = Cart::where('session', $request->session)->first();
+        $cart->update([
+            'user_id' => $request->user_id,
+        ]);
+        $cart->getItems;
+        return new CartResource($cart);
+    }
+
+    public function deleteItemVariant(Request $request, int $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'session' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return new CartResource($validator->messages());
+        }
+
+        try {
+            $productVariant = ProductVariant::findOrFail($id);
+            $cart           = Cart::where('session', $request->session)->first();
+            if (!is_null($cart)) {
+                $cartItems = $cart->getItems->where('product_id', $productVariant->id);
+                foreach ($cartItems as $key => $value) {
+                    $value->delete();
+                }
+                $cart->getItems;
+            }
+            return response()->json($cart);
+        } catch (ModelNotFoundException $exception) {
+            return response()->json(['data' => 'not found']);
+        }
     }
 }

@@ -31,7 +31,7 @@
     </tool>
 </div>
 <!-- end tools -->
-
+<hr>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable">
@@ -90,8 +90,13 @@
                 {
                     "data": "variant",
                     "render": function (data, type, row) {
-                        console.log(data);
-                        return '<a href="{{ url("admin/product-variant") }}/' + row.id + '">' + row.name + ' ' + data.toUpperCase() + '</a>';
+                        
+                        if(data == null){
+                            return '-';
+                        }else{
+                            return '<a href="{{ url("admin/product-variant") }}/' + row.id + '">' + row.name + ' ' + data.toUpperCase() + '</a>';
+                        }
+                        
                     }
                 },
                 { "data": "sku" },

@@ -24,6 +24,7 @@ class CreateCartItemsTable extends Migration
             $table->enum('wishlist',['true','false'])->nullable();
             $table->enum('checked',['true','false'])->default('true');
             $table->text('notes')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
