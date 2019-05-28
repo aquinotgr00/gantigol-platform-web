@@ -9,7 +9,7 @@ return [
     ],
     'guards' => [
         'admin' => [
-            'driver' => 'session',
+            'driver' => 'database',
             'provider' => 'admins',
         ]
     ],
