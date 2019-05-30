@@ -12,11 +12,11 @@ class Cart extends Model
     protected $fillable = [
         'total',
         'coupon',
-        'amount_items'    
+        'amount_items'
     ];
     
     public function getItems()
     {
-        return $this->hasMany('\Modules\Ecommerce\CartItems','cart_id','id');
+        return $this->hasMany('\Modules\Ecommerce\CartItems', 'cart_id', 'id');
     }
 }

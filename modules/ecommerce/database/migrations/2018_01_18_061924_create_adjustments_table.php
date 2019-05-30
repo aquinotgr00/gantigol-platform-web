@@ -16,7 +16,7 @@ class CreateAdjustmentsTable extends Migration
         Schema::create('adjustments', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('product_variants_id');
-            $table->enum('method',['+', '-']);
+            $table->enum('method', ['+', '-']);
             $table->integer('qty');
             $table->text('note')->nullable();
             $table->unsignedTinyInteger('type');

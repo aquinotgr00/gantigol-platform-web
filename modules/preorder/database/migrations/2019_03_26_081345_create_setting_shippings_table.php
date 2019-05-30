@@ -18,7 +18,7 @@ class CreateSettingShippingsTable extends Migration
             $table->unsignedInteger('width');
             $table->unsignedInteger('height');
             $table->text('courier')->nullable();
-            $table->enum('delimiter',[';',',','|','-'])->default(';');
+            $table->enum('delimiter', [';',',','|','-'])->default(';');
             $table->timestamps();
         });
     }

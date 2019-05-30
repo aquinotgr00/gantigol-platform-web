@@ -15,7 +15,7 @@ class UpdateTableBlogCounterDefault extends Migration
     {
         if (Schema::hasColumn('blogs', 'counter')) {
             Schema::table('blogs', function (Blueprint $table) {
-               $table->bigInteger('counter')->default(0)->change();
+                $table->bigInteger('counter')->default(0)->change();
             });
         }
     }

@@ -21,8 +21,8 @@ class CreateCartItemsTable extends Migration
             $table->unsignedInteger('price')->nullable();
             $table->unsignedInteger('subtotal')->nullable();
             $table->json('attributes')->nullable();
-            $table->enum('wishlist',['true','false'])->nullable();
-            $table->enum('checked',['true','false'])->default('true');
+            $table->enum('wishlist', ['true','false'])->nullable();
+            $table->enum('checked', ['true','false'])->default('true');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

@@ -11,7 +11,7 @@ use Modules\Preorder\ProductionBatch;
 use Modules\Preorder\Transaction;
 use Modules\Preorder\Production;
 
-use PDF; 
+use PDF;
 
 class TransactionController extends Controller
 {
@@ -73,7 +73,7 @@ class TransactionController extends Controller
             'production_batch' => $production_batch,
             'data' => [
                 'title' => ucwords('Batch '.$production_batch->batch_name),
-                'back' => route('pending.transaction',$production_batch->pre_order_id)
+                'back' => route('pending.transaction', $production_batch->pre_order_id)
             ]
         ];
         return view('preorder::transaction.shipping')->with($data);
@@ -99,7 +99,7 @@ class TransactionController extends Controller
             'production_batch' => $production_batch,
             'data' => [
                 'title' => ucwords('batch '.$production_batch->batch_name),
-                'back' => route('shipping.transaction',$production_batch->id)
+                'back' => route('shipping.transaction', $production_batch->id)
             ],
             'status' => [
                 'pending' => 'Pending',
@@ -131,7 +131,7 @@ class TransactionController extends Controller
             'orders' => $orders,
             'data' => [
                 'title' => 'Details Transaction',
-                'back' => route('pending.transaction',$preOrder->id)
+                'back' => route('pending.transaction', $preOrder->id)
             ]
         ];
         return view('preorder::transaction.show')->with($data);
@@ -146,13 +146,13 @@ class TransactionController extends Controller
 
     public function printShippingSticker(int $batch_id)
     {
-        $production =  Production::where('production_batch_id',$batch_id)->get();
+        $production =  Production::where('production_batch_id', $batch_id)->get();
         $data = [
             'production' => $production
         ];
         return PDF::setOptions(['defaultFont' => 'sans-serif'])
         ->setPaper('a4', 'landscape')
-        ->loadView('preorder::shipping.sticker',$data)
+        ->loadView('preorder::shipping.sticker', $data)
         ->stream('shipping-sticker.pdf');
     }
 }

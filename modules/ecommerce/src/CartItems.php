@@ -9,6 +9,6 @@ class CartItems extends Model
     protected $guarded = [];
     public function fromCart()
     {
-        return $this->belongsTo('Modules\Ecommerce\Cart','cart_id','id');
+        return $this->belongsTo('Modules\Ecommerce\Cart', 'cart_id', 'id');
     }
 }

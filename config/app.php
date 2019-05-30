@@ -197,6 +197,9 @@ return [
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Preorder\Providers\PreOrderServiceProvider::class,
         Modules\Preorder\Providers\PreorderAuthServiceProvider::class,
+
+        Modules\Banners\Providers\BannerServiceProvider::class,
+        Modules\Promo\Providers\PromoServiceProvider::class,
     ],
 
     /*

@@ -26,7 +26,7 @@ class BlogServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot(Router $router, Factory $factory)
-    {   
+    {
         $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadRoutes($router);

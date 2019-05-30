@@ -61,7 +61,7 @@ class PreorderApiController extends Controller
 
         $request->request->add(['product_id' => $new_product->id]);
 
-        $preOrder = PreOrder::create($request->only('product_id', 'quota', 'end_date', 'status','start_date'));
+        $preOrder = PreOrder::create($request->only('product_id', 'quota', 'end_date', 'status', 'start_date'));
 
         // add product images
         if ($request->hasFile('images')) {

@@ -55,7 +55,7 @@
                   <input type="text" name="keywords" class="form-control" id="InputCategoryKeywords" data-role="tagsinput">
                 </div>
                  <div class="d-flex flex-row-reverse">
-                  <button class="btn btn-success ml-4" formaction="#">Publish</button>
+                  <button class="btn btn-success ml-4">Publish</button>
                   <button type="submit" class="btn btn-outline-secondary" formaction="{{Route('blog.post.store')}}">Save As Draft</button>
                 </div>
               </form>

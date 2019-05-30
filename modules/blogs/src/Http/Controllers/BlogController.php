@@ -10,7 +10,8 @@ use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
 
 class BlogController extends Controller
-{   
+{
+
 
     /**
      * Create a new parameter.
@@ -34,9 +35,10 @@ class BlogController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index(){
+    public function index()
+    {
         $data['title'] = 'Post';
-    	return view('blogs::post.list',compact('data')); 
+        return view('blogs::post.list', compact('data'));
     }
 
     /**
@@ -45,24 +47,25 @@ class BlogController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function list()
-    {   
-        $blogs = $this->blogs->leftjoin('blog_category','blogs.category_id','=','blog_category.id')
-                ->select('blogs.*','blog_category.name')
+    {
+        $blogs = $this->blogs->leftjoin('blog_category', 'blogs.category_id', '=', 'blog_category.id')
+                ->select('blogs.*', 'blog_category.name')
                 ->get();
         return Datatables::of($blogs)
                             ->addColumn('create_date', function ($blogs) {
-                                return date_format($blogs->created_at,"d-m-Y");
+                                return date_format($blogs->created_at, "d-m-Y");
                             })
                             ->addColumn('published_date', function ($blogs) {
                                 $published ='';
-                                if(!empty($blogs->publish_date))
-                                    $published = date_format(date_create($blogs->publish_date),"d-m-Y");
+                                if (!empty($blogs->publish_date)) {
+                                    $published = date_format(date_create($blogs->publish_date), "d-m-Y");
+                                }
                                 return $published;
                             })
                              ->addColumn('action', function ($blogs) {
-                                return  '<a href="'.Route('blog.post.edit',$blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
-                                        <a href="'.Route('blog.post.edit',$blogs->id).'" class="btn btn-table circle-table show-table" data-toggle="tooltip" data-placement="top" title="Hide On Website"></a>';
-                            })
+                                return  '<a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
+                                        <a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table show-table" data-toggle="tooltip" data-placement="top" title="Hide On Website"></a>';
+                             })
                             ->make(true);
     }
 
@@ -73,8 +76,12 @@ class BlogController extends Controller
      */
     public function create()
     {
+        $data = [
+            'title' => ucwords('Create Post'),
+            'back' => route('blog.index')
+        ];
         $categories = BlogCategory::all();
-        return view('blogs::post.create',compact('categories')); 
+        return view('blogs::post.create', compact('categories', 'data'));
     }
 
     /**
@@ -82,12 +89,18 @@ class BlogController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function edit($id){
+    public function edit($id)
+    {
 
+        $data = [
+            'title' => ucwords('Edit Post'),
+            'back' => route('blog.index')
+        ];
         $categories = BlogCategory::all();
-        $post = $this->blogs->where('id',$id)->first();
+        $post = $this->blogs->where('id', $id)->first();
+        $data['title'] = 'Edit Post '.$post->title;
         $tags = $post->tagNames();
-        return view('blogs::post.edit',compact('post','categories','tags','id')); 
+        return view('blogs::post.edit', compact('post', 'categories', 'tags', 'id', 'data'));
     }
 
     /**
@@ -97,21 +110,21 @@ class BlogController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {   
+    {
         $request->validate([
             'title' => 'required',
             'category_id' => 'required',
         ]);
         $blog = $this->blogs->create($request->except(['id','_token','tags','keywords']));
-        if($request->has('tags')){
-            $this->insertTags($request,$blog);
+        if ($request->has('tags')) {
+            $this->insertTags($request, $blog);
         }
-        if($request->has('keywords')){
-            $this->insertKeywords($request,$blog);
+        if ($request->has('keywords')) {
+            $this->insertKeywords($request, $blog);
         }
         $request->session()->flash('message', 'Post has been created');
         return redirect()->route('blog.index');
-    }  
+    }
 
     /**
      * edit a post created resource in storage.
@@ -120,21 +133,21 @@ class BlogController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
-    {   
+    {
         $request->validate([
             'title' => 'required',
             'category_id' => 'required',
         ]);
         $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags','keywords']));
         $blog = $this->blogs->where('id', $request->id)->first();
-        if($request->has('tags')){
-            $this->insertTags($request,$blog);
+        if ($request->has('tags')) {
+            $this->insertTags($request, $blog);
         }
-        if($request->has('keywords')){
-            $this->insertKeywords($request,$blog);
+        if ($request->has('keywords')) {
+            $this->insertKeywords($request, $blog);
         }
         $request->session()->flash('message', 'Post has been updated');
-        return redirect()->route('blog.post.edit',$request->id);
+        return redirect()->route('blog.post.edit', $request->id);
     }
 
     /**
@@ -143,8 +156,8 @@ class BlogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function publish(Request $request,$id=null)
-    {   
+    public function publish(Request $request, $id = null)
+    {
         $request->validate([
             'title' => 'required',
             'category_id' => 'required',
@@ -152,16 +165,16 @@ class BlogController extends Controller
             // 'image'=>'required',
         ]);
         $request->request->add(['publish_date' => Carbon::now()]);
-        if(!empty($id)){
-        $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags','keywords']));
-        $blog = $this->blogs->where('id', $request->id)->first();
+        if (!empty($id)) {
+            $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags','keywords']));
+            $blog = $this->blogs->where('id', $request->id)->first();
         }
         
-        if($request->has('tags')){
-            $this->insertTags($request,$blog);
+        if ($request->has('tags')) {
+            $this->insertTags($request, $blog);
         }
-        if($request->has('keywords')){
-            $this->insertKeywords($request,$blog);
+        if ($request->has('keywords')) {
+            $this->insertKeywords($request, $blog);
         }
         $request->session()->flash('message', 'Post has been published');
         return redirect()->route('blog.index');
@@ -173,10 +186,11 @@ class BlogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-     public function insertTags($request,$data){
-        $array = explode(",",$request->tags);
+    public function insertTags($request, $data)
+    {
+        $array = explode(",", $request->tags);
         $data->retag($array);
-     }
+    }
 
      /**
      * create a keyword post created resource in storage.
@@ -184,7 +198,7 @@ class BlogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-     public function insertKeywords($request,$data){
-
-     }
+    public function insertKeywords($request, $data)
+    {
+    }
 }

@@ -18,7 +18,7 @@ class PreorderController extends Controller
     public function index()
     {
         $data['title'] = 'Preorder';
-        return view('preorder::preorder.index',compact('data'));
+        return view('preorder::preorder.index', compact('data'));
     }
     /**
      *
@@ -47,7 +47,7 @@ class PreorderController extends Controller
             'title' => 'Create Preorder',
             'back' => route('list-preorder.index')
         ];
-        return view('preorder::preorder.create',compact('data'));
+        return view('preorder::preorder.create', compact('data'));
     }
     /**
      * show single pre order

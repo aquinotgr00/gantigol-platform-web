@@ -35,18 +35,19 @@ class BlogApiController extends Controller
      *
      * @return mixed
      */
-    public function getOnePost($id){
-    	$post = $this->blogs
-    	->leftjoin('blog_category','blog_category.id','=','blogs.category_id')
-    	->select('blogs.*','blog_category.name as category_name')
-    	->with('tagged')	
-    	->find($id);
-    	$post->increment('counter');
-    	$data =[
-    		'blog'=>$post
-    	]; 
+    public function getOnePost($id)
+    {
+        $post = $this->blogs
+        ->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
+        ->select('blogs.*', 'blog_category.name as category_name')
+        ->with('tagged')
+        ->find($id);
+        $post->increment('counter');
+        $data =[
+            'blog'=>$post
+        ];
 
-    	return json_encode($data);
+        return json_encode($data);
     }
 
     /**
@@ -54,9 +55,10 @@ class BlogApiController extends Controller
      *
      * @return mixed
      */
-    public function getManyPostWithTag(Request $request,$limit = 20){
-    	$post = $this->blogs->withAnyTag($request->tag)->limit($limit)->orderBy('created_at', 'desc')->get();
-    	return json_encode($post);
+    public function getManyPostWithTag(Request $request, $limit = 20)
+    {
+        $post = $this->blogs->withAnyTag($request->tag)->limit($limit)->orderBy('created_at', 'desc')->get();
+        return json_encode($post);
     }
 
     /**
@@ -64,13 +66,14 @@ class BlogApiController extends Controller
      *
      * @return mixed
      */
-    public function getManyPostWithCategories(Request $request,$name,$limit = 3){
-    	$post = $this->blogs->leftjoin('blog_category','blog_category.id','=','blogs.category_id')
-    	->where('blog_category.name',$name)
-    	->orderBy('blogs.created_at', 'desc')
-    	->limit($limit)
-    	->get();
-    	return json_encode($post);
+    public function getManyPostWithCategories(Request $request, $name, $limit = 3)
+    {
+        $post = $this->blogs->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
+        ->where('blog_category.name', $name)
+        ->orderBy('blogs.created_at', 'desc')
+        ->limit($limit)
+        ->get();
+        return json_encode($post);
     }
 
 
@@ -79,12 +82,12 @@ class BlogApiController extends Controller
      *
      * @return mixed
      */
-    public function getPostAndProductBySearch($key){
-    	$searchResults = (new Search())
-		   ->registerModel(Blog::class, ['title','created_at'])
-		   ->search($key);
+    public function getPostAndProductBySearch($key)
+    {
+        $searchResults = (new Search())
+           ->registerModel(Blog::class, ['title','created_at'])
+           ->search($key);
 
-    	return json_encode($searchResults);
+        return json_encode($searchResults);
     }
-
 }

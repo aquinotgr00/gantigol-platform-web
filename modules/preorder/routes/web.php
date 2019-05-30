@@ -21,5 +21,4 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('shipping-sticker/{batch_id}', 'TransactionController@printShippingSticker')->name('setting-shipping.sticker');
     Route::get('shipping-preview', 'SettingShippingController@preview')->name('setting-shipping.preview');
     Route::post('shipping-sticker', 'SettingShippingController@storeSize')->name('shipping.store-size');
-    
 });

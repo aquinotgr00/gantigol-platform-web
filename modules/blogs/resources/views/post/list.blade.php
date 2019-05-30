@@ -18,7 +18,7 @@
                             </button>
                          </div>
                     </div>
-                      <a class="btn sub-circle my-2 my-sm-0" href="add-product.html" role="button">
+                      <a class="btn sub-circle my-2 my-sm-0" href="{{ Route('blog.post.create')}}" role="button">
                         <img class="add-svg" src="{{asset('vendor/admin/images/Add.svg')}}" alt="add-image">
                       </a>
                   </form>

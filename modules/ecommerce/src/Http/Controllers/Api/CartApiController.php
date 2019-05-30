@@ -55,7 +55,6 @@ class CartApiController extends Controller
         }
         
         foreach ($request->items as $key => $value) {
-
             $valid = Validator::make($value, [
                 'qty' => 'required|numeric',
                 'product_id' => 'required',
@@ -68,13 +67,13 @@ class CartApiController extends Controller
                 return new CartResource($valid->messages());
             }
 
-            $cartItemExist = CartItems::where('cart_id',$cart->id)
-            ->where('product_id',$value['product_id'])
+            $cartItemExist = CartItems::where('cart_id', $cart->id)
+            ->where('product_id', $value['product_id'])
             ->first();
             if (is_null($cartItemExist)) {
                 $value = array_merge($value, ['cart_id' => $cart->id]);
                 $cartItem = CartItems::create($value);
-            }else{
+            } else {
                 $value = array_merge($value, [
                     'qty' => $cartItemExist->qty + $value['qty'],
                     'subtotal' => $cartItemExist->subtotal + $value['subtotal'],

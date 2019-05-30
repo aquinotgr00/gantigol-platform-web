@@ -20,13 +20,13 @@ class Blog extends Model implements Searchable
     protected $fillable = ['title', 'image', 'publish_date', 'category_id','body','created_at','updated_at','deleted_at'];
 
     public function getSearchResult(): SearchResult
-     {
+    {
         $url = route('blog.article', $this->id);
      
          return new \Spatie\Searchable\SearchResult(
-            $this,
-            $this->title,
-            $url
+             $this,
+             $this->title,
+             $url
          );
-     }
+    }
 }

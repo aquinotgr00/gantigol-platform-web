@@ -19,11 +19,11 @@ class CreateCustomerProfilesTable extends Migration
             $table->unsignedInteger('member_discount_id')->nullable();
             $table->string('name');
             $table->string('email')->nullable();
-            $table->string('phone',20);
-            $table->enum('gender',['m', 'f'])->nullable();
+            $table->string('phone', 20);
+            $table->enum('gender', ['m', 'f'])->nullable();
             $table->text('address');
             $table->unsignedInteger('subdistrict_id')->nullable();
-            $table->string('zip_code',6)->nullable();
+            $table->string('zip_code', 6)->nullable();
             $table->date('birthdate');
             $table->datetime('last_login')->nullable();
             $table->timestamps();

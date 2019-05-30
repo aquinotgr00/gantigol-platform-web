@@ -15,7 +15,7 @@ class UpdateTableBLogCounter extends Migration
     {
         if (Schema::hasColumn('blogs', 'counter')) {
             // do nothing
-        }else{
+        } else {
             Schema::table('blogs', function (Blueprint $table) {
                 $table->bigInteger('counter');
             });
@@ -31,7 +31,7 @@ class UpdateTableBLogCounter extends Migration
     {
         if (Schema::hasColumn('blogs', 'counter')) {
             Schema::table('blogs', function (Blueprint $table) {
-               $table->dropColumn('counter');
+                $table->dropColumn('counter');
             });
         }
     }
