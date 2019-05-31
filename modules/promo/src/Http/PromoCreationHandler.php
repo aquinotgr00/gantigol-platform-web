@@ -2,8 +2,7 @@
 
 namespace Modules\Promo;
 
-use Promocodes as promotion;
-use Modules\Promo\Promocode;
+use Modules\Promo\PromoCodeModel;
 class PromoCreationHandler
 {	
 	
@@ -13,10 +12,10 @@ class PromoCreationHandler
      * @return mixed
      */
     public function CreateSinglePromo($request){
-    	return Promocode::create([
+    	return PromoCodeModel::create([
     		'code'=>$request->code,
     		'reward'=>$request->reward,
-    		'data'=>'[]',
+    		'data'=>json_encode([]),
     		'is_disposable'=>1,
     		'expires_at'=>$request->expires_at
     		]);
@@ -30,32 +29,12 @@ class PromoCreationHandler
      */
     public function CreateMultiplePromo($request){
 
-    	return Promocode::create([
+    	return PromoCodeModel::create([
     		'code'=>$request->code,
     		'reward'=>$request->reward,
-    		'data'=>'[]',
+    		'data'=>json_encode([]),
     		'expires_at'=>$request->expires_at
     		]);
     }
 
-    /**
-     * Function creating single promo auto generated code
-     *
-     * @return mixed
-     */
-    public function CreateSinglePromoAuto($request){
-    	return promotion::create(1,$request->reward, [],$request->expires_at);
-
-    }
-
-    /**
-     * Function creating multiple promo auto generated code
-     *
-     * @return mixed
-     */
-    public function CreateMultiplePromoAuto($request){
-
-    	return promotion::createDisposable(1,$request->reward,[],$request->expires_at);
-
-    }
 }

@@ -45,7 +45,7 @@ class PromoController extends Controller
      */
     public function list()
     {   
-        $list =  Promocode::orderBy('created_at','desc')->get();
+        $list =  Promocode::get();
         return Datatables::of($list)
         				 ->addColumn('type', function ($list) {
         				 	$value="Multiple";
@@ -55,7 +55,8 @@ class PromoController extends Controller
                                 return  $value ;
                             })
                              ->addColumn('action', function ($list) {
-                                return  '<a href="'.Route('banner.edit',$list->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>' ;
+                                return  '<a href="'.Route('banner.edit',$list->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
+                                        <a href="'.Route('banner.delete',$list->id).'" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="Delete"></a>' ;
                             })
                             ->make(true);
     }
@@ -78,12 +79,9 @@ class PromoController extends Controller
      * @return mixed
      */
     public function createPromo(Request $request){
-    	$request->validate([
-        'code' => 'required|unique:promocodes|max:255',
-        'reward' => 'required|integer|min:1',
-    	]);
-    	if(empty($request->code)){
+    	if(is_null($request->code)){
     		$result = $this->autoGeneratePromo($request);
+    		return redirect()->route('promo.index');
     	}
     	$result = $this->manualGeneratePromo($request);
 
@@ -99,13 +97,13 @@ class PromoController extends Controller
     {
     	switch ($request->type) {
 			    case "single":
-			        $result = $this->creation->CreateSinglePromoAuto($request);
+			        $result = $this->creation->createSinglePromoAuto($request);
 			        break;
 			    case "multiple":
-			       	$result = $this->creation->CreateMultiplePromoAuto($request);
+			       	$result = $this->creation->createMultiplePromoAuto($request);
 			        break;
 			    default:
-			    $result = $result = $this->creation->CreateMultiplePromoAuto($request);
+			     $result = $this->creation->createMultiplePromoAuto($request);
 			}
 
     }
@@ -119,13 +117,13 @@ class PromoController extends Controller
     {
     	switch ($request->type) {
 			    case "single":
-			        $result = $this->creation->CreateSinglePromo($request);
+			        $result = $this->creation->createSinglePromo($request);
 			        break;
 			    case "multiple":
-			       	$result = $this->creation->CreateMultiplePromo($request);
+			       	$result = $this->creation->createMultiplePromo($request);
 			        break;
 			    default:
-			    $result = $result = $this->creation->CreateMultiplePromo($request);
+			    $result = $this->creation->createMultiplePromo($request);
 			}
 
     }
