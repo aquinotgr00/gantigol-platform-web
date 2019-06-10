@@ -8,6 +8,8 @@ Route::get('/post/list', 'BlogController@list')->name('blog.post.list');
 Route::post('/post/store', 'BlogController@store')->name('blog.post.store');
 Route::post('/post/update', 'BlogController@update')->name('blog.post.update');
 Route::post('/post/publish/{id}', 'BlogController@publish')->name('blog.post.publish');
+Route::get('/post/hide/{id}', 'BlogController@hide')->name('blog.post.hide');
+Route::get('/post/show/{id}', 'BlogController@show')->name('blog.post.show');
 
 
 //blogcategory

@@ -63,8 +63,20 @@ class BlogController extends Controller
                                 return $published;
                             })
                              ->addColumn('action', function ($blogs) {
+                                $data=[
+                                        'button'=>'hide-table',
+                                        'route'=>Route('blog.post.show', $blogs->id),
+                                        'title' => 'Show On Website'
+                                    ];
+                                if($blogs->show == "show"){
+                                    $data=[
+                                        'button'=>'show-table',
+                                        'route'=>Route('blog.post.hide', $blogs->id),
+                                        'title' => 'Hide On Website'
+                                    ];
+                                }
                                 return  '<a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
-                                        <a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table show-table" data-toggle="tooltip" data-placement="top" title="Hide On Website"></a>';
+                                        <a href="'.$data["route"].'" class="btn btn-table circle-table '.$data["button"].'" data-toggle="tooltip" data-placement="top" title="'.$data['title'].'"></a>';
                              })
                             ->make(true);
     }
@@ -115,7 +127,7 @@ class BlogController extends Controller
             'title' => 'required',
             'category_id' => 'required',
         ]);
-        $blog = $this->blogs->create($request->except(['id','_token','tags','keywords']));
+        $blog = $this->blogs->create($request->except(['id','_token','tags']));
         if ($request->has('tags')) {
             $this->insertTags($request, $blog);
         }
@@ -138,7 +150,7 @@ class BlogController extends Controller
             'title' => 'required',
             'category_id' => 'required',
         ]);
-        $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags','keywords']));
+        $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags']));
         $blog = $this->blogs->where('id', $request->id)->first();
         if ($request->has('tags')) {
             $this->insertTags($request, $blog);
@@ -166,15 +178,12 @@ class BlogController extends Controller
         ]);
         $request->request->add(['publish_date' => Carbon::now()]);
         if (!empty($id)) {
-            $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags','keywords']));
+            $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags']));
             $blog = $this->blogs->where('id', $request->id)->first();
         }
         
         if ($request->has('tags')) {
             $this->insertTags($request, $blog);
-        }
-        if ($request->has('keywords')) {
-            $this->insertKeywords($request, $blog);
         }
         $request->session()->flash('message', 'Post has been published');
         return redirect()->route('blog.index');
@@ -192,13 +201,30 @@ class BlogController extends Controller
         $data->retag($array);
     }
 
-     /**
-     * create a keyword post created resource in storage.
+    /**
+     * hide a  post  from frontend.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return void
+     * @return \Illuminate\Http\Response
      */
-    public function insertKeywords($request, $data)
+    public function hide( $id )
     {
+       $blog = $this->blogs->find($id);
+       $blog->show = "hide";
+       $blog->save();
+        return redirect()->route('blog.index');
+    }
+    /**
+     * hide a  post  from frontend.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function show( $id )
+    {
+       $blog = $this->blogs->find($id);
+       $blog->show = "show";
+       $blog->save();
+        return redirect()->route('blog.index');
     }
 }

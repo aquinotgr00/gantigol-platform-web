@@ -459,6 +459,11 @@ img .add-svg{
 	background-position: center;
 	background-repeat: no-repeat;
 }
+.hide-table{
+	background-image: url(../images/hide-hover.svg);
+	background-position: center;
+	background-repeat: no-repeat;
+}
 .show-table:hover{
 	background-image: url(../images/hide-hover.svg);
 	background-position: center;

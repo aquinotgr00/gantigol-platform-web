@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDescriptionToContentsTable extends Migration
+class UpdateBlogsShow extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddDescriptionToContentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('contents', function (Blueprint $table) {
-            $table->string('description')->nullable()->after('title')->change();
+        Schema::table('blogs', function (Blueprint $table) {
+            $table->string('show')->default('show');
         });
     }
 
@@ -25,8 +25,10 @@ class AddDescriptionToContentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('contents', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('blogs', 'show')) {
+            Schema::table('blogs', function (Blueprint $table) {
+                $table->dropColumn('show');
+            });
+        }
     }
 }

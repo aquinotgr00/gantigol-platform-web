@@ -8,6 +8,7 @@ use Promocodes;
 use Modules\Promo\Promocode;
 use Modules\Promo\PromoCreationHandler;
 use Yajra\Datatables\Datatables;
+use Carbon\Carbon;
 
 class PromoController extends Controller
 {
@@ -55,8 +56,11 @@ class PromoController extends Controller
                                 return  $value ;
                             })
                              ->addColumn('action', function ($list) {
-                                return  '<a href="'.Route('banner.edit',$list->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
-                                        <a href="'.Route('banner.delete',$list->id).'" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="Delete"></a>' ;
+                                $active = "disabled";
+                                if(is_null($list->expires_at)){
+                                    $active = "show";
+                                }
+                                return  '<a href="'.Route('promo.delete',$list->code).'"onclick="return confirm(\'Are you sure you want to delete this item\')" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="Delete" ></a>' ;
                             })
                             ->make(true);
     }
@@ -79,6 +83,15 @@ class PromoController extends Controller
      * @return mixed
      */
     public function createPromo(Request $request){
+        $request->validate([
+        'code' => 'required|unique:promocodes|max:255',
+        'reward' => 'required|integer|min:1',
+        ]);
+        if(!is_null($request->expires_at)){
+            $date = strtotime($request->expires_at." 23:59:59");
+            
+            $request->merge(['expires_at' => date('Y-m-d H:i:s', $date)]);
+        }
     	if(is_null($request->code)){
     		$result = $this->autoGeneratePromo($request);
     		return redirect()->route('promo.index');
@@ -126,5 +139,15 @@ class PromoController extends Controller
 			    $result = $this->creation->createMultiplePromo($request);
 			}
 
+    }
+
+    /**
+     * function handling expiring Promo
+     *
+     * @return mixed
+     */
+    public function expiringPromo($code){
+        Promocodes::disable($code);
+        return redirect()->route('promo.index');
     }
 }

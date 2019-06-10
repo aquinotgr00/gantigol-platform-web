@@ -144,4 +144,21 @@ class BannerController extends Controller
       
         return redirect()->route('banner.index');
     }  
+
+    /**
+     * Process list api  request.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listApi($category,$limit)
+    {   
+        $list =  $this->banner->whereNull('banners.deleted_at')
+                ->where('banner_category.name',$category)
+                ->leftjoin('banner_category','banner_category.id','=','banners.placement')
+                ->orderby('banners.created_at','desc')
+                ->select('banners.*','banner_category.name as placement_name')
+                ->limit($limit)
+                ->get();
+        return json_encode($list);
+    }
 }
