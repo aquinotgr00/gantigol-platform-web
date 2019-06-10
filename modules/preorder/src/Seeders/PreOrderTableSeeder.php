@@ -19,5 +19,9 @@ class PreOrderTableSeeder extends Seeder
         $transaction = factory(\Modules\Preorder\Transaction::class, 50)->create();
         DB::table('orders')->truncate();
         $orders = factory(\Modules\Preorder\PreOrdersItems::class, 150)->create();
+        DB::table('production_batches')->truncate();
+        $production = factory(\Modules\Preorder\ProductionBatch::class, 5)->create();
+        DB::table('productions')->truncate();
+        $production = factory(\Modules\Preorder\Production::class, 50)->create();
     }
 }

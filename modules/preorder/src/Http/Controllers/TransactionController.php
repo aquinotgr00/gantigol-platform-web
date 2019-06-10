@@ -130,7 +130,7 @@ class TransactionController extends Controller
             'product' => $preOrder->product,
             'orders' => $orders,
             'data' => [
-                'title' => 'Details Transaction',
+                'title' => $transaction->invoice,
                 'back' => route('pending.transaction',$preOrder->id)
             ]
         ];

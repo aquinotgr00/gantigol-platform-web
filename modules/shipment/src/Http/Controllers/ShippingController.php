@@ -5,7 +5,7 @@ namespace Modules\Shipment\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use \rizalafani\rajaongkirlaravel\RajaOngkir;
+use RajaOngkir;
 use \GuzzleHttp\Client;
 
 use Modules\Shipment\Traits\OrderTrait;
@@ -24,9 +24,27 @@ class ShippingController extends Controller
      *
      * @return void
      */
+    /**
+     * class guzzle for request api rajaongkir
+     *
+     * @var mixed $client
+     */
+    protected $client;
+    /**
+     * Random key string for request api raja ongkir
+     *
+     * @var string $key
+     */
+    protected $key;
+
     public function __construct()
     {
         $this->shipping = new RajaOngkir();
+        
+        $this->client = new Client([
+            'base_uri' => config('shipment.end_point_api','shipment')
+        ]);
+        $this->key      = config('shipment.api_key','shipment');
     }
     /**
      *
@@ -51,15 +69,42 @@ class ShippingController extends Controller
         $destination    = $request->query("d");
         $weight         = $request->query("w");
         $courier        = $request->query("c");
-
-        $cost = $this->shipping->Cost([
-            'origin'=>$origin,
-            'originType'=>'city',
-            'destination'=>$destination,
-            'destinationType'=>'city',
-            'weight'=>$weight,
-            'courier'=>$courier
-        ])->get();
+        
+        if (class_exists('Rajaongkir::Cost')) {
+            $cost = $this->shipping->Cost([
+                'origin'=>$origin,
+                'originType'=>'city',
+                'destination'=>$destination,
+                'destinationType'=>'city',
+                'weight'=>$weight,
+                'courier'=>$courier
+            ])->get();
+        }else{
+            
+            
+            $request->request->add(['origin' => $request->o]);
+            $request->request->add(['destination' => $request->d]);
+            $request->request->add(['weight' => $request->w]);
+            $request->request->add(['courier' => $request->c]);
+            
+            $req = $this->client->request('POST', 'cost', [
+                'headers' => [
+                    'Accept'   => 'application/json',
+                    'key'      => $this->key
+                ],
+                'form_params' => $request->only(
+                    'origin',
+                    'destination',
+                    'weight',
+                    'courier'
+                )
+            ]);
+            
+            $response   = $req->getBody()->getContents();
+            $collection = json_decode($response);
+            return response()->json($collection);
+        }
+        
 
         return response($cost);
     }

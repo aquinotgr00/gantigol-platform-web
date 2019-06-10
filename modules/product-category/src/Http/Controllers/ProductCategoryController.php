@@ -33,7 +33,12 @@ class ProductCategoryController extends Controller
      */
     public function create(ProductCategory $category)
     {
-        return $this->form($category);
+        $data = [
+            'title' => ucwords('add new product categories'),
+            'back' => route('product-categories.index')
+        ];
+        $categories = ProductCategory::all();
+        return view('product-category::nassau.create', compact('data','categories'));
     }
 
     /**
@@ -108,8 +113,13 @@ class ProductCategoryController extends Controller
      * @param  \Modules\ProductCategory\ProductCategory  $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductCategory $productCategory)
+    public function destroy(Request $request,int $id)
     {
-        //
+        $productCategory =  ProductCategory::findOrFail($id); 
+        if ($productCategory->delete()) {
+            return response()->json(['data'=>1]);
+        }else{
+            return response()->json(['data'=>0]);
+        }
     }
 }

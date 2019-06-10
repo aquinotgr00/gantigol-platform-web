@@ -35,31 +35,60 @@
 <hr />
 <!-- start table -->
 <div class="table-responsive">
-    <table class="table" id="dataTable" width="100%" cellspacing="0">
+    <table class="table">
         <thead>
             <tr>
-                <th scope="col">Image</th>
-                <th scope="col">Category</th>
+                <th scope="col">Images</th>
+                <th scope="col">Parent Categories » Category</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
             @foreach($categories as $category)
-
-            <tr class="d-flex">
-                <td class="col-1">
+            <tr>
+                <td>
                     @if($category->image)
                     <img src="{{$category->image->getUrl() }}" class="img-thumbnail">
                     @endif
                 </td>
-                <td class="col-9">{{$category->name}}</td>
-                <td class="col-2">
-                    @smallRoundButton(['icon'=>'fa-pen','title'=>'Edit','route'=>route('product-categories.edit',['category'=>$category])])
+                <td>
+                    @if($category->subcategory->count() > 0)
+
+                    @php
+                    $subs = [];
+                    foreach($category->subcategory as $key => $value){
+                    if($key == 0){
+                    if(isset($category->parentCategory->id)){
+                    $subs[] = $category->parentCategory->name;
+                    }
+                    $subs[] = $category->name;
+                    }
+                    $subs[] = $value->name;
+                    }
+                    $subcategory = implode(' » ',$subs);
+                    echo $subcategory;
+                    @endphp
+
+                    @else
+                    {{ $category->name }}
+                    @endif
+                </td>
+                <td>
+                    @if(is_null($category->checkIfHasOneItem))
+
+                    <a href="{{ route('product-categories.edit',['category'=>$category]) }}"
+                        class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top"
+                        title="" data-original-title="Edit"></a>
+
+                    <a href="#" onclick="deleteItem({{ $category->id }})"
+                        class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top"
+                        title="" data-original-title="Delete"></a>
+
+                    @endif
                 </td>
             </tr>
             @endforeach
         </tbody>
-
     </table>
 </div>
 <!-- end table -->
@@ -68,6 +97,25 @@
 
 @push('scripts')
 <script>
+
+    function deleteItem(id) {
+
+        if (confirm('Are u sure?')) {
+            $.ajax({
+                url: '{{ url("admin/product-categories") }}/' + id,
+                type: 'DELETE',
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.data == 1) {
+                        window.location.href = "{{ route('product-categories.index')  }}";
+                    }
+                }
+            });
+        }
+    }
 
 </script>
 @endpush

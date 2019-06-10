@@ -8,6 +8,7 @@ use Modules\Product\Product;
 use Modules\Product\ProductVariant;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Auth;
 
 class AdjustmentController extends Controller
 {
@@ -72,7 +73,7 @@ class AdjustmentController extends Controller
         $input = $request->all();
         
         $input['type'] = config('inventory.adjustment.type.InventoryAdjustment', 'inventory');
-        
+        $input['users_id'] = Auth::user()->id;
 
         $create = Adjustment::create($input);
 
@@ -83,6 +84,16 @@ class AdjustmentController extends Controller
                 Product::find($variant->product_id)->update(['status' => true]);
             }
         }
+
+        //activity log
+        $user = Auth::user();
+        activity()
+            ->performedOn($variant)
+            ->causedBy($user)
+            ->withProperties([
+                'activity' => ($method == '+')? 'Add Stock' : 'Reduce Stock'
+            ])
+            ->log($request->note);
 
         if ($create) {
             $request->session()->flash('successMessage', 'Variant succesfully adjusted');

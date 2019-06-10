@@ -118,7 +118,7 @@ class CheckoutApiController extends Controller
                         'price' => $value->price
                     ];
                     $itemCart = CartItems::find($value->id);
-                    $itemCart->trashed();
+                    $itemCart->delete();
                 }
             }
 

@@ -20,3 +20,7 @@ Route::get('send-reminder/{id}', 'TransactionController@sendReminder')->name('tr
 Route::get('shipping-sticker/{batch_id}', 'TransactionController@printShippingSticker')->name('setting-shipping.sticker');
 Route::get('shipping-preview', 'SettingShippingController@preview')->name('setting-shipping.preview');
 Route::post('shipping-sticker', 'SettingShippingController@storeSize')->name('shipping.store-size');
+
+Route::get('all-transaction', 'AllTransactionController@index')->name('all-transaction.index');
+Route::get('all-transaction/{id}', 'AllTransactionController@show')->name('all-transaction.show');
+Route::post('ajax/all-transaction', 'AllTransactionController@ajaxAllTransactions')->name('ajax.all-transaction');

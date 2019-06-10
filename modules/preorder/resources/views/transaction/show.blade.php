@@ -20,108 +20,130 @@
 @section('content')
 
 <div class="row">
-    <div class="col">
-        <h4>Shipping Information</h4>
-        <div class="form-group">
-            <strong>Courier Name</strong>
-            <p>
-                {{ (isset($transaction->courier_name))? $transaction->courier_name : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Service Type</strong>
-            <p>
-                {{ (isset($transaction->courier_type))? $transaction->courier_type : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Courier Fee</strong>
-            <p>
-                {{ (isset($transaction->courier_fee))? $transaction->courier_fee : ''   }}
-            </p>
-        </div>
-    </div>
-    <div class="col">
-        <h4>Account Information</h4>
-        <div class="form-group">
-            <strong>Customer Name</strong>
-            <p>
-                {{ (isset($transaction->name))? $transaction->name : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Customer Name</strong>
-            <p>
-                {{ (isset($transaction->name))? $transaction->name : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Email</strong>
-            <p>
-                {{ (isset($transaction->email))? $transaction->email : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Phone</strong>
-            <p>
-                {{ (isset($transaction->phone))? $transaction->phone : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Address</strong>
-            <p>
-                {{ (isset($transaction->address))? $transaction->address : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Postal Code</strong>
-            <p>
-                {{ (isset($transaction->postal_code))? $transaction->postal_code : ''   }}
-            </p>
+    <div class="col-12 col-md-4">
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="card-heading-content">
+                    <div class="clearfix">
+                        <div class="float-left">
+                            <h4>Customer Info</h4>
+                        </div>
+                        <div class="float-right">
+                            <a href="#">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <p>{{ $transaction->name }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <p>{{ $transaction->address }}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Zip Code</label>
+                        <p>{{ $transaction->postal_code }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <p>{{ $transaction->phone }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <p>{{ $transaction->email }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col">
-        <h4>Order Information</h4>
-        <div class="form-group">
-            <strong>Invoice ID</strong>
-            <h4>{{ (isset($transaction->invoice))? $transaction->invoice : ''   }}</h4>
+    <div class="col-12 col-md-4">
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="card-heading-content">
+                    <div class="clearfix">
+                        <div class="float-left">
+                            <h4>Shipping Info</h4>
+                        </div>
+                        <div class="float-right">
+                            <a href="#">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <p>{{ $transaction->name }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <p>{{ $transaction->address }}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Zip Code</label>
+                        <p>{{ $transaction->postal_code }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <p>{{ $transaction->phone }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <strong>Order Product</strong>
-            <h5 class="text-primary">{{ $product->name }}</h5>
-        </div>
-        <div class="form-group">
-            <strong>Status Transaction</strong>
-            <p>
-                {{ (isset($transaction->status))? strtoupper($transaction->status) : ''   }}
-                @if($transaction->status == 'unpaid')
-                <strong class="text-danger">&nbsp;({{ $transaction->payment_reminder }}X Reminder)</strong>
-                @endif
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Order Amount</strong>
-            <p>
-                {{ (isset($transaction->amount))? 'Rp '.number_format($transaction->amount) : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Order Quantity</strong>
-            <p>
-                {{ (isset($transaction->quantity))? $transaction->quantity : ''   }}
-            </p>
-        </div>
-        <div class="form-group">
-            <strong>Notes</strong>
-            <p>
-                {{ (isset($transaction->note))? $transaction->note : ''   }}
-            </p>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="card-heading-content">
+                    <div class="clearfix">
+                        <div class="float-left">
+                            <h4>Shipping Details</h4>
+                        </div>
+                        <div class="float-right">
+                            <a href="#">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                            <a href="#">
+                                <i class="fas fa-shipping-fast"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label>Order Status</label>
+                        <p>{{ ucwords($transaction->status) }}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tracking Number</label>
+                        @if(isset($transaction->getProduction->id))
+                        <p>{{ $transaction->getProduction->tracking_number }}</p>
+                        @else
+                        <p> - </p>
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" style="margin-top:10px;">
     <div class="col">
-        <h4>List Order</h4>
+        
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable">
                 <thead>

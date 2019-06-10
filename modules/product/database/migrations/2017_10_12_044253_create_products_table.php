@@ -23,6 +23,7 @@ class CreateProductsTable extends Migration
             $table->unsignedInteger('category_id')->nullable();
             $table->text('size_codes')->nullable();
             $table->boolean('status')->default(true);
+            $table->boolean('visible')->default(true);
             $table->unsignedInteger('size_id')->nullable();
             $table->timestamps();
             

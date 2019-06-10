@@ -17,7 +17,7 @@ class CreateProductVariantsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('product_id');
             $table->string('variant')->nullable();
-            $table->string('size_code',10);
+            $table->string('size_code',10)->nullable();
             $table->string('sku')->nullable();
             $table->string('image')->nullable();
             $table->text('description')->nullable();

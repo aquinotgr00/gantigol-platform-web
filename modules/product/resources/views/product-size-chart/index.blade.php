@@ -2,10 +2,10 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 @endpush
@@ -30,15 +30,14 @@
     </tool>
 </div>
 <!-- end tools -->
-<hr/>
+<hr>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable">
         <thead>
             <tr>
                 <th scope="col">Image</th>
-                <th scope="col">Name</th>
-                <th scope="col">Codes</th>
+                <th scope="col">Size Chart Name</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -50,42 +49,48 @@
 @push('scripts')
 <script>
 
-    $(document).ready(function () {
-        var datatables = $('#dataTable').DataTable({
-            "ajax": {
-                "url": '{{ route("items-size.index") }}',
-                "type": 'GET'
-            },
-            "order": [[1, "desc"]],
-            "columns": [
-                {
-                    "data": "image",
-                    "render": function (data, type, row) {
-                        if (data == null || data.trim().length == 0) {
-                            return '-';
-                        } else {
-                            
-                            var url = data.replace("public", "storage");
-                            //return '<img src="{{ url("/") }}/' + url + '" style="width:100%;height:100%;" />';
-                            return '<a href="{{ url("/") }}/' + url + '" target="_blank">Preview</a>';
-                        }
-                    }
+    function deleteItem(id) {
+
+        if (confirm('Are u sure?')) {
+            $.ajax({
+                url: '{{ url("admin/product-size-chart") }}/' + id,
+                type: 'DELETE',
+                data: {
+                    "_token": "{{ csrf_token() }}"
                 },
-                {
-                    "data": "name",
-                    "render": function (data, type, row) {
-                        return '<a href="{{ url("admin/product-size-chart") }}/' + row.id + '">'+data+'</a>';
-                    }
-                },
-                { "data": "codes" },
-                {
-                    "data": "id",
-                    "render": function (data, type, row) {
-                        var button = '<a href="{{ url("admin/product-size-chart") }}/'+data+'/edit" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>';
-                        return button;
+                dataType: 'json',
+                success: function (result) {
+                    if (result.data == 1) {
+                        window.location.href = "{{ route('product-size-chart.index')  }}";
                     }
                 }
+            });
+        }
+    }
+
+    $(function () {
+
+        var datatables = $('#dataTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route("datatables.size-chart") }}',
+                method: 'POST',
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                }
+            },
+            columns: [
+                { data: 'image' },
+                { data: 'name' },
+                { data: 'action' },
             ]
+        });
+
+        $('#dataTable_filter').css('display','none');
+
+        $('.search-box').on('keyup', function () {    
+            datatables.search(this.value).draw();
         });
 
     });

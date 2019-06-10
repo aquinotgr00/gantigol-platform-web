@@ -26,6 +26,11 @@ class CartApiController extends Controller
         $cart = Cart::find($id);
         if (!is_null($cart)) {
             $cart->getItems;
+            foreach ($cart->getItems as $key => $value) {
+                if (isset($value->productVariant->product)) {
+                    $value->productVariant->product->name;
+                }
+            }
         } else {
             $validator = Validator::make($request->all(), [
                 'session' => 'required',
@@ -40,6 +45,7 @@ class CartApiController extends Controller
                 ->where('session', $request->session)
             //->where('user_id',$request->user_id)
                 ->get();
+                
         }
 
         return new CartResource($cart);
@@ -81,22 +87,30 @@ class CartApiController extends Controller
         }
 
         foreach ($request->items as $key => $value) {
-
+            
             $valid = Validator::make($value, [
                 'qty' => 'required|numeric',
                 'product_id' => 'required',
                 'price' => 'required',
-                'subtotal' => 'required',
-                'attributes' => 'json',
+                'subtotal' => 'required'
             ]);
 
             if ($valid->fails()) {
                 return new CartResource($valid->messages());
             }
 
-            $cartItemExist = CartItems::where('cart_id', $cart->id)
+            $cartItemExist = null;
+
+            if (isset($value['size_code'])) {
+                $cartItemExist = CartItems::where('cart_id', $cart->id)
+                ->where('product_id', $value['product_id'])
+                ->where('size_code', $value['size_code'])
+                ->first();
+            }else{
+                $cartItemExist = CartItems::where('cart_id', $cart->id)
                 ->where('product_id', $value['product_id'])
                 ->first();
+            }
             if (is_null($cartItemExist)) {
                 $value = array_merge($value, ['cart_id' => $cart->id]);
                 $cartItem = CartItems::create($value);
@@ -110,6 +124,17 @@ class CartApiController extends Controller
         }
 
         $cart->getItems;
+        $total  = 0;
+        $amount_items    = 0;
+        foreach ($cart->getItems as $key => $value) {
+            $amount_items += intval($value->qty);
+            $total += intval($value->subtotal);
+        }
+        $cart->update([
+            'total' => $total,
+            'amount_items' => $amount_items
+        ]);
+
         return new CartResource($cart);
     }
     /**
@@ -123,9 +148,7 @@ class CartApiController extends Controller
     public function update(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
-            'items' => 'array',
-            'total' => 'required',
-            'amount_items' => 'numeric',
+            'items' => 'array'
         ]);
 
         if ($validator->fails()) {
@@ -143,6 +166,18 @@ class CartApiController extends Controller
                 }
             }
         }
+        $total          = 0;
+        $amount_items   = 0;
+        foreach ($cart->getItems as $key => $value) {
+            $amount_items += intval($value->qty);
+            $total += intval($value->subtotal);
+        }
+            
+        $cart->update([
+            'total' => $total,
+            'amount_items' => $amount_items
+        ]);
+        $cart->getItems;
         return new CartResource($cart);
     }
     /**
@@ -164,11 +199,31 @@ class CartApiController extends Controller
             return new CartResource($validator->messages());
         }
 
-        $cartItem = CartItems::find($id);
+        $cartItem   = CartItems::find($id);
+        $cart       = null;
         if (!is_null($cartItem)) {
+            
             $cartItem->update($request->except('_token', '_method'));
+
+            $cart           = Cart::find($cartItem->cart_id);
+            $total          = 0;
+            $amount_items   = 0;
+            foreach ($cart->getItems as $key => $value) {
+                $amount_items += intval($value->qty);
+                $total += intval($value->subtotal);
+            }
+            
+            $cart->update([
+                'total' => $total,
+                'amount_items' => $amount_items
+            ]);
+            
+            $cart->getItems;
+
         }
-        return new CartResource($cartItem);
+        
+        
+        return new CartResource($cart);
     }
     /**
      *
@@ -180,10 +235,10 @@ class CartApiController extends Controller
     {
         $cart = Cart::find($id);
         if (!is_null($cart)) {
-            $cart->trashed();
-            return response()->json('success', 204);
+            $cart->delete();
+            return response()->json(['message'=>200]);
         } else {
-            return response()->json('error', 204);
+            return response()->json(['message'=>204]);
         }
     }
     /**
@@ -196,11 +251,28 @@ class CartApiController extends Controller
     public function deleteItem(Request $request, int $id)
     {
         $cartItem = CartItems::find($id);
-        if (!is_null($cartItem)) {
-            $cartItem->delete();
-            return response()->json('success', 204);
+        if (
+                !is_null($cartItem) &&
+                ($cartItem->delete())
+            ) {
+            
+            $cart   = Cart::find($cartItem->cart_id);
+            $total  = 0;
+            $amount_items   = 0;
+            foreach ($cart->getItems as $key => $value) {
+                $amount_items += intval($value->qty);
+                $total += intval($value->subtotal);
+            }
+                
+            $cart->update([
+                'total' => $total,
+                'amount_items' => $amount_items
+            ]);
+            $cart->getItems;
+            return response()->json(['data'=> $cart,'message'=>200]);
+
         } else {
-            return response()->json('error', 204);
+            return response()->json(['message'=>204]);
         }
     }
     /**

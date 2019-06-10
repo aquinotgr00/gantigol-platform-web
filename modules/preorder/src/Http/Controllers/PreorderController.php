@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Preorder\PreOrder;
 use Modules\Product\Product;
+use Modules\Product\ProductVariantAttribute;
 use Modules\Preorder\Jobs\BulkPaymentReminder;
 
 class PreorderController extends Controller
@@ -47,7 +48,13 @@ class PreorderController extends Controller
             'title' => 'Create Preorder',
             'back' => route('list-preorder.index')
         ];
-        return view('preorder::preorder.create',compact('data'));
+        $categories = [];
+        if (class_exists('\Modules\ProductCategory\ProductCategory')) {
+            $productCategory    = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')->with('subcategories')->get();
+            $categories         = $productCategory;
+        }
+        $variantAttribute = ProductVariantAttribute::all();
+        return view('preorder::preorder.create',compact('variantAttribute','categories','data'));
     }
     /**
      * show single pre order
@@ -84,7 +91,25 @@ class PreorderController extends Controller
      */
     public function edit(int $id)
     {
-        $preOrder = PreOrder::findOrFail($id);
-        return view('preorder::preorder.edit', ['preOrder' => $preOrder]);
+        $preOrder       = PreOrder::findOrFail($id);
+        $product_tags   = Product::with('tagged')->find($preOrder->product_id);
+        $get_tags       = [];
+        foreach ($product_tags->tags as $key => $value) {
+            $get_tags[] = $value->name;
+        }
+        $related_tags   = implode(',',$get_tags);
+        
+        $data = [
+            'title' => $preOrder->name,
+            'back' => route('list-preorder.index') 
+        ];
+        $send = [
+            'preOrder' => $preOrder,
+            'product' => $preOrder->product,
+            'productVariant' => $preOrder->product->variants,
+            'related_tags' => $related_tags,
+            'data' => $data
+        ];
+        return view('preorder::preorder.edit', $send);
     }
 }

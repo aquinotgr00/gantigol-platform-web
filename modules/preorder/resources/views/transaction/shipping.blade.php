@@ -20,6 +20,16 @@
         }
 
     }
+
+    function showModalCourier(obj) {
+        var id = $(obj).attr('id');
+        var name = $(obj).val();
+        $('#ModalInputShippingNumber').modal('show');
+
+        $('input[name="courier_name"]').val(name);
+        $('input[name="production_id"]').val(id);
+    }
+
     $(document).ready(function () {
         var production_json = $('#p-production-json').val();
 
@@ -34,7 +44,12 @@
             "data": selected.get_productions,
             "columns": [
                 { "data": "get_transaction.created_at" },
-                { "data": "get_transaction.invoice" },
+                { 
+                    "data": "get_transaction.invoice",
+                    "render": function(data, type, row){
+                        return '<a href="{{ url('admin/show-transaction') }}/'+row.get_transaction.id+'?preorder={{ $preOrder->id }}">'+data+'</a>';
+                    } 
+                },
                 { "data": "get_transaction.name" },
                 {
                     "data": "get_transaction.orders",
@@ -71,13 +86,19 @@
                         return output;
                     }
                 },
-                { "data": "get_transaction.courier_name" },
+                {
+                    "data": "get_transaction.courier_name",
+                    "render": function (data, type, row) {
+                        var input = '<input type="text" name="courier_name[]" onclick="showModalCourier(this)" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
+                        return input;
+                    }
+                },
                 {
                     "data": "tracking_number",
                     "render": function (data, type, row) {
                         var input = '<div class="input-group-append">';
                         input += "<input type='hidden' value='" + row.id + "' name='production_id[]' />";
-                        input += '<input type="text" onkeyup="inputResi(this)" name="tracking_number[]" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
+                        input += '<input type="text" name="tracking_number[]" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
                         input += '<button class="btn btn-tbl" id="btn-tbl-' + row.id + '" data-toggle="tooltip" data-placement="top" title="" data-original-title="Submit" style="display:none;">';
                         input += '</button></div>';
                         return input;
@@ -111,6 +132,22 @@
             });
 
         });
+
+        $('#form-update-courier').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serializeArray(),
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+
+        });
+
     });
 </script>
 @endpush
@@ -145,27 +182,36 @@
 <!-- end tools -->
 
 <!-- start table -->
-<div class="table-responsive">
-    <table class="table" id="datatable-shipping">
-        <thead>
-            <tr>
-                <th scope="col">Order Date</th>
-                <th scope="col">Invoice ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Variant Quantity</th>
-                <th scope="col">Courier</th>
-                <th scope="col">Tracking Number</th>
-                <th scope="col">Status</th>
+<form  action="{{ route('production.save-shipping-number') }}" method="post">
+    @csrf
+    <input type="hidden" value="{{ $production_batch->id }}" name="batch_id" />
+    <div class="table-responsive">
+        <table class="table" id="datatable-shipping">
+            <thead>
+                <tr>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Invoice ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Variant Quantity</th>
+                    <th scope="col">Courier</th>
+                    <th scope="col">Tracking Number</th>
+                    <th scope="col">Status</th>
 
-            </tr>
-        </thead>
-    </table>
-</div>
-<!-- end table -->
-<hr>
-<div class="float-right mt-3">
-    <a class="btn btn-success ml-4" role="button">Send Tracking Number</a>
-</div>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- end table -->
+    <hr>
+    <div class="float-right mt-3">
+        <button type="submit" class="btn btn-success ml-4" role="button">
+            Send Tracking Number
+        </button>
+    </div>
+</form>
 
 <input type="hidden" id="p-production-json" value="{{ (isset($production_json))? $production_json : '[]' }}" readonly />
+
+@include('preorder::includes.modal-input-shipping-number')
+
 @endsection

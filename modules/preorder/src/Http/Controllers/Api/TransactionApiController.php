@@ -33,7 +33,7 @@ class TransactionApiController extends Controller
         $preOrder    = PreOrder::find($pre_order_id);
         $transaction = array();
         if (isset($preOrder->transaction)) {
-            $transaction = $preOrder->transaction->where('status', 'unpaid');
+            $transaction = $preOrder->transaction->where('status', 'pending');
             foreach ($preOrder->transaction as $key => $value) {
                 $value->orders;
             }
@@ -192,7 +192,7 @@ class TransactionApiController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:transactions,id',
             'pre_order_id' => 'required|exists:pre_orders,id',
-            'status' => 'in:unpaid',
+            'status' => 'in:pending',
             'amount' => 'numeric',
         ]);
         if ($validator->fails()) {
@@ -202,6 +202,15 @@ class TransactionApiController extends Controller
         $transaction->update([
             'status' => 'paid',
         ]);
+        return new TransactionResource($transaction);
+    }
+
+    public function getAll()
+    {
+        $transaction = Transaction::all();
+        foreach($transaction as $key => $value){
+            $value->orders;
+        }
         return new TransactionResource($transaction);
     }
 }

@@ -53,12 +53,13 @@ class ProductionApiController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Production $production
+     * @param int $id
      * @return \Modules\Preorder\Http\Resources\ProductionResource
      */
-    public function show(Production $production)
+    public function show(int $id)
     {
-
+        $production = Production::find($id);
+        $production->getTransaction;
         return new ProductionResource($production);
     }
 
@@ -80,7 +81,7 @@ class ProductionApiController extends Controller
                 ]
             )
         );
-
+        
         return new ProductionResource($production);
     }
 
@@ -179,5 +180,29 @@ class ProductionApiController extends Controller
             $production->update();
         }
         return new ProductionResource($batch);
+    }
+
+    public function updateCourier(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'courier_name' => 'required',
+            'courier_type' => 'required',
+            'courier_fee' => 'numeric',
+            'production_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return new ProductionResource($validator->messages());
+        } 
+        $production         = Production::find($request->production_id);
+        if (isset($production->getTransaction->id)) {
+            $transaction_id     = $production->getTransaction->id;
+            $transaction        = Transaction::find($transaction_id);
+            $transaction->courier_name = $request->courier_name;
+            $transaction->courier_type  = $request->courier_type;
+            $transaction->courier_fee   = $request->courier_fee;
+            $transaction->update();
+        }
+        return new ProductionResource($production);
     }
 }

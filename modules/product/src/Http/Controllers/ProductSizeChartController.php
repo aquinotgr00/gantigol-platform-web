@@ -3,10 +3,11 @@
 namespace Modules\Product\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Modules\Product\Product;
-use Modules\Product\ProductSize;
+use Modules\ProductCategory\ProductCategory;
+use Modules\Product\ProductSizeChart;
 
 class ProductSizeChartController extends Controller
 {
@@ -20,75 +21,44 @@ class ProductSizeChartController extends Controller
     {
         $data['title'] = 'Product Size Chart';
         $data['back'] = route('product-size-chart.index');
-        return view('product::product-size-chart.create', compact('data'));
+        $productCategory = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
+        return view('product::product-size-chart.create', compact('productCategory', 'data'));
     }
 
     public function show(int $id)
     {
-        $productSize = ProductSize::findOrFail($id);
+        $productSize = ProductSizeChart::findOrFail($id);
         $data['title'] = 'Product Size Chart';
         $data['back'] = route('product-size-chart.index');
-        return view('product::product-size-chart.show', compact('productSize','data'));
+        return view('product::product-size-chart.show', compact('productSize', 'data'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required',
-            'codes' => 'required',
         ]);
 
-        $image      = '';
-        $charts     = [];
-        $heading    = [];
+        $productSize = ProductSizeChart::create($request->except('_token'));
 
-        if ($request->has('table')) {
-            $body   = [];
-            foreach ($request->table as $key => $value) {
-                if ($key == 0) {
-                    $heading[] = $value;
-                }else{
-                    $body[] = $value;
-                }
-            }
-            foreach ($body as $key => $value) {
-                $charts[] = array_combine($heading[0],$value);
-            }
-        }
-
-        if ($request->hasFile('image')) {
-            $image = $request->image->store('public/images');
-        }
-
-        $json = json_encode($charts);
-
-        $productSize = ProductSize::create([
-            'name' => $request->name,
-            'codes' => $request->codes,
-            'charts' => $json,
-            'image' => $image
-        ]);
-
-        return redirect()->route('product-size-chart.show', $productSize->id);
+        return redirect()->route('product-size-chart.index');
     }
 
     public function edit(int $id)
     {
-        $productSize = ProductSize::findOrFail($id);
+        $productSize = ProductSizeChart::findOrFail($id);
         $data['title'] = 'Product Size Chart';
         $data['back'] = route('product-size-chart.index');
-        return view('product::product-size-chart.edit', compact('productSize','data'));
+        return view('product::product-size-chart.edit', compact('productSize', 'data'));
     }
 
     public function update(Request $request, int $id)
     {
         $request->validate([
             'name' => 'required',
-            'codes' => 'required',
-            'image' => 'image'
         ]);
 
-        $productSize = ProductSize::findOrFail($id);
+        $productSize = ProductSizeChart::findOrFail($id);
 
         $charts = [];
 
@@ -99,14 +69,14 @@ class ProductSizeChartController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            
+
             $image_path = storage_path($productSize->image);
-            if(File::exists($image_path)) {
+            if (File::exists($image_path)) {
                 File::delete($image_path);
             }
             $image = $request->image->store('public/images');
             $productSize->update([
-                'image' => $image
+                'image' => $image,
             ]);
         }
         if ($charts) {
@@ -118,7 +88,7 @@ class ProductSizeChartController extends Controller
 
         $productSize->update([
             'name' => $request->name,
-            'codes' => $request->codes
+            'codes' => $request->codes,
         ]);
 
         return redirect()->route('product-size-chart.show', $productSize->id);
@@ -126,8 +96,36 @@ class ProductSizeChartController extends Controller
 
     public function destroy(int $id)
     {
-        $productSize = ProductSize::findOrFail($id);
-        $productSize->delete();
-        return redirect()->route('product-size-chart.index');
+        $productSize = ProductSizeChart::findOrFail($id);
+        if ($productSize->delete()) {
+            return response()->json(['data'=>1]);
+        }else{
+            return response()->json(['data'=>0]);
+        }
+    }
+
+    public function getAllDatatables()
+    {
+        $variant = ProductSizeChart::all();
+        return Datatables::of($variant)
+            ->addColumn('name', function ($data) {
+                return '<a href="'.route('product-size-chart.show',$data->id).'">' . $data->name . '</a>';
+            })
+            ->addColumn('image', function ($data) {
+                $image_url = str_replace('public', 'storage', $data->image);
+                $image_url = url($image_url);
+
+                return '<img src="' . $image_url . '" alt="#">';
+            })
+            ->addColumn('action', function ($data) {
+                $button = '<a href="' . route('product-size-chart.edit', $data->id) . '" class="btn btn-table circle-table edit-table"';
+                $button .= 'data-toggle="tooltip" data-placement="top" title="Edit"></a>';
+                $button .= '<button type="button" onclick="deleteItem(' . $data->id . ')" class="btn btn-table circle-table delete-table" data-toggle="tooltip"';
+                $button .= ' data-placement="top" title="Delete"></button>';
+                return $button;
+            })
+            ->rawColumns(['name','image','action'])
+            ->toJson();
+            
     }
 }

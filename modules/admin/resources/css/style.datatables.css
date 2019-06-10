@@ -8,5 +8,16 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .table-responsive {
-    overflow-x: visible; 
+    overflow-x: hidden; 
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+    font-size: 11px;
+}
+.page-link{
+    position: relative;
+    padding: .2rem .75rem;
+    padding-top: 0.2rem;
+    margin-left: -1px;
+    line-height: 1;
 }

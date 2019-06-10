@@ -25,13 +25,12 @@ class ProductApiController extends Controller
      */
     public function index(Request $request)
     {
-        $request->validate([
-            'category_id' => 'exists:pre_orders,id',
-            'cat' => 'array',
-        ]);
         $product = Product::with('variants')
-            ->where('status', 1)
-            ->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate($this->n_pages);
+        ->with('preOrder')
+        ->where('visible',1)
+        ->where('status',1)
+        ->orderBy('created_at', 'desc')
+        ->paginate($this->n_pages);
 
         return new ProductResource($product);
     }
@@ -83,6 +82,14 @@ class ProductApiController extends Controller
                 ]);
             }
         }
+        
+        if (!is_null($Product->images->first())) {
+            $image = $Product->images->first();
+            $image_url = str_replace('public','storage',$image->image);
+            $image_url = url($image_url);
+            $Product->image = $image_url;
+            $Product->update();
+        }
         return new ProductResource($Product);
     }
 
@@ -112,7 +119,7 @@ class ProductApiController extends Controller
                     WHERE NOW() BETWEEN discounts.start_date AND discounts.end_date
                 ) active_discount"),
                     'products.id', '=', 'active_discount.product_id')
-                ->join(DB::raw("(
+                ->leftJoin(DB::raw("(
                     SELECT product_variants.product_id,CAST(SUM(product_variants.quantity_on_hand) AS UNSIGNED) AS stock_all_variants
                     FROM product_variants
                     GROUP BY product_variants.product_id
@@ -212,5 +219,12 @@ class ProductApiController extends Controller
             ]);   
         }
         return response()->json(['data'=>$productImage]);
+    }
+
+    public function showProductVariant(int $id)
+    {
+        $productVariant = ProductVariant::find($id);
+        $productVariant->product;
+        return response()->json($productVariant);
     }
 }
