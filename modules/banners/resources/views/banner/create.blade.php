@@ -15,7 +15,7 @@
             <div class="row pl-3">
               <form class="col-md-6 col-lg7 pl-0" method="post">
                 @csrf
-                <input type="hidden" value="https://source.unsplash.com/aob0ukAYfuI/400x300" name="image">
+                <input type="hidden" id="fieldInputImage" value="" name="image">
                 <div class="form-group">
                   <label for="exampleInputCategoryName">Banner Title</label>
                   <input type="text" class="form-control" name="title" id="exampleInputCategoryName">
@@ -55,145 +55,75 @@
                     <span>400 kb</span></small>
                   </div>
                 
-            </div>
+                </div>
+                @include('banners::component.media-modal')
 @endsection
 
-<!-- Start Modal popup media-->
-<div class="modal fade" id="ModalMediaLibrary" tabindex="-1" role="dialog" aria-labelledby="exampleModalMedia" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title" id="exampleModalLongTitle">Media Library</h1>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body container mt-3">
-        <div class="mb-3">
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#All-Media">All Media</a>
-            </li>
-            <li class="vr"></li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#Add-New-Media">Add New Media</a>
-            </li>
-          </ul>
-        </div>
-        <div class="tab-content">
-          <div id="All-Media" class="tab-pane active">
-            <div class="row">
-              <div class="col">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Categories
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Categories 1</a>
-                  <a class="dropdown-item" href="#">Categories 2</a>
-                  <a class="dropdown-item" href="#">Categories 3</a>
-                  <a class="dropdown-item" href="#">Categories 4</a>
-                </div>
-              </div>
-              <div class="col pgntn">
-                <ul class="pagination hidden-xs pull-right">
-                        <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
-                          <span aria-hidden="true">«</span>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
-                          <span aria-hidden="true">»</span>
-                          <span class="sr-only">Next</span>
-                      </a>
-                    </li>
-                    <li class="page-item">of 3</li>
-                      </ul>
-              </div>
-              
-            </div>
-            
-            <div class="row mt-1">
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/pWkk7iiCoDM/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/aob0ukAYfuI/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/EUfxH-pze7s/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/M185_qYH8vg/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/sesveuG_rNo/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/AvhMzHwiE_0/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/2gYsZUmockw/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/EMSDtjVHdQ8/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-            </div>
-            <div class="modal-footer mt-1">
-              <button type="button" class="btn btn-success">Submit</button>
-            </div>
-            
-          </div>
-          <div id="Add-New-Media" class="tab-pane">
-            <div id="dropzone">
-              <form class="dropzone dropzone-media needsclick dz-clickable" id="demo-upload" action="/upload">
-                <div class="message-dz">
-                  <h1>Drop Files To Upload</h1>
-                  <p>or click to browse</p>
-                </div>
-                <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
-              </form>
-            </div>
-            <div class="float-right mt-3">
-              <button type="submit" class="btn btn-success" formaction="#">Upload</button>
-            </div>
-          </div>
-        </div>
 
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- End Modal popup media-->
 
     
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+   //pagination
+                    $(function() {
+                        $("#loading-render").hide();
+
+                        $('body').on('click', '.pagination a', function(e) {
+                            e.preventDefault();
+                            $("#loading-render").show();
+                            $(".loaded-media").hide();
+                            var url = $(this).attr('href');  
+                            getMedia(url);
+                            window.history.pushState("", "", url);
+                        });
+
+                        function getMedia(url) {
+                            $.ajax({
+                                url : url  
+                            }).done(function (data) {
+                                $("#loading-render").hide();
+                                $(".loaded-media").show();
+                                $('.list-media').html(data);  
+                            }).fail(function () {
+                                $("#loading-render").hide();
+                                $(".loaded-media").show();
+                                alert('Media could not be loaded.');
+                            });
+                        }
+                    });
+  $('body').on('click', '.list-media-picker', function(e) {
+    $('.list-media-picker').removeClass( "pickedImage" )
+    $(this).addClass( "pickedImage" )
+    
+  })
+  $('body').on('click', '#buttonSelectImage', function(e) {
+    $('#fieldInputImage').val($('.pickedImage').data('src'))
+    $('.add-img-featured').attr({ "src": $('.pickedImage').data('src') })
+  })
+</script>
+<script>
+      var uploadedDocumentMap = {}
+//dropzone upload
+Dropzone.options.documentDropzone = {
+  url: '{{ route('projects.storeMedia') }}',
+  maxFilesize: 2, // MB
+  addRemoveLinks: true,
+  headers,
+  success: function (file, response) {
+    $('form').append('<input type="hidden" name="document[]" value="' + response.name + '">')
+    uploadedDocumentMap[file.name] = response.name
+  },
+  removedfile: function (file) {
+    file.previewElement.remove()
+    let name = ''
+    if (typeof file.file_name !== 'undefined') {
+      name = file.file_name
+    } else {
+      name = uploadedDocumentMap[file.name]
+    }
+    $('form').find('input[name="document[]"][value="' + name + '"]').remove()
+  }
+
+}
 @endpush

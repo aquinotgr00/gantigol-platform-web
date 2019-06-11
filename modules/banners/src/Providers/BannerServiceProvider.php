@@ -30,6 +30,7 @@ class BannerServiceProvider extends ServiceProvider
         $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadRoutes($router);
+        $this->loadRoutesApi($router);
         $this->loadViews();
         $this->loadMigrationsAndFactories($factory);
     }
@@ -64,7 +65,17 @@ class BannerServiceProvider extends ServiceProvider
                    $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
                });
     }
-
+    /**
+     * Register API  routes.
+     */
+    private function loadRoutesApi(Router $router): void
+    {
+         $router->prefix(config('banners.api', 'api/banners'))
+               ->namespace('Modules\Banners\Http\Controllers')
+               ->group(function () {
+                   $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
+               });
+    }
     /**
      * Register any load view Banner.
      *

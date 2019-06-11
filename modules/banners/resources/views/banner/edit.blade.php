@@ -15,7 +15,7 @@
             <div class="row pl-3">
               <form class="col-md-6 col-lg7 pl-0" method="post">
                 @csrf
-                <input type="hidden" value="{{$result->image}}" name="image">
+                <input type="hidden" id="fieldInputImage" value="{{$result->image}}" name="image">
                 <div class="form-group">
                   <label for="exampleInputCategoryName">Banner Title</label>
                   <input type="text" class="form-control" name="title"  value="{{$result->title}}" id="exampleInputCategoryName">
@@ -47,7 +47,7 @@
                     <label for="exampleFormControlSelect1">Featured Images</label>
                     <div class="mb-2"> 
                       <a href="#" data-toggle= modal role="button" data-target="#ModalMediaLibrary">
-                        <img class="img-fluid img-thumbnail add-img-featured"  src="{{asset('vendor/admin/images/image-plus.svg')}}" alt="" @if(!empty($result->image)) style="background-image:url({{$result->image}})" @endif>
+                        <img class="img-fluid img-thumbnail add-img-featured"  src="{{asset('vendor/admin/images/image-plus.svg')}}" alt="" @if(!empty($result->image)) style="background-image:url({{$result->image}});background-size: contain;background-repeat: no-repeat;" @endif>
                         
                       </a>
                     </div>
@@ -114,58 +114,10 @@
               
             </div>
             
-            <div class="row mt-1">
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/pWkk7iiCoDM/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/aob0ukAYfuI/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/EUfxH-pze7s/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/M185_qYH8vg/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/sesveuG_rNo/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/AvhMzHwiE_0/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/2gYsZUmockw/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-                    <div class="col-md-3">
-                      <a href="#" class="h-100">
-                        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/EMSDtjVHdQ8/400x300" alt="">
-                      </a>
-                      <p class="mt-2 mb-4">asascacadc.jpg</p>
-                    </div>
-            </div>
+            <img  id="loading-render" class="center-block"src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" />
+            @include('banners::component.media-list-pagination')
             <div class="modal-footer mt-1">
-              <button type="button" class="btn btn-success">Submit</button>
+              <button type="button" id="buttonSelectImage" class="btn btn-success">Submit</button>
             </div>
             
           </div>
@@ -196,4 +148,44 @@
     
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+   //pagination
+                    $(function() {
+                        $("#loading-render").hide();
+
+                        $('body').on('click', '.pagination a', function(e) {
+                            e.preventDefault();
+                            $("#loading-render").show();
+                            $(".loaded-media").hide();
+                            var url = $(this).attr('href');  
+                            getMedia(url);
+                            window.history.pushState("", "", url);
+                        });
+
+                        function getMedia(url) {
+                            $.ajax({
+                                url : url  
+                            }).done(function (data) {
+                                $("#loading-render").hide();
+                                $(".loaded-media").show();
+                                $('.list-media').html(data);  
+                            }).fail(function () {
+                                $("#loading-render").hide();
+                                $(".loaded-media").show();
+                                alert('Media could not be loaded.');
+                            });
+                        }
+                    });
+  $('body').on('click', '.list-media-picker', function(e) {
+    $('.list-media-picker').removeClass( "pickedImage" )
+    $(this).addClass( "pickedImage" )
+    
+  })
+  $('body').on('click', '#buttonSelectImage', function(e) {
+    console.log('close')
+     $('#ModalMediaLibrary').modal('toggle');
+    $('#fieldInputImage').val($('.pickedImage').data('src'))
+    $('.add-img-featured').attr({ "src": $('.pickedImage').data('src') })
+  })
+</script>
 @endpush

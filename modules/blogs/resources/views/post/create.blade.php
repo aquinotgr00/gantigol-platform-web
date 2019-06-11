@@ -19,7 +19,7 @@
                 @csrf
                 <div class="form-group">
                   <label for="exampleInputCategoryName">Blog Title</label>
-                  <input type="hidden" name="image" value="">
+                  <input type="hidden" id="fieldInputImage" name="image" value="">
                   <input type="text" name="title" class="form-control" id="exampleInputCategoryName">
                   @if($errors->has('title'))
                   <small class="text-red">{{$errors->first('title')}}</small>
@@ -58,15 +58,20 @@
                   <button type="submit" class="btn btn-outline-secondary" formaction="{{Route('blog.post.store')}}">Save As Draft</button>
                 </div>
               </form>
-                <div id="dropzone" class="col-md-4 col-lg-5 pl-5 grs">
-                  <div class="form-group">
-                    <label for="exampleFormControlSelect1">Featured Image</label>
-                    <form class="dropzone needsclick" id="demo-upload" action="/upload">
-                    </form>
+                <div class="col-md-4 col-lg-5 pl-5 grs">
+                  <div class="mb-4">
+                    <label for="exampleFormControlSelect1">Featured Images</label>
+                    <div class="mb-2">
+                      <a href="#" data-toggle= modal role="button" data-target="#ModalMediaLibrary">
+                        <img class="img-fluid img-thumbnail add-img-featured" src="{{asset('vendor/admin/images/image-plus.svg')}}" alt="">
+                        
+                      </a>
+                    </div>
                     <small><span>Image size must be 1920x600 with maximum file size</span>
                     <span>400 kb</span></small>
                   </div>
-            </div>
+                
+                </div>
             
             <!-- end form -->
           </div>
@@ -74,7 +79,7 @@
       </div> 
     </div>
 @endsection
-
+@include('banners::component.media-modal')
 @push('scripts')
  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
  <script src="{{asset('vendor/product/js/bootstrap-tagsinput.js')}}"></script>
@@ -189,4 +194,44 @@
           }
         });
       </script>
+<!-- start paginationscript -->
+<script type="text/javascript">
+   //pagination
+                    $(function() {
+                        $("#loading-render").hide();
+
+                        $('body').on('click', '.pagination a', function(e) {
+                            e.preventDefault();
+                            $("#loading-render").show();
+                            $(".loaded-media").hide();
+                            var url = $(this).attr('href');  
+                            getMedia(url);
+                            window.history.pushState("", "", url);
+                        });
+
+                        function getMedia(url) {
+                            $.ajax({
+                                url : url  
+                            }).done(function (data) {
+                                $("#loading-render").hide();
+                                $(".loaded-media").show();
+                                $('.list-media').html(data);  
+                            }).fail(function () {
+                                $("#loading-render").hide();
+                                $(".loaded-media").show();
+                                alert('Media could not be loaded.');
+                            });
+                        }
+                    });
+  $('body').on('click', '.list-media-picker', function(e) {
+    $('.list-media-picker').removeClass( "pickedImage" )
+    $(this).addClass( "pickedImage" )
+    
+  })
+  $('body').on('click', '#buttonSelectImage', function(e) {
+    $('#fieldInputImage').val($('.pickedImage').data('src'))
+    $('.add-img-featured').attr({ "src": $('.pickedImage').data('src') })
+  })
+</script>
+<!-- end paginationscript -->
 @endpush

@@ -1,5 +1,6 @@
 <?php
 
 return [
-			'prefix' => 'banner',
+		'prefix' => 'banner',
+		'api'=>'api/banners',
 ];

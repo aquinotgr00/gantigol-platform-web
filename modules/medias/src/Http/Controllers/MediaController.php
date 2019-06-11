@@ -73,7 +73,7 @@ class MediaController extends Controller
         $media = $this->medias->getMediaPaginate();
         $category = $this->getCategory();
         if ($request->ajax()) {
-            return view('medias::media-library-list', compact('media'))->render();
+            return view('banners::media-list-pagination', compact('media'))->render();
         }
  
         return view('medias::media-library-ori', compact('category', 'media'));

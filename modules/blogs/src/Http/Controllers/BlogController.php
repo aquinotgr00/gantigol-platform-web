@@ -6,13 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Blogs\BlogCategory;
 use Modules\Blogs\Blog;
+use Modules\Medias\Content;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
 
 class BlogController extends Controller
 {
 
-
+    /**
+     * Create a new parameter.
+     *
+     * @var mixed medias
+     */
+    protected $medias;  
     /**
      * Create a new parameter.
      *
@@ -25,9 +31,10 @@ class BlogController extends Controller
      *
      * @return void
      */
-    public function __construct(Blog $blogs)
+    public function __construct(Content $mediaModel, Blog $blogs)
     {
         $this->blogs = $blogs;
+        $this->medias = $mediaModel;
     }
 
     /**
@@ -93,7 +100,8 @@ class BlogController extends Controller
             'back' => route('blog.index')
         ];
         $categories = BlogCategory::all();
-        return view('blogs::post.create', compact('categories', 'data'));
+        $media = $this->medias->getMediaPaginate();
+        return view('blogs::post.create', compact('categories', 'data','media'));
     }
 
     /**
@@ -110,9 +118,10 @@ class BlogController extends Controller
         ];
         $categories = BlogCategory::all();
         $post = $this->blogs->where('id', $id)->first();
+        $media = $this->medias->getMediaPaginate();
         $data['title'] = 'Edit Post '.$post->title;
         $tags = $post->tagNames();
-        return view('blogs::post.edit', compact('post', 'categories', 'tags', 'id', 'data'));
+        return view('blogs::post.edit', compact('post', 'categories', 'tags', 'id', 'data','media'));
     }
 
     /**
@@ -130,9 +139,6 @@ class BlogController extends Controller
         $blog = $this->blogs->create($request->except(['id','_token','tags']));
         if ($request->has('tags')) {
             $this->insertTags($request, $blog);
-        }
-        if ($request->has('keywords')) {
-            $this->insertKeywords($request, $blog);
         }
         $request->session()->flash('message', 'Post has been created');
         return redirect()->route('blog.index');
@@ -154,9 +160,6 @@ class BlogController extends Controller
         $blog = $this->blogs->where('id', $request->id)->first();
         if ($request->has('tags')) {
             $this->insertTags($request, $blog);
-        }
-        if ($request->has('keywords')) {
-            $this->insertKeywords($request, $blog);
         }
         $request->session()->flash('message', 'Post has been updated');
         return redirect()->route('blog.post.edit', $request->id);

@@ -6,13 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Banners\Banner;
 use Modules\Banners\BannerCategory;
+use Modules\Medias\Content;
 use Illuminate\Support\Collection;
 use Yajra\Datatables\Datatables;
 
 
 class BannerController extends Controller
 {
-    
+    /**
+     * Create a new parameter.
+     *
+     * @var mixed medias
+     */
+    protected $medias;   
     /**
      * Create a new parameter.
      *
@@ -31,10 +37,11 @@ class BannerController extends Controller
      *
      * @return void
      */
-    public function __construct(Banner $banner,BannerCategory $banner_category)
+    public function __construct(Content $mediaModel, Banner $banner,BannerCategory $banner_category)
     {
         $this->banner = $banner;
         $this->banner_category = $banner_category;
+        $this->medias = $mediaModel;
     }
 	/**
      * view function Banner list.
@@ -55,8 +62,9 @@ class BannerController extends Controller
      */
     public function indexCreate(){
     	$data['title'] = "Create Banner";
+        $media = $this->medias->getMediaPaginate();
     	$category = $this->banner_category->get();
-    	return view('banners::banner.create',compact('data','category'));
+    	return view('banners::banner.create',compact('data','category','media'));
     }
 
     /**
@@ -70,9 +78,10 @@ class BannerController extends Controller
             'title' => ucwords('Update Banner'),
             'back' => route('banner.index')
         ];
+        $media = $this->medias->getMediaPaginate();
     	$category = $this->banner_category->get();
     	$result = $this->banner->find($id);
-    	return view('banners::banner.edit',compact('data','category','result'));
+    	return view('banners::banner.edit',compact('data','category','result','media'));
     }
 
     /**
@@ -105,6 +114,8 @@ class BannerController extends Controller
         $request->validate([
             'title' => 'required',
             'placement' => 'required',
+            'url'=>'required',
+            'image'=>'required',
             'sequence'=>'required'
         ]);
 
