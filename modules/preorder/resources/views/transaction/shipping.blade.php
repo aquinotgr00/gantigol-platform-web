@@ -2,14 +2,12 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="https://cdn.datatables.net/select/1.3.0/css/select.bootstrap4.min.css" rel="stylesheet">
-
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.select.min.js') }}"></script>
 <script>
     function inputResi(obj) {
         var id = $(obj).attr('id');
@@ -20,6 +18,20 @@
         }
 
     }
+
+    function showModalCourier(obj) {
+        var id              = $(obj).attr('id');
+        var courier_name    = $(obj).attr('placeholder');
+        var courier_type    = $(obj).data('type');
+        var courier_fee     = $(obj).data('fee');
+        $('#ModalInputShippingNumber').modal('show');
+
+        $('input[name="courier_name"]').val(courier_name);
+        $('input[name="courier_type"]').val(courier_type);
+        $('input[name="courier_fee"]').val(courier_fee);
+        $('input[name="production_id"]').val(id);
+    }
+
     $(document).ready(function () {
         var production_json = $('#p-production-json').val();
 
@@ -30,11 +42,16 @@
         $('#heading-status').text(selected.status.toUpperCase());
 
 
-        $('#datatable-shipping').DataTable({
+        var dataTable = $('#datatable-shipping').DataTable({
             "data": selected.get_productions,
             "columns": [
                 { "data": "get_transaction.created_at" },
-                { "data": "get_transaction.invoice" },
+                { 
+                    "data": "get_transaction.invoice",
+                    "render": function(data, type, row){
+                        return '<a href="{{ url('admin/show-transaction') }}/'+row.get_transaction.id+'?preorder={{ $preOrder->id }}">'+data+'</a>';
+                    } 
+                },
                 { "data": "get_transaction.name" },
                 {
                     "data": "get_transaction.orders",
@@ -46,7 +63,13 @@
                         var qty_n = 0;
                         var output = "";
                         $.each(data, function (key, val) {
-                            switch (val.size) {
+                            var size_code = val.product_variant.size_code;
+                            
+                            if (size_code.length > 0) {
+                                size_code = size_code.toLowerCase();
+                            }
+                                
+                            switch (size_code) {
                                 case 's':
                                     qty_s += parseInt(val.qty);
                                     break;
@@ -71,13 +94,26 @@
                         return output;
                     }
                 },
-                { "data": "get_transaction.courier_name" },
+                {
+                    "data": "get_transaction.courier_name",
+                    "render": function (data, type, row) {
+                        
+                        var input = '<input type="text" name="courier_name[]"';
+                        input += ' onclick="showModalCourier(this)" ';
+                        input +=' class="form-control form-table form-success"';
+                        input +=' id="' + row.id + '"';
+                        input +=' data-fee="' + row.get_transaction.courier_fee + '"';
+                        input +=' data-type="' + row.get_transaction.courier_type + '"';
+                        input +=' placeholder="' + data + '">';
+                        return input;
+                    }
+                },
                 {
                     "data": "tracking_number",
                     "render": function (data, type, row) {
                         var input = '<div class="input-group-append">';
                         input += "<input type='hidden' value='" + row.id + "' name='production_id[]' />";
-                        input += '<input type="text" onkeyup="inputResi(this)" name="tracking_number[]" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
+                        input += '<input type="text" name="tracking_number[]" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
                         input += '<button class="btn btn-tbl" id="btn-tbl-' + row.id + '" data-toggle="tooltip" data-placement="top" title="" data-original-title="Submit" style="display:none;">';
                         input += '</button></div>';
                         return input;
@@ -111,6 +147,27 @@
             });
 
         });
+
+        $('#form-update-courier').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serializeArray(),
+                dataType: "json",
+                cache: false,
+                success: function (res) {
+                    if (res.data.id > 0) {
+                        $('#ModalInputShippingNumber').modal('hide');
+                    }else{
+                        alert('Error! failed to update courier');
+                    }
+                    location.reload();
+                }
+            });
+
+        });
+
     });
 </script>
 @endpush
@@ -145,27 +202,36 @@
 <!-- end tools -->
 
 <!-- start table -->
-<div class="table-responsive">
-    <table class="table" id="datatable-shipping">
-        <thead>
-            <tr>
-                <th scope="col">Order Date</th>
-                <th scope="col">Invoice ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Variant Quantity</th>
-                <th scope="col">Courier</th>
-                <th scope="col">Tracking Number</th>
-                <th scope="col">Status</th>
+<form  action="{{ route('store-shipping-number') }}" method="post">
+    @csrf
+    <input type="hidden" value="{{ $production_batch->id }}" name="batch_id" />
+    <div class="table-responsive">
+        <table class="table" id="datatable-shipping">
+            <thead>
+                <tr>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Invoice ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Variant Quantity</th>
+                    <th scope="col">Courier</th>
+                    <th scope="col">Tracking Number</th>
+                    <th scope="col">Status</th>
 
-            </tr>
-        </thead>
-    </table>
-</div>
-<!-- end table -->
-<hr>
-<div class="float-right mt-3">
-    <a class="btn btn-success ml-4" role="button">Send Tracking Number</a>
-</div>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- end table -->
+    <hr>
+    <div class="float-right mt-3">
+        <button type="submit" class="btn btn-success ml-4" role="button">
+            Send Tracking Number
+        </button>
+    </div>
+</form>
 
 <input type="hidden" id="p-production-json" value="{{ (isset($production_json))? $production_json : '[]' }}" readonly />
+
+@include('preorder::includes.modal-input-shipping-number')
+
 @endsection

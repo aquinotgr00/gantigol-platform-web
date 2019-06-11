@@ -80,4 +80,13 @@ class Product extends Model
         $nextId = $statement[0]->Auto_increment;
         return $nextId;
     }
+
+    public function preOrder()
+    {
+        $data = null;
+        if (class_exists('\Modules\Preorder\PreOrder')) {
+            $data = $this->hasOne('\Modules\Preorder\PreOrder','product_id','id');
+        }
+        return $data;
+    }
 }

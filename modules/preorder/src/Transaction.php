@@ -76,7 +76,7 @@ class Transaction extends Model
      */
     public static function getToReminder(int $interval)
     {
-        return static::where('status', 'unpaid')
+        return static::where('status', 'pending')
             ->where('payment_reminder', '<=', $interval)
             ->get();
     }

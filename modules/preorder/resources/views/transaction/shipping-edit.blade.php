@@ -66,20 +66,7 @@
                 {
                     "data": "get_transaction.courier_name",
                     "render": function (data, type, row) {
-                        var status = ['jne', 'jnt', 'pahala', 'wahana', 'pos'];
-                        var select = "<select name='courier[]'>";
-                        $.each(status, function (key, val) {
-                            console.log(data);
-                            if (data == val) {
-                                select += "<option value='" + val + "' selected>";
-                            } else {
-                                select += "<option value='" + val + "'>";
-                            }
-                            select += val.toUpperCase();
-                            select += "</option>";
-                        });
-                        select += "</select>";
-                        return select;
+                       return data;
                     }
                 },
                 {

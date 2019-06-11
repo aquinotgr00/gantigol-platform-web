@@ -60,6 +60,7 @@ class CustomerApiController extends Controller
         
         $customer = CustomerProfile::create([
             'name' => $request->name,
+            'email' => $request->email,
             'address' => $request->address,
             'subdistrict_id' => $request->subdistrict_id,
             'birthdate' => $request->birthdate,
@@ -84,10 +85,7 @@ class CustomerApiController extends Controller
         }
         try {
             $customer = CustomerProfile::findOrFail($id);
-            foreach ($request->all() as $key => $value) {
-                $customer->$key = $value;
-            }
-            $customer->update();
+            $customer->update($request->except('_method','_token'));
             return new CustomerResource($customer);
         } catch (ModelNotFoundException $exception) {
             return response()->json(['data'=>$exception->getMessage()]);

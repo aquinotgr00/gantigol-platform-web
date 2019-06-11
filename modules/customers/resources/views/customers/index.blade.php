@@ -2,6 +2,7 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -24,10 +25,7 @@
         var datatables = $('#dataTable').DataTable({
             "ajax": {
                 "url": '{{ route("customers.index") }}',
-                "type": 'GET',
-                "data": {
-                    'status': 'publish'
-                }
+                "type": 'GET'
             },
             "order": [[2, "asc"]],
             "columns": [
@@ -67,16 +65,12 @@
                     </button>
                 </div>
             </div>
-            @can('create-preorder')
-            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('list-customer.create') }}" role="button">
-                <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
-            </a>
-            @endcan
+            
         </form>
     </tool>
 </div>
 <!-- end tools -->
-
+<hr/>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable" width="100%" cellspacing="0">

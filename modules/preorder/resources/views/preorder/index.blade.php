@@ -2,6 +2,7 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -52,8 +53,17 @@
                         if ($('input[name="edit-preorder"]').length == 1) {
                             button += '<a href="{{ url("admin/list-preorder/") }}/' + data + '/edit" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>';
                         }
-                        button += '<a href="#" class="btn btn-table circle-table show-table" data-id="' + data + '" data-toggle="tooltip" data-placement="top" title="" data-original-title="Hide On Website" aria-describedby="tooltip856046"></a>';
+                        button += '<a href="{{ url("admin/product/set-visible") }}/'+row.product_id+'"'; 
+                        
+                        if (row.product.visible == 1) {
+                            button += 'class="btn btn-table circle-table show-table" title="Hide On Website"';
+                        }else{
+                            button += 'class="btn btn-table circle-table hide-table" title="Show On Website"';
+                        }
 
+                        button +='data-toggle="tooltip" ';
+                        button +='data-placement="top" >';
+                        button +='</a>';
                         return button;
                     }
                 }

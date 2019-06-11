@@ -28,6 +28,11 @@
         @if(class_exists('\Modules\Product\Product'))
             @include('product::includes.sidebar-nav-item')
         @endif
+
+        @if(class_exists('\Modules\Preorder\PreOrder'))
+            @include('preorder::includes.sidebar-nav-item')
+        @endif
+
     </ul>
 </nav>
 <!-- end sidebar -->

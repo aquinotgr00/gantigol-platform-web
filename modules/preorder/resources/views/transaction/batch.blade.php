@@ -30,7 +30,12 @@
 
                         $.each(data, function (key, val) {
                             $.each(val.get_transaction.orders, function (index, data) {
-                                switch (data.size) {
+                                
+                                var size_code = data.product_variant.size_code;
+                                if (size_code.length > 0) {
+                                    size_code = size_code.toLowerCase();
+                                }
+                                switch (size_code) {
                                     case 's':
                                         qty_s += parseInt(data.qty);
                                         break;

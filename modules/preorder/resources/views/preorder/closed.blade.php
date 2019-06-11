@@ -1,4 +1,4 @@
-@extends('preorder::layout')
+@extends('admin::layout-nassau')
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">

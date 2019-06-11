@@ -4,6 +4,8 @@ namespace Modules\Preorder\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Modules\Preorder\Mail\WayBill;
 use Modules\Preorder\Jobs\BulkPaymentReminder;
 
 use Modules\Preorder\PreOrder;
@@ -65,6 +67,9 @@ class TransactionController extends Controller
         foreach ($production_batch->getProductions as $key => $value) {
             $value->getTransaction;
             $value->getTransaction->orders;
+            foreach ($value->getTransaction->orders as $index => $order) {
+                $order->productVariant;
+            }
         }
         $production_json  = json_encode($production_batch);
         $data = [
@@ -91,6 +96,9 @@ class TransactionController extends Controller
         foreach ($production_batch->getProductions as $key => $value) {
             $value->getTransaction;
             $value->getTransaction->orders;
+            foreach ($value->getTransaction->orders as $index => $order) {
+                $order->productVariant;
+            }
         }
         $production_json  = json_encode($production_batch);
         $data = [
@@ -130,7 +138,7 @@ class TransactionController extends Controller
             'product' => $preOrder->product,
             'orders' => $orders,
             'data' => [
-                'title' => 'Details Transaction',
+                'title' => $transaction->invoice,
                 'back' => route('pending.transaction',$preOrder->id)
             ]
         ];
@@ -154,5 +162,47 @@ class TransactionController extends Controller
         ->setPaper('a4', 'landscape')
         ->loadView('preorder::shipping.sticker',$data)
         ->stream('shipping-sticker.pdf');
+    }
+
+    public function storeShippingNumber(Request $request)
+    {
+        $request->validate([
+            'batch_id' => 'required',
+            'tracking_number' => 'array',
+            'production_id' => 'array'
+        ]);
+
+        foreach ($request->production_id as $key => $value) {
+            $production         = Production::find($value);
+            $tracking_number    = trim($request->tracking_number[$key]);
+            if (
+                !is_null($production) &&
+                !empty($tracking_number) 
+            ) {
+                
+                $transaction = Transaction::find($production->transaction_id);
+                if (!is_null($transaction)) {
+                    $transaction->update([
+                        'status' => 'shipped'
+                    ]);
+                }
+                
+                try {
+                    $production->update([
+                        'tracking_number' => $tracking_number,
+                        'status' => 'shipped'
+                    ]);
+                    
+                    Mail::to($production->getTransaction->email)->send(new WayBill($production));
+                    
+                } catch (\Swift_TransportException $e) {
+                    $response = $e->getMessage();
+                    
+                    break;
+                }
+            }
+        }
+        
+        return back();
     }
 }
