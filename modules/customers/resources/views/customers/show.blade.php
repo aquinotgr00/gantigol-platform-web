@@ -123,5 +123,5 @@
 </div>
 <!-- end info -->
 
-@include('customers::customers.modal-edit');
+@include('customers::customers.modal-edit',$customer);
 @endsection

@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        \Modules\Preorder\Console\Commands\SendPaymentReminders::class,
     ];
 
     /**
@@ -28,6 +28,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->command('payment:reminder')->dailyAt('13:17');
     }
 
     /**

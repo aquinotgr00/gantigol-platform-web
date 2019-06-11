@@ -4,14 +4,12 @@
     <ul class="list-unstyled collapse show" id="preorderSubmenu" style="">
         <li>
             <a  {{ (Route::is('list-preorder.index'))? 'class=active' : '' }} href="{{ route('list-preorder.index') }}">
-                <i class="fas fa-clock"></i>
                 <span>Pre-Order</span>
             </a>
         </li>
         <li>
-            <a  {{ (Route::is('setting-preorder.index'))? 'class=active' : '' }} href="{{ route('setting-preorder.index') }}">
-                <i class="fas fa-cog"></i>
-                <span>Setting</span>
+            <a  {{ (Route::is('all-transaction.index'))? 'class=active' : '' }} href="{{ route('all-transaction.index') }}">
+                <span>Transaction</span>
             </a>
         </li>
     </ul>

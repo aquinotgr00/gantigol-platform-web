@@ -167,6 +167,8 @@ return [
          */
         Conner\Tagging\Providers\TaggingServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        rizalafani\rajaongkirlaravel\RajaOngkirServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -197,9 +199,10 @@ return [
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Preorder\Providers\PreOrderServiceProvider::class,
         Modules\Preorder\Providers\PreorderAuthServiceProvider::class,
-
         Modules\Banners\Providers\BannerServiceProvider::class,
         Modules\Promo\Providers\PromoServiceProvider::class,
+        Modules\Inventory\Providers\InventoryServiceProvider::class,
+        Modules\Shipment\Providers\ShipmentServiceProvider::class,
     ],
 
     /*
@@ -249,6 +252,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'RajaOngkir' => rizalafani\rajaongkirlaravel\RajaOngkirFacade::class,
+        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
     ],
 
 ];

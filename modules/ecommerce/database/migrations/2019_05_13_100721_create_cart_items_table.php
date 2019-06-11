@@ -17,13 +17,14 @@ class CreateCartItemsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('cart_id')->nullable();
             $table->unsignedInteger('product_id')->nullable();
+            $table->string('size_code',10)->nullable();
             $table->unsignedInteger('qty');
             $table->unsignedInteger('price')->nullable();
             $table->unsignedInteger('subtotal')->nullable();
-            $table->json('attributes')->nullable();
-            $table->enum('wishlist', ['true','false'])->nullable();
-            $table->enum('checked', ['true','false'])->default('true');
+            $table->enum('wishlist',['true','false'])->nullable();
+            $table->enum('checked',['true','false'])->default('true');
             $table->text('notes')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

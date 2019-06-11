@@ -275,7 +275,7 @@ select.form-control:not([size]):not([multiple]) {
   	height: 30px;
   	width: 30px;
   	padding: 0;
-  	border-color: rgba(0, 0, 0, 0);}
+  	border-color: rgba(0, 0, 0, 0);
 }
 img .add-svg{
 	margin-top: 10px !important;
@@ -469,6 +469,16 @@ img .add-svg{
 	background-position: center;
 	background-repeat: no-repeat;
 }
+.hide-table{
+	background-image: url(../images/hide.svg);
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.hide-table:hover{
+	background-image: url(../images/show-hover.svg);
+	background-position: center;
+	background-repeat: no-repeat;
+}
 .tooltip-inner{
 	font-style: normal;
 	font-weight: 600;
@@ -629,7 +639,7 @@ img .add-svg{
   padding: 9px 22px;
   text-align: center;
   cursor: default;
-  color: ##2980b9;
+  color: #2980b9;
   border: #2980b9 1px solid;
   border-radius: 27px;
   font-size: 18px;

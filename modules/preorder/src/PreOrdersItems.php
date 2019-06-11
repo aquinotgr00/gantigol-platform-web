@@ -16,6 +16,7 @@ class PreOrdersItems extends Model
     protected $fillable = [
         'transaction_id',
         'pre_order_id',
+        'product_id',
         'model',
         'size',
         'qty',
@@ -23,7 +24,7 @@ class PreOrdersItems extends Model
         'price'
     ];
     /**
-     * [product description]
+     *
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -32,12 +33,21 @@ class PreOrdersItems extends Model
         return $this->belongsTo('\Modules\Preorder\PreOrder', 'pre_order_id', 'id');
     }
     /**
-     * [transaction description]
+     *
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function transaction()
     {
         return $this->belongsTo('\Modules\Preorder\Transaction', 'transaction_id', 'id');
+    }
+    /**
+     * product variant relations
+     *
+     * @return void
+     */
+    public function productVariant()
+    {
+        return $this->belongsTo('\Modules\Product\ProductVariant', 'product_id', 'id');
     }
 }

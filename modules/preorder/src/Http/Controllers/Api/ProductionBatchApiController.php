@@ -160,6 +160,9 @@ class ProductionBatchApiController extends Controller
                 foreach ($item->getProductions as $key => $value) {
                     $value->getTransaction;
                     $value->getTransaction->orders;
+                    foreach ($value->getTransaction->orders as $index => $order) {
+                        $order->productVariant;
+                    }
                 }
             }
         }

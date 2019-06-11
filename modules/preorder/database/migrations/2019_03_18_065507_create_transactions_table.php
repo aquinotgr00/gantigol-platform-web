@@ -26,7 +26,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('quantity');
             $table->integer('amount');
             $table->text('note')->nullable();
-            $table->enum('status', ['unpaid','paid','completed'])->default('unpaid');
+            $table->enum('status', ['pending','paid','shipped','rejected','returned','completed'])->default('pending');
             $table->string('courier_name')->nullable();
             $table->string('courier_type')->nullable();
             $table->string('courier_fee')->nullable();

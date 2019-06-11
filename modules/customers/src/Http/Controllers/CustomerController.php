@@ -20,7 +20,11 @@ class CustomerController extends Controller
 
     public function create()
     {
-        return view('customers::customers.create');
+        $data = [
+            'title' => 'Add New Customer',
+            'back' => route('list-customer.index')
+        ];
+        return view('customers::customers.create',compact('data'));
     }
 
     public function show(int $id)

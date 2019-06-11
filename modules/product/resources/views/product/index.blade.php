@@ -2,10 +2,10 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 @endpush
@@ -30,7 +30,7 @@
     </tool>
 </div>
 <!-- end tools -->
-
+<hr>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable">
@@ -43,75 +43,77 @@
                 <th scope="col">Action</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <th>
-                    <img src="images/product-images/gg-01.jpeg" alt="#">
-                </th>
-                <td><a href="{{ route('product.show',1) }}">T-SHIRT GG BLACK <span>»</span> <span>M</span></a></td>
-                <td>100</td>
-                <td>150.000</td>
-                <td>
-                    <a href="#" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top"
-                        title="Edit"></a>
-                    <a href="#" class="btn btn-table circle-table adjustment-table" data-toggle="tooltip"
-                        data-placement="top" title="Adjustment"></a>
-                    <a href="#" class="btn btn-table circle-table show-table" data-toggle="tooltip" data-placement="top"
-                        title="Hide On Website"></a>
-                </td>
-            </tr>
-        </tbody>
+
     </table>
 </div>
 <!-- end table -->
+
+
+@include('product::includes.modal-adjustment')
+
 @endsection
 
 @push('scripts')
 <script>
-$(document).ready(function () {
+    function number_format(data) {
+        if (data == null) {
+            return 0;
+        } else {
+            return "Rp " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+    }
+
+    $(document).ready(function () {
         var datatables = $('#dataTable').DataTable({
-            "ajax": {
-                "url": '{{ route("items.index") }}',
-                "type": 'GET',
-                "data": {
-                    'status': 'publish'
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route("ajax.all-product") }}',
+                method: 'POST',
+                data: {
+                    "_token": "{{ csrf_token() }}"
                 }
             },
-            "order": [[1, "desc"]],
-            "columns": [
-                { 
-                    "data": "image",
-                    "render": function(data,type,row){
-                        if (data == null) {
-                            return '-';
-                        }else{
-                            var url = data.replace("public", "storage");
-                            return '<img src="{{ url("/") }}'+url+'" style="width:100%;height:100%;" />';
-                        }   
-                    }
-                },
-                { 
-                    "data": "name",
-                    "render": function(data,type,row){
-                        return '<a href="{{ url("admin/product") }}/'+row.id+'">'+data+'</a>';
-                    }
-                },
-                { "data": "weight" },
-                { 
-                    "data": "price",
-                    "render": function (data, type, row) {
-                        return "Rp " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                    }
-                },
-                { 
-                    "data": "status",
-                    "render": function (data, type, row) {
-                        return (data == 1)? 'publish' : 'draft';
-                    }
-                }
+            columns: [
+                { data: 'image' },
+                { data: 'name' },
+                { data: 'quantity_on_hand' },
+                { data: 'price' },
+                { data: 'action' },
             ]
         });
 
+        $('#ModalAdjusment').on('shown.bs.modal', function (e) {
+            var button = e.relatedTarget;
+            var id = $(button).data('id');
+            console.log(id);
+            $('input[name="product_variants_id"]').val(id);
+
+        });
+
+        $('#form-add-adjustment').submit(function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serializeArray(),
+                success: function (data) {
+                    if (data.id > 0) {
+                        $('#ModalAdjusment').modal('hide');
+                    } else {
+                        alert('Error! cant update stock adjustment');
+                    }
+                }
+            });
+        });
+
+        $('#dataTable_filter').css('display','none');
+
+        $('.search-box').on('keyup', function () {
+            
+            datatables.search(this.value).draw();
+        });
     });
 </script>
 @endpush

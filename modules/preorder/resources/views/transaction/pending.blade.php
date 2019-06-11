@@ -3,22 +3,22 @@
     $(document).ready(function () {
         var datatables = $('#pendingDataTable').DataTable({
             "ajax": "{{ route('transaction.pending',$preOrder->id) }}",
-            "order": [[4, "desc"]],
+            "order": [[0, "desc"]],
             "columns": [
                 { "data": "created_at" },
-                { "data": "invoice" },
                 { 
-                    "data": "name",
+                    "data": "invoice",
                     "render": function(data, type, row){
                         return '<a href="{{ url('admin/show-transaction') }}/'+row.id+'?preorder={{ $preOrder->id }}">'+data+'</a>';
                     }
                 },
+                { "data": "name" },
                 {
                     "data": "orders",
                     "render": function (data, type, row) {
                         var variant_qty = "";
                         $.each(data, function (key, val) {
-                            variant_qty += val.size.toUpperCase() + " : ";
+                            //variant_qty += val.size.toUpperCase() + " : ";
                             variant_qty += val.qty + "<br/>";
                         });
                         return variant_qty;
@@ -28,7 +28,7 @@
                     "data": "payment_reminder",
                     "render": function (data, type, row) {
                         var text = "";
-                        for (var x = 0; x < 3; x++) {
+                        for (var x = 0; x < data; x++) {
                             text += '<img class="alert-pre" src="{{ asset("vendor/admin") }}/images/alert-' + x + '.svg" alt="indicator reminder"></a>';
                         }
                         return text;

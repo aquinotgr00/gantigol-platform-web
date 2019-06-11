@@ -45,9 +45,9 @@ class CreateOrdersTable extends Migration
             $table->string('shipping_tracking_number')->nullable();
             $table->unsignedInteger('admin')->nullable();
             $table->text('notes')->nullable();
-            $table->unsignedInteger('admin_fee')->default(0)->change();
-            $table->unsignedInteger('total_amount')->default(0)->change();
-            $table->boolean('prism_checkout')->default(false)->change();
+            $table->unsignedInteger('admin_fee')->default(0);
+            $table->unsignedInteger('total_amount')->default(0);
+            $table->boolean('prism_checkout')->default(false);
             $table->timestamps();
             
             //$table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');

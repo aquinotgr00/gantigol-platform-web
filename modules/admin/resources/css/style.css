@@ -469,6 +469,16 @@ img .add-svg{
 	background-position: center;
 	background-repeat: no-repeat;
 }
+.hide-table{
+	background-image: url(../images/hide.svg);
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.hide-table:hover{
+	background-image: url(../images/show-hover.svg);
+	background-position: center;
+	background-repeat: no-repeat;
+}
 .tooltip-inner{
 	font-style: normal;
 	font-weight: 600;
