@@ -38,7 +38,19 @@
         </div>
         <div class="form-group">
             <label>Category</label>
-            
+            <p>
+                @if(isset($categories) && ($categories))
+                @foreach ($categories->all() as $category)
+
+                @include('product::includes.productcategory-row', [
+                'category'=>$category,
+                'parent'=>'',
+                'category_id'=>$product->category->id
+                ])
+
+                @endforeach
+                @endif
+            </p>
         </div>
         <div class="mt-3">
             <label>Log Activity</label>
@@ -90,9 +102,9 @@
             ajax: {
                 url: '{{ route("ajax.detail-product-activities",$productVariant->id) }}',
                 method: 'POST',
-                data : function(d){
+                data: function (d) {
                     d._token = "{{ csrf_token() }}",
-                    d.activity = $('input[name="activity"]').val()
+                        d.activity = $('input[name="activity"]').val()
                 }
             },
             order: [[0, "desc"]],

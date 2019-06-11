@@ -11,10 +11,20 @@
         </div>
         <div id="tableDiv"></div>
         <div class="form-group">
-            <label for="">Product Category</label>
-            <h4>
-            @include('product::includes.productcategory-row', ['category'=> $productSize->category, 'parent'=>''])
-            </h4>
+            <label >Product Category</label>
+            <p>
+            @if(isset($categories) && ($categories))
+                @foreach ($categories->all() as $category)
+
+                @include('product::includes.productcategory-row', [
+                'category'=>$category,
+                'parent'=>'',
+                'category_id'=> $productSize->category_id
+                ])
+
+                @endforeach
+                @endif
+            </p>
         </div>
         <div class="text-right">
             <a href="{{ route('product-size-chart.edit',$productSize->id) }}" class="btn btn-success">

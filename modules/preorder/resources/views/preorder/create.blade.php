@@ -1,144 +1,149 @@
 @extends('admin::layout-nassau')
 
 @push('styles')
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-@endpush
-
-@push('scripts')
-
-<script>
-    function preview_image() {
-        var total_file = document.getElementById("images").files.length;
-        for (var i = 0; i < total_file; i++) {
-            $('#image_preview').append("<img src='" + URL.createObjectURL(event.currentTarget.files[i]) + "' class='col-md-2'>");
-        }
-    }
-
-    $(document).ready(function () {
-        const btnDraftProduct = $('#btn-draft-product');
-
-        btnDraftProduct.on('click', function () {
-            $('input[name="status"]').val(1);
-            $('form').submit();
-        });
-
-        $('form').submit(function (event) {
-            event.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: $(this).attr('action'),
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    if (typeof data.data.product_id === 'undefined') {
-                        alert('Error! product failed to save');
-                    } else {
-                        alert('Success! product saved');
-                        window.location.href = "{{ route('list-preorder.index') }}";
-                    }
-                }
-            });
-        });
-
-    });
-</script>
+<link rel="stylesheet" href="{{ asset('vendor/product/css/tagsinput.css') }}">
 @endpush
 
 @section('content')
-
-<form action="{{ route('preorder.store') }}" method="post" enctype="multipart/form-data">
-    {{ csrf_field() }}
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Product Name</label>
-                <input type="text" name="name" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>Price</label>
-                <input type="number" name="price" class="form-control">
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlSelect1">Product Category</label>
-                <select class="form-control" id="exampleFormControlSelect1" name="category_id">
-                    <option value="0">Select Product Category</option>
-                    @if(isset($categories))
-
-                    @foreach ($categories->all() as $category)
-                    @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
-                    @endforeach
-                    @endif
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea name="description" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="selectProductType">Product Type</label>
-                <select class="form-control" id="selectProductType">
-                    <option value="0">Choose One</option>
-                    <option value="variant">
-                        Variant Product
-                    </option>
-                    <option value="simple">
-                        Simple Product
-                    </option>
-                </select>
-            </div>
-
-            <div id="view-product-type"></div>
-
-            <button type="button" id="btn-generate-variant" hidden></button>
-
+<!-- start form -->
+<div class="row">
+    <form action="{{ route('list-preorder.store') }}" method="post" class="col-6" id="form-add-product">
+        @csrf
+        <div class="form-group">
+            <label for="exampleInputCategoryName">Product Title</label>
+            <input type="text" name="name" class="form-control" id="exampleInputCategoryName">
+            @if($errors->has('name'))
+            <small><code>{{ $errors->first('name') }}</code></small>
+            @endif
         </div>
-        <div class="col-md-6">
-            <strong>Product Images</strong>
-            <input type="file" id="images" name="images[]" multiple onchange="preview_image()" />
-            <div id="image_preview"></div>
-            <hr>
-            <strong>Preorder Information</strong>
-            <div class="form-group">
-                <label>Quota</label>
-                <input type="number" name="quota" class="form-control">
+        <div class="form-group">
+            <label for="productDescription">Description</label>
+            <textarea type="text" name="description" class="form-control" id="productDescription" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputCategoryPrice">Price</label>
+            <input type="text" name="price" class="form-control" id="exampleInputCategoryPrice">
+            @if($errors->has('price'))
+            <small><code>{{ $errors->first('price') }}</code></small>
+            @endif
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Product Category</label>
+            <select class="form-control" id="exampleFormControlSelect1" name="category_id">
+                <option value="0">Select Product Category</option>
+                @if(isset($categories) && ($categories))
+                @foreach ($categories->all() as $category)
+                @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
+                @endforeach
+                @endif
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="inputQuota">Quota</label>
+            <input type="number" class="form-control" name="quota" id="inputQuota" />
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="inputStartDate">Start Date</label>
+                    <input type="date" class="form-control" name="start_date" id="inputStartDate" />
+                </div>
             </div>
-            <div class="form-group">
-                <label>Start Date</label>
-                <input type="date" name="start_date" class="form-control">
+            <div class="col">
+
+                <div class="form-group">
+                    <label for="inputEndDate">End Date</label>
+                    <input type="date" class="form-control" name="end_date" id="inputEndDate" />
+                </div>
             </div>
-            <div class="form-group">
-                <label>End Date</label>
-                <input type="date" name="end_date" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="selectProductType">Product Type</label>
+            <select class="form-control" id="selectProductType">
+                <option value="0">Choose One</option>
+                <option value="variant">
+                    Variant Product
+                </option>
+                <option value="simple">
+                    Simple Product
+                </option>
+            </select>
+        </div>
+
+        <div id="view-product-type"></div>
+
+        <div id="input-simple-product" style="display:none;">
+            @include('product::includes.simple')
+        </div>
+        <div id="input-variant-product" style="display:none;">
+            @include('product::includes.variant')
+        </div>
+
+        <div class="float-right">
+            <input type="hidden" name="status">
+            <button type="submit" onclick="changeStatus(0)" class="btn btn-outline-secondary">Save As Draft</button>
+            <button type="submit" onclick="changeStatus(1)" class="btn btn-success ml-4">Publish</button>
+        </div>
+    </form>
+    <div class="col-4 grs">
+        <div class="mb-4">
+            <label for="exampleFormControlSelect1">Featured Image</label>
+            <div class="mb-2">
+                <a href="#" data-toggle=modal role="button" data-target="#ModalMediaLibrary">
+                    <img class="img-fluid img-thumbnail add-img-featured"
+                        src="{{ url('vendor/admin/images/image-plus.svg') }}" alt="">
+                </a>
             </div>
+            <small><span>Image size must be 1920x600 with maximum file size</span>
+                <span>400 kb</span></small>
+        </div>
+
+        <div>
+            <label for="exampleFormControlSelect1">Aditional Image</label>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-2">
+                        <a href="#" data-toggle=modal role="button" data-target="#ModalMediaLibrary">
+                            <img class="img-fluid img-thumbnail add-img-additional"
+                                src="{{ url('vendor/admin/images/image-plus-small.svg') }}" alt="">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-2 hovereffect">
+                        <img class="img-fluid img-thumbnail img-additional-size"
+                            src="https://source.unsplash.com/pWkk7iiCoDM/400x300" alt="">
+                        <div class="overlay-additional btn-img">
+                            <span>
+                                <a href="#" class="btn btn-table circle-table view-img mr-2" data-toggle="tooltip"
+                                    data-placement="top" title="" data-original-title="View"></a>
+                            </span>
+                            <span data-toggle=modal role="button" data-target="#ModalMediaLibrary">
+                                <a href="#" class="btn btn-table circle-table edit-table" data-toggle="tooltip"
+                                    data-placement="top" title="" data-original-title="Edit"></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <small><span>Image size must be 1920x600 with maximum file size</span>
+                <span>400 kb</span></small>
+
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="text-right">
-                <input type="hidden" name="status" value="publish" />
-                <input type="hidden" name="product_id" />
-                <button class="btn btn-outline-secondary" type="button">
-                    Save As Draft
-                </button>
-                <button class="btn btn-success" type="submit">
-                    Publish
-                </button>
-            </div>
-        </div>
-    </div>
-</form>
+</div>
+<!-- end form -->
 
 <!-- start modal-->
 
-@include('product::includes.modal-variant',['variantAttribute'=>$variantAttribute])
+@include('product::includes.modal-variant')
 
-@include('product::includes.modal-attribute',['variantAttribute'=>$variantAttribute])
+@include('product::includes.modal-attribute')
 
 @include('product::includes.modal-media')
 
 <!-- end modal -->
+
 @endsection
 
 @push('scripts')
@@ -148,8 +153,6 @@
 <script src="{{ asset('vendor/product/js/tagsinput.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/zInput.js') }}"></script>
 <script>
-
-    var sizes = [];
 
     function removeVariant(obj) {
         var row_number = $(obj).data('id');
@@ -178,11 +181,25 @@
         });
     }
 
+    function getAllAttributes(attribute) {
+
+        $.ajax({
+            type: "GET",
+            url: "{{ route('ajax.variant-values') }}/",
+            data: {
+                attribute: attribute,
+            },
+            dataType: "json",
+            success: function (data) {
+                setAllAttributes(attribute, data);
+            }
+        });
+    }
+
     function setAllAttributes(attribute, data) {
         var input = '';
         $.each(data, function (key, value) {
             if (key != 0) {
-
                 input += '<input type="checkbox" name="' + attribute + '" title="' + value + '" value="' + value + '"/>&nbsp;' + value;
             }
         });
@@ -206,12 +223,10 @@
         return r;
     }
 
-    function callBtnGenerate() {
-        $('#btn-generate-variant').click();
-    }
-
     $(function () {
         var attributes = [];
+
+        var size_codes = [];
 
         tinymce.init({
             selector: '#productDescription'
@@ -223,26 +238,6 @@
                 e.preventDefault();
                 return false;
             }
-        });
-
-        $('#form-add-product').submit(function (event) {
-
-            event.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: $(this).attr('action'),
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    if (data.id > 0) {
-                        alert('Success');
-                        window.location.href = "{{ route('product.index') }}";
-                    }
-                }
-            });
-            return false;
         });
 
         $('#form-add-new-variant').submit(function (event) {
@@ -262,24 +257,22 @@
                     }
                 }
             });
-            $(this).attr('action', '{{ url("admin/ajax/add-by-variant/") }}');
             return false;
 
         });
 
         $('#selectProductType').on('change', function () {
 
-            $.ajax({
-                type: "GET",
-                url: "{{ route('ajax.view-product-type') }}",
-                data: {
-                    type: $(this).val()
-                },
-                dataType: 'json',
-                success: function (data) {
-                    $('#view-product-type').html(data.html);
-                }
-            });
+            switch ($(this).val()) {
+                case 'simple':
+                    $('#input-simple-product').css('display', 'block');
+                    $('#input-variant-product').css('display', 'none');
+                    break;
+                case 'variant':
+                    $('#input-simple-product').css('display', 'none');
+                    $('#input-variant-product').css('display', 'block');
+                    break;
+            }
         });
 
         $('#ModalProductProperties').on('shown.bs.modal', function (e) {
@@ -295,7 +288,7 @@
 
             $('input[name="index"]').val(index);
 
-            setAllAttributes(name, values);
+            getAllAttributes(name);
 
             var form_action_url = $('#form-add-value-variant').attr('action');
             $('#form-add-value-variant').attr('action', form_action_url + '/' + values[0]);
@@ -303,16 +296,23 @@
             //$("#value").zInput();
         });
 
+        $('#ModalVariantAttribute').on('hidden.bs.modal', function (e) {
+            $('#form-add-value-variant').attr('action', '{{ url("admin/ajax/add-by-variant") }}');
+        });
+
         $('#form-submit-variant').submit(function (event) {
 
             event.preventDefault();
             var data = $(this).serializeArray();
             var row = '';
+
             $.each(data, function (key, value) {
+
+                $('.btn-add-variant').before('<span class="badge badge-pill badge-primary mr-3">' + value.name + '</span>');
+
                 row += '<div class="inline-row">';
                 row += '<span class="mr-3 proper">' + value.name + '</span>';
-                row += '<div id="attr-' + value.name + '"></div>';
-                row += '<a class="btn sub-circle my-2 my-sm-0" href="#" role="button" data-toggle="modal"';
+                row += '<a id="attr-' + value.name + '" class="btn sub-circle my-2 my-sm-0" href="#" role="button" data-toggle="modal"';
                 row += 'data-target="#ModalVariantAttribute" data-id="' + key + '" data-name="' + value.name + '" data-val="' + value.value + '">';
                 row += '<img class="add-svg" src="{{ url("vendor/admin/images/add.svg")  }}" alt="add-image">';
                 row += '</a></div>';
@@ -340,6 +340,7 @@
                     }
                 }
             });
+
         });
 
         $('#form-choose-attribute').submit(function (event) {
@@ -367,9 +368,7 @@
 
             attributes[index_key] = items;
 
-            console.log(attributes);
-
-            $(selector).html(pills);
+            $(selector).before(pills);
 
             $('#ModalVariantAttribute').modal('hide');
 
@@ -384,9 +383,24 @@
                 tbody += '<tr>';
                 tbody += '<td>' + val.join(' ').toUpperCase();
                 tbody += '<input type="hidden" name="list_variant[]" value="' + val.join(' ') + '" /></td>';
-                tbody += '<td><input type="text" name="list_sku[]" /></td>';
-                tbody += '<td><input type="number" name="list_price[]" /></td>';
-                tbody += '<td><input type="number" name="list_initial[]" /></td>';
+                tbody += '<td>';
+                tbody += '<div class="form-group">';
+                tbody += '<label>Size Code</label>';
+                tbody += '<input type="text" name="list_size[]" class="form-control"/>';
+                tbody += '</div>';
+                tbody += '<div class="form-group">';
+                tbody += '<label>SKU</label>';
+                tbody += '<input type="text" name="list_sku[]" class="form-control"/>';
+                tbody += '</div>';
+                tbody += '<div class="form-group">';
+                tbody += '<label>Price</label>';
+                tbody += '<input type="number" name="list_price[]"  class="form-control"/>';
+                tbody += '</div>';
+                tbody += '<div class="form-group">';
+                tbody += '<label>Initial Stock</label>';
+                tbody += '<input type="number" name="list_initial[]"  class="form-control"/>';
+                tbody += '</div>';
+                tbody += '</td>';
                 tbody += '</tr>';
             });
 

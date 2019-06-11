@@ -44,50 +44,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($categories as $category)
-            <tr>
-                <td>
-                    @if($category->image)
-                    <img src="{{$category->image->getUrl() }}" class="img-thumbnail">
-                    @endif
-                </td>
-                <td>
-                    @if($category->subcategory->count() > 0)
-
-                    @php
-                    $subs = [];
-                    foreach($category->subcategory as $key => $value){
-                    if($key == 0){
-                    if(isset($category->parentCategory->id)){
-                    $subs[] = $category->parentCategory->name;
-                    }
-                    $subs[] = $category->name;
-                    }
-                    $subs[] = $value->name;
-                    }
-                    $subcategory = implode(' » ',$subs);
-                    echo $subcategory;
-                    @endphp
-
-                    @else
-                    {{ $category->name }}
-                    @endif
-                </td>
-                <td>
-                    @if(is_null($category->checkIfHasOneItem))
-
-                    <a href="{{ route('product-categories.edit',['category'=>$category]) }}"
-                        class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top"
-                        title="" data-original-title="Edit"></a>
-
-                    <a href="#" onclick="deleteItem({{ $category->id }})"
-                        class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top"
-                        title="" data-original-title="Delete"></a>
-
-                    @endif
-                </td>
-            </tr>
-            @endforeach
+        @foreach ($categories as $category)
+            @include('product::includes.productcategory-table-row', ['category'=>$category, 'parent'=>'', 'parentSizeCodes'=>''])
+        @endforeach
         </tbody>
     </table>
 </div>

@@ -10,7 +10,8 @@ class Cart extends Model
         'total',
         'coupon',
         'user_id',
-        'amount_items'    
+        'amount_items',
+        'session'    
     ];
     
     public function getItems()

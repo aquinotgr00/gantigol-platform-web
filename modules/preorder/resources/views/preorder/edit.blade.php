@@ -8,7 +8,7 @@
 
 <!-- start form -->
 <div class="row">
-    <form action="{{ route('preorder.update',$product->id) }}" method="post" class="col-6" id="form-add-product">
+    <form action="{{ route('list-preorder.update',$preOrder->id) }}" method="post" class="col-6" id="form-add-product">
         @csrf
         @method('PUT')
         <div class="form-group">
@@ -20,27 +20,43 @@
             <textarea type="text" name="description" class="form-control" id="productDescription"
                 rows="3">{{ $product->description }}</textarea>
         </div>
-        <div class="row">
-            <div class="col-sm form-group">
-                <label for="#">SKU</label>
-                <p></p>
-            </div>
-            <div class="col-sm form-group">
-                <label>Price</label>
-                <p></p>
-            </div>
-            <div class="col-sm form-group">
-                <label>Stock</label>
-                <p></p>
-            </div>
-        </div>
         <div class="form-group">
             <label>Category</label>
-            
+            <p>
+                @if(isset($categories) && ($categories))
+                @foreach ($categories->all() as $category)
+
+                @include('product::includes.productcategory-row', ['category'=>$category, 'parent'=>'','category_id'=>
+                $product->category_id ])
+
+                @endforeach
+                @endif
+            </p>
         </div>
         <div class="form-group">
-            <label for="sizeCode">Size Code</label>
-            <input type="text" class="form-control" id="sizeCode" name="size_code" />
+            <label for="inputQuota">Quota</label>
+            <input type="number" class="form-control" name="quota" id="inputQuota" value="{{ $preOrder->quota }}" />
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="inputStartDate">Start Date</label>
+                    @php
+                    $start_date = date('Y-m-d', strtotime($preOrder->start_date));
+                    @endphp
+                    <input type="date" class="form-control" name="start_date" id="inputStartDate" value="{{ $start_date }}"/>
+                </div>
+            </div>
+            <div class="col">
+
+                <div class="form-group">
+                    <label for="inputEndDate">End Date</label>
+                    @php
+                    $end_date = date('Y-m-d', strtotime($preOrder->end_date));
+                    @endphp
+                    <input type="date" class="form-control" name="end_date" id="inputEndDate"  value="{{ $end_date }}"/>
+                </div>
+            </div>
         </div>
         <div class="form-group">
             <label for="InputCategoryRelatedTag">Related Tag</label>

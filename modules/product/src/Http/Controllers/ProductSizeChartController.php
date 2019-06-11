@@ -28,9 +28,17 @@ class ProductSizeChartController extends Controller
     public function show(int $id)
     {
         $productSize = ProductSizeChart::findOrFail($id);
-        $data['title'] = 'Product Size Chart';
-        $data['back'] = route('product-size-chart.index');
-        return view('product::product-size-chart.show', compact('productSize', 'data'));
+        $categories = [];
+        if (class_exists('\Modules\ProductCategory\ProductCategory')) {
+            $categories = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')
+                            ->with('subcategories')
+                            ->get();            
+            
+        }
+        $data['title']  = 'Product Size Chart';
+        $data['back']   = route('product-size-chart.index');
+
+        return view('product::product-size-chart.show', compact('productSize','categories', 'data'));
     }
 
     public function store(Request $request)

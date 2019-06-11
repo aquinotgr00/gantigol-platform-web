@@ -18,7 +18,8 @@ class ProductCategoryController extends Controller
     {
         //$this->authorize('index', Auth::user());
         
-        $categories = ProductCategory::all();
+        //$categories = ProductCategory::all();
+        $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
         $data = [
             'title' => ucwords('product categories')
         ];

@@ -5,10 +5,11 @@ namespace Modules\Preorder\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Preorder\Http\Resources\TransactionResource;
-use Modules\Preorder\Order;
+use Modules\Preorder\PreOrdersItems;
 use Modules\Preorder\PreOrder;
 use Modules\Preorder\Production;
 use Modules\Preorder\Transaction;
+use Modules\Product\ProductVariant;
 use Validator;
 
 class TransactionApiController extends Controller
@@ -134,25 +135,32 @@ class TransactionApiController extends Controller
                 $item = array_merge(
                     $item,
                     [
-                        'product_id' => $item['id'],
+                        'product_id' => $item['product_id'],
                         'transaction_id' => $transaction->id
                     ]
                 );
-                if (!isset($item['model'])) {
-                    $item['model'] = ' ';
-                }
-                if (isset($item['id']) &&
+                if (isset($item['product_id']) &&
                         isset($item['price'])
                     ) {
-                    Order::create($item);
+                    
+                    $productVariantExist = ProductVariant::find($item['product_id']);
+                    
+                    if (!is_null($productVariantExist)) {
+                        
+                        PreOrdersItems::create($item);
+
+                    }
+                    
+
                 } else {
                     return new TransactionResource(['errors'=> [
-                        'message'=>"item doesn't have default key",
+                        'message'=>"item doesn't have product_id",
                         'status'=>'danger'
                     ]]);
                 }
             }
         }
+        $transaction->orders;
         return new TransactionResource($transaction);
     }
     /**
@@ -202,6 +210,7 @@ class TransactionApiController extends Controller
         $transaction->update([
             'status' => 'paid',
         ]);
+        $transaction->orders;
         return new TransactionResource($transaction);
     }
 

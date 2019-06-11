@@ -12,6 +12,7 @@ Route::post('cart-guest-login', 'CartApiController@cartGuestLogin')->name("cart.
 Route::get('cart-checked/{id}', 'CartApiController@getChecked')->name("cart.checked");
 Route::post('cart-checkout', 'CheckoutApiController@store')->name("cart.checkout");
 Route::post('cart-delete-variant/{id}', 'CartApiController@deleteItemVariant')->name("cart.delete-variant");
+Route::get('cart-merge/{id}', 'CartApiController@mergeCart')->name("cart.merge");
 
 Route::get('report/sales', 'ReportApiController@sales')->name('report.sales');
 Route::get('report/customer', 'ReportApiController@customer')->name('report.customer');

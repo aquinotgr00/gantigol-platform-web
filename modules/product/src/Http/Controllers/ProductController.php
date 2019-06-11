@@ -8,6 +8,7 @@ use Modules\Product\Product;
 use Modules\Product\ProductVariant;
 use Modules\Product\ProductVariantAttribute;
 use Modules\Inventory\Adjustment;
+use Modules\ProductCategory\ProductCategory;
 use Spatie\Activitylog\Models\Activity;
 use Validator;
 use DataTables;
@@ -126,11 +127,21 @@ class ProductController extends Controller
     {
         $productVariant = ProductVariant::findOrFail($id);
         $product = $productVariant->product;
+        
+        $categories = [];
+        
+        if (class_exists('\Modules\ProductCategory\ProductCategory')) {
+            $categories = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')
+                            ->with('subcategories')
+                            ->get();            
+            
+        }
+        
         $data = [
             'title' => ucwords($product->name),
             'back' => route('product.index')
         ];
-        return view("product::product.show",compact('product','productVariant','data'));
+        return view("product::product.show",compact('product','productVariant','categories','data'));
     }
     /**
      * Show the form for editing the specified resource.
@@ -263,6 +274,7 @@ class ProductController extends Controller
         ->select(
                 'product_variants.*',
                 'products.name',
+                'products.visible',
                 'products.image'
         )->get();
 
@@ -290,11 +302,16 @@ class ProductController extends Controller
                         data-id="10" 
                         data-placement="top" 
                         title="Adjustment"></a>';
-            $button .= '<a href="'.route('product.set-visible',$data->product_id).'" 
-                        class="btn btn-table circle-table show-table"
-                        data-toggle="tooltip"
-                        data-placement="top"
-                        title="Hide On Website">
+            $button .= '<a href="'.route('product.set-visible',$data->product_id).'"';
+            
+            if ($data->visible == 1) {
+                $button .= 'class="btn btn-table circle-table show-table" title="Hide On Website"';
+            }else{
+                $button .= 'class="btn btn-table circle-table hide-table" title="Show On Website"';
+            }
+
+            $button .= 'data-toggle="tooltip"
+                        data-placement="top" >
                         </a>';
             return $button;
         })
@@ -342,6 +359,6 @@ class ProductController extends Controller
         }else{
             $request->session()->flash('alert', 'Fail to update product visible');
         }
-        return redirect()->route('product.index');
+        return back();//redirect()->route('product.index');
     }
 }

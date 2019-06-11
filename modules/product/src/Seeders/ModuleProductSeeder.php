@@ -15,7 +15,11 @@ class ModuleProductSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('product_sizes')->truncate();
         $this->call(ProductSizesTableSeeder::class);
+        DB::table('products')->truncate();
         $this->call(ProductsTableSeeder::class);
+        DB::table('product_variants')->truncate();
+        $this->call(ProductVariantsTableSeeder::class);
     }
 }

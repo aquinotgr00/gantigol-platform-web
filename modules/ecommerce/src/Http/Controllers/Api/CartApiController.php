@@ -64,24 +64,38 @@ class CartApiController extends Controller
             'total' => 'required|numeric',
             'user_id' => 'numeric',
         ]);
+        
+        $user_id = 0;
 
         if ($validator->fails()) {
             return new CartResource($validator->messages());
         }
 
-        $existCart = Cart::where('session', $request->session)->first();
+        if ($request->has('user_id')) {
+            $member = Member::find($request->user_id);
+            if (!is_null($member)) {
+                $user_id = $member->id;
+            }
+        }
+        
+        $cart = new Cart;
+
+        if ($user_id == 0) {
+            $existCart = Cart::where('session', $request->session)->first();
+        }else{
+            $existCart = Cart::where('session', $request->session)
+            ->where('user_id',$user_id)
+            ->first();
+
+            $cart->user_id = $user_id;
+        }
+        
         if (is_null($existCart)) {
-            $cart = new Cart;
+        
             $cart->total = $request->total;
             $cart->session = $request->session;
-            if (isset($request->user_id)) {
-                $member = Member::find($request->user_id);
-                if (!is_null($member)) {
-                    $cart->user_id = $member->id;
-                }
-
-            }
             $cart->save();
+
         } else {
             $cart = $existCart;
         }
@@ -342,6 +356,72 @@ class CartApiController extends Controller
             return response()->json($cart);
         } catch (ModelNotFoundException $exception) {
             return response()->json(['data' => 'not found']);
+        }
+    }
+
+    public function mergeCart(Request $request,int $user_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'session' => 'required',
+        ]);
+
+        $userCarts      = Cart::where('user_id',$user_id)->orderBy('created_at','desc')->first();
+        $sessionCart    = Cart::where('session',$request->session)->first();
+        $items          = [];
+        
+        $total          = 0;
+        $amount_items   = 0;
+
+        if (
+            !is_null($userCarts) &&
+            !is_null($sessionCart)
+        ) {
+            foreach ($userCarts->getItems as $key => $value) {
+                $items[] = $value;
+                $amount_items += intval($value->qty);
+                $total += intval($value->subtotal);
+            }
+
+            foreach ($sessionCart->getItems as $key => $value) {
+                $items[] = $value;
+                $amount_items += intval($value->qty);
+                $total += intval($value->subtotal);
+            }
+        }
+
+        if ($items) {
+            $length = 5;
+            $randomletter = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, $length);
+            
+            $newCart = Cart::create([
+                'session' => $randomletter,
+                'user_id' => $user_id,
+                'total' => $total,
+                'amount_items' => $amount_items,
+            ]);
+
+            $userCarts->delete();
+
+            $sessionCart->delete();
+
+            foreach ($items as $index => $item) {
+
+                CartItems::create([
+                    'cart_id' => $newCart->id,
+                    'product_id' => $item->product_id,
+                    'size_code' => $item->size_code,
+                    'qty' => $item->qty,
+                    'price' => $item->price,
+                    'subtotal' => $item->subtotal,
+                    'wishlist' => $item->wishlist,
+                    'checked' => $item->checked,
+                    'notes' => $item->notes
+                ]);
+            }
+            $newCart->getItems;
+            return new CartResource($newCart);
+        }else{
+            return response()->json(['data'=> $items ]);
         }
     }
 }

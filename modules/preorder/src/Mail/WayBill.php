@@ -36,7 +36,7 @@ class WayBill extends Mailable
      */
     public function build()
     {
-        return $this->subject('Shipping Number #'.$this->production->id)
+        return $this->subject('Shipping Number #'.$this->production->getTransaction->invoice)
         ->markdown('preorder::emails.waybill')->with([
             'production' => $this->production,
         ]);

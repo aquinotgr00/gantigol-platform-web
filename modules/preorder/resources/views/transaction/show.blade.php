@@ -2,14 +2,13 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="https://cdn.datatables.net/select/1.3.0/css/select.bootstrap4.min.css" rel="stylesheet">
-
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.select.min.js') }}"></script>
+
 <script>
     $(document).ready(function () {
         $('#dataTable').DataTable();
@@ -159,10 +158,14 @@
                     <tr>
                         <td>{{ $key+1 }}</td>
                         <td>
-                            {{ strtoupper($value->model) }}
+                            @if(isset($value->productVariant->id))
+                                {{ $value->productVariant->product->name }}
+                            @endif
                         </td>
                         <td>
-                            {{ strtoupper($value->size) }}
+                            @if(isset($value->productVariant->size_code))
+                                {{ $value->productVariant->size_code }}
+                            @endif
                         </td>
                         <td>
                             {{ $value->qty }}
