@@ -152,7 +152,7 @@ class CartApiController extends Controller
         return new CartResource($cart);
     }
     /**
-     * [update description]
+     * update all items cart
      *
      * @param   Request  $request use application/x-www-form-urlencoded.
      * @param   int      $id
@@ -313,7 +313,12 @@ class CartApiController extends Controller
         $data = $cart->getItems->where('checked', 'true');
         return new CartResource($data);
     }
-
+    /**
+     * get cart by user id and session
+     *
+     * @param Request $request
+     * @return void
+     */
     public function cartGuestLogin(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -332,7 +337,13 @@ class CartApiController extends Controller
         $cart->getItems;
         return new CartResource($cart);
     }
-
+    /**
+     * delete item cart by product variant id
+     *
+     * @param Request $request
+     * @param integer $id
+     * @return void
+     */
     public function deleteItemVariant(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
@@ -358,7 +369,13 @@ class CartApiController extends Controller
             return response()->json(['data' => 'not found']);
         }
     }
-
+    /**
+     * merge cart by guest and last cart by user logged_in
+     *
+     * @param Request $request
+     * @param integer $user_id
+     * @return void
+     */
     public function mergeCart(Request $request,int $user_id)
     {
         $validator = Validator::make($request->all(), [
@@ -423,5 +440,20 @@ class CartApiController extends Controller
         }else{
             return response()->json(['data'=> $items ]);
         }
+    }
+    /**
+     * get last cart by user id
+     *
+     * @param integer $user_id
+     * @return void
+     */
+    public function getByUser(int $user_id)
+    {
+        $userCarts      = Cart::where('user_id',$user_id)->orderBy('created_at','desc')->first();
+        
+        if (!is_null($userCarts)) {
+            $userCarts->getItems;
+        }
+        return new CartResource($userCarts);
     }
 }
