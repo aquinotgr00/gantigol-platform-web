@@ -82,7 +82,8 @@ class BlogController extends Controller
                                         'title' => 'Hide On Website'
                                     ];
                                 }
-                                return  '<a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
+                                return  '<a href="'.Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]).'" class="btn btn-table circle-table" data-toggle="tooltip" data-placement="top" title="Highlight"><i class="fa fa-globe"></i></a>
+                                <a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
                                         <a href="'.$data["route"].'" class="btn btn-table circle-table '.$data["button"].'" data-toggle="tooltip" data-placement="top" title="'.$data['title'].'"></a>';
                              })
                             ->make(true);

@@ -112,4 +112,20 @@ class BlogCategoryController extends Controller
         }
         return redirect()->route('blog.category.index');
     }
+
+     /**
+     * view function set highlight for blog category.
+     * @param \Illuminate\Http\Request  $request
+     *
+     * @return mixed
+     */
+     public function setHighlight($category,$id){
+        $this->blogs->where('category_id',$category)->update([
+                'highlight'=>'no'
+            ]);
+         $this->blogs->where('id',$id)->update([
+                'highlight'=>'yes'
+            ]);
+         return redirect()->route('blog.index');
+     }
 }

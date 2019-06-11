@@ -66,7 +66,6 @@
                   <h1>Drop Files To Upload</h1>
                   <p>or click to browse</p>
                 </div>
-                 <button type="submit" class="btn btn-success" formaction="{{ route("projects.store") }}">Upload</button>
               </form>
             </div>
             <div class="float-right mt-3">

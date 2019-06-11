@@ -11,12 +11,13 @@ Route::post('/post/publish/{id}', 'BlogController@publish')->name('blog.post.pub
 Route::get('/post/hide/{id}', 'BlogController@hide')->name('blog.post.hide');
 Route::get('/post/show/{id}', 'BlogController@show')->name('blog.post.show');
 
-
 //blogcategory
 Route::get('/category', 'BlogCategoryController@index')->name('blog.category.index');
 Route::get('/category/list', 'BlogCategoryController@list')->name('blog.category.list');
 Route::get('/category/new', 'BlogCategoryController@indexFormCategory')->name('blog.category.new');
 Route::get('/category/edit/{id}', 'BlogCategoryController@indexFormCategory')->name('blog.category.edit');
+Route::get('/post/highlight/{category}/{id}','BlogCategoryController@setHighlight')->name('blog.category.highlight');
+
 
 //blogcategorypost
 Route::post('/category/new', 'BlogCategoryController@actionPostCategory')->name('blog.category.new.post');
