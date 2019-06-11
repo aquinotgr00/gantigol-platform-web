@@ -11,11 +11,11 @@ class Cart extends Model
         'coupon',
         'user_id',
         'amount_items',
-        'session'    
+        'session'
     ];
     
     public function getItems()
     {
-        return $this->hasMany('\Modules\Ecommerce\CartItems','cart_id','id');
+        return $this->hasMany('\Modules\Ecommerce\CartItems', 'cart_id', 'id');
     }
 }

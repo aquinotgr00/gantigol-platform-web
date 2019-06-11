@@ -14,7 +14,7 @@ class AddDescriptionToContentsTable extends Migration
     public function up()
     {
         Schema::table('contents', function (Blueprint $table) {
-            $table->string('description')->nullable()->after('title');
+            $table->string('description')->nullable()->after('title')->change();
         });
     }
 

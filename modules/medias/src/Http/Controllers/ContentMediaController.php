@@ -73,7 +73,7 @@ class ContentMediaController extends Controller
             ];
         }
         
-        if($request->ajax()) {
+        if ($request->ajax()) {
             return response()->json([
                 'status'=>'success',
                 'data'=>['images'=>$uploadedMedia]

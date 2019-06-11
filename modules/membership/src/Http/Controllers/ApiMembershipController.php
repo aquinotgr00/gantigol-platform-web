@@ -346,7 +346,7 @@ class ApiMembershipController extends Controller
         $check = $this->password_reset->where('token', $request->token)->first();
         if (!is_null($check)) {
             $member = $this->members->findForPassport($check->email);
-            $this->members->where('email', $check->email)->update(['password'=>$request->password]);
+            $this->members->where('email', $check->email)->update(['password'=>bcrypt($request->password)]);
             $token = $this->accessTokenMember($member->id);
             $response = ["message"=>"Success change password",
                         "access_token"=>$token

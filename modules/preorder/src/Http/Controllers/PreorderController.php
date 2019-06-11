@@ -20,7 +20,7 @@ class PreorderController extends Controller
     public function index()
     {
         $data['title'] = 'Preorder';
-        return view('preorder::preorder.index',compact('data'));
+        return view('preorder::preorder.index', compact('data'));
     }
     /**
      *
@@ -49,6 +49,7 @@ class PreorderController extends Controller
             'title' => 'Create Preorder',
             'back' => route('list-preorder.index')
         ];
+
         $categories = [];
         if (class_exists('\Modules\ProductCategory\ProductCategory')) {
             $productCategory    = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')->with('subcategories')->get();
@@ -56,6 +57,7 @@ class PreorderController extends Controller
         }
         $variantAttribute = ProductVariantAttribute::all();
         return view('preorder::preorder.create',compact('variantAttribute','categories','data'));
+
     }
     /**
      * show single pre order

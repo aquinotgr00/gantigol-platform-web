@@ -13,7 +13,7 @@ class CartItems extends Model
 
     public function fromCart()
     {
-        return $this->belongsTo('Modules\Ecommerce\Cart','cart_id','id');
+        return $this->belongsTo('Modules\Ecommerce\Cart', 'cart_id', 'id');
     }
 
     public function productVariant()

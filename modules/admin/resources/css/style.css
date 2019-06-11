@@ -459,6 +459,11 @@ img .add-svg{
 	background-position: center;
 	background-repeat: no-repeat;
 }
+.hide-table{
+	background-image: url(../images/hide-hover.svg);
+	background-position: center;
+	background-repeat: no-repeat;
+}
 .show-table:hover{
 	background-image: url(../images/hide-hover.svg);
 	background-position: center;
@@ -798,6 +803,19 @@ footer p{
 	color: #272A2D;
 	font-size: 11px;
 	font-weight: normal;
+}
+
+.bootstrap-tagsinput{
+	width: 100%;
+}
+
+.bootstrap-tagsinput .tag{
+    border: 1px #4285f4;
+    border-radius: 10px;
+    padding: 3px;
+    margin: 10px 2px;
+    background: #4285f4;
+    font-size: 15px;
 }
 
 

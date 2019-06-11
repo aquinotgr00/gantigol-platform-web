@@ -178,6 +178,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
         
         
         /*
@@ -187,6 +188,9 @@ return [
         Modules\Admin\Providers\AdminAuthServiceProvider::class,
         Modules\Medias\MediaServiceProvider::class,
         Modules\Membership\MemberRegistrationServiceProvider::class,
+
+        Modules\Blogs\BlogServiceProvider::class,
+
         Modules\ProductCategory\Providers\ProductCategoryServiceProvider::class,
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Ecommerce\Providers\EcommerceServiceProvider::class,
@@ -195,6 +199,8 @@ return [
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Preorder\Providers\PreOrderServiceProvider::class,
         Modules\Preorder\Providers\PreorderAuthServiceProvider::class,
+        Modules\Banners\Providers\BannerServiceProvider::class,
+        Modules\Promo\Providers\PromoServiceProvider::class,
         Modules\Inventory\Providers\InventoryServiceProvider::class,
         Modules\Shipment\Providers\ShipmentServiceProvider::class,
     ],

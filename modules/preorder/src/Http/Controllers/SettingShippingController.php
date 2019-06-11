@@ -4,7 +4,7 @@ namespace Modules\Preorder\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Preorder\SettingShipping;
-use PDF; 
+use PDF;
 
 class SettingShippingController extends Controller
 {
@@ -16,7 +16,7 @@ class SettingShippingController extends Controller
         ];
         return PDF::setOptions(['defaultFont' => 'sans-serif'])
         ->setPaper('a4', 'landscape')
-        ->loadView('preorder::shipping.preview',$data)
+        ->loadView('preorder::shipping.preview', $data)
         ->stream('shipping-sticker.pdf');
     }
 
@@ -32,7 +32,7 @@ class SettingShippingController extends Controller
                 'width' => $request->width,
                 'height' => $request->height
             ]);
-        }else{
+        } else {
             $exist->update([
                 'width' => $request->width,
                 'height' => $request->height

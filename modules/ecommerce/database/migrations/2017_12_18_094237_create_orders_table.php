@@ -19,14 +19,14 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('customer_id');
             $table->string('billing_name')->nullable();
             $table->string('billing_email')->nullable();
-            $table->string('billing_phone',20)->nullable();
+            $table->string('billing_phone', 20)->nullable();
             $table->text('billing_address')->nullable();
             $table->unsignedInteger('billing_subdistrict_id')->nullable();
             $table->string('billing_subdistrict')->nullable();
             $table->string('billing_city')->nullable();
             $table->string('billing_province')->nullable();
-            $table->string('billing_zip_code',6)->nullable();
-            $table->string('billing_country',3)->nullable()->default('IDN');
+            $table->string('billing_zip_code', 6)->nullable();
+            $table->string('billing_country', 3)->nullable()->default('IDN');
             $table->string('shipping_name');
             $table->string('shipping_email');
             $table->string('shipping_phone');
@@ -35,8 +35,8 @@ class CreateOrdersTable extends Migration
             $table->string('shipping_subdistrict')->nullable();
             $table->string('shipping_city')->nullable();
             $table->string('shipping_province')->nullable();
-            $table->string('shipping_zip_code',6)->nullable();
-            $table->string('shipping_country',3)->nullable()->default('IDN');
+            $table->string('shipping_zip_code', 6)->nullable();
+            $table->string('shipping_country', 3)->nullable()->default('IDN');
             $table->string('shipment_id')->nullable();
             $table->string('shipment_name')->nullable();
             $table->unsignedInteger('shipping_cost');

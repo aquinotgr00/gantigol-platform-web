@@ -1,3 +1,3 @@
 <?php
 
-Route::resource('list-customer', 'CustomerController');    
+Route::resource('list-customer', 'CustomerController');

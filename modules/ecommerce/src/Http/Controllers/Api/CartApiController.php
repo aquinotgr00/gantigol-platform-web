@@ -101,7 +101,7 @@ class CartApiController extends Controller
         }
 
         foreach ($request->items as $key => $value) {
-            
+
             $valid = Validator::make($value, [
                 'qty' => 'required|numeric',
                 'product_id' => 'required',
