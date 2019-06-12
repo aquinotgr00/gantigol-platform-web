@@ -86,6 +86,7 @@ class PromoController extends Controller
         $request->validate([
         'code' => 'required|unique:promocodes|max:255',
         'reward' => 'required|integer|min:1',
+        'expires_at'=>'required',
         ]);
         if(!is_null($request->expires_at)){
             $date = strtotime($request->expires_at." 23:59:59");
