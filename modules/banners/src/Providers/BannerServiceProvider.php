@@ -72,6 +72,7 @@ class BannerServiceProvider extends ServiceProvider
     {
          $router->prefix(config('banners.api', 'api/banners'))
                ->namespace('Modules\Banners\Http\Controllers')
+               ->middleware(['api'])
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
                });

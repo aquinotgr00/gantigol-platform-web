@@ -73,6 +73,7 @@ class BlogServiceProvider extends ServiceProvider
     {
          $router->prefix(config('blogs.api', 'api/blogs'))
                ->namespace('Modules\Blogs\Http\Controllers')
+               ->middleware(['api'])
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
                });

@@ -30,6 +30,7 @@ class PromoServiceProvider extends ServiceProvider
         $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadRoutes($router);
+        $this->loadRoutesApi($router);
         $this->loadViews();
         $this->loadMigrationsAndFactories($factory);
     }
@@ -62,6 +63,18 @@ class PromoServiceProvider extends ServiceProvider
                ->middleware(['web','auth:admin'])
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../../../routes/web.php');
+               });
+    }
+    /**
+     * Register API  routes.
+     */
+    private function loadRoutesApi(Router $router): void
+    {
+         $router->prefix(config('promo.api', 'api/promos'))
+               ->namespace('Modules\Promo\Http\Controllers')
+               ->middleware(['api'])
+               ->group(function () {
+                   $this->loadRoutesFrom(__DIR__.'/../../../routes/api.php');
                });
     }
 

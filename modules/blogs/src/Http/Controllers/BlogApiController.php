@@ -72,7 +72,8 @@ class BlogApiController extends Controller
         ->where('blog_category.name', $name)
         ->orderBy('blogs.created_at', 'desc')
         ->limit($limit)
-        ->get();
+        ->paginate();
+        
         $data['highlight']= $this->blogs->where('highlight','yes')
         ->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
         ->where('blog_category.name', $name)
