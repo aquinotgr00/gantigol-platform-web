@@ -299,7 +299,7 @@ class ProductController extends Controller
             $button .= '<a href="#" 
                         data-target="#ModalAdjusment" data-toggle="modal" 
                         class="btn btn-table circle-table adjustment-table" 
-                        data-id="10" 
+                        data-id="'.$data->id.'" 
                         data-placement="top" 
                         title="Adjustment"></a>';
             $button .= '<a href="'.route('product.set-visible',$data->product_id).'"';

@@ -430,8 +430,8 @@ class CartApiController extends Controller
                     'qty' => $item->qty,
                     'price' => $item->price,
                     'subtotal' => $item->subtotal,
-                    'wishlist' => $item->wishlist,
-                    'checked' => $item->checked,
+                    //'wishlist' => $item->wishlist,
+                    //'checked' => $item->checked,
                     'notes' => $item->notes
                 ]);
             }
