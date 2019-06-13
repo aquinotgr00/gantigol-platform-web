@@ -6,6 +6,15 @@
         <li>
             <a class="active" href="{{ route('admin.dashboard') }}">Summary</a>
         </li>
+        
+        <li>
+            <a class="active" href="{{ route('media.library') }}">Media Library</a>
+        </li>
+        
+        @if(class_exists('\Modules\Product\Product'))
+            @include('product::includes.sidebar-nav-item')
+        @endif
+        
         <!-- Nav Item - Users -->
         @can('view-users')
         <li>
@@ -25,9 +34,7 @@
         </li>
         @endcan
 
-        @if(class_exists('\Modules\Product\Product'))
-            @include('product::includes.sidebar-nav-item')
-        @endif
+        
     </ul>
 </nav>
 <!-- end sidebar -->

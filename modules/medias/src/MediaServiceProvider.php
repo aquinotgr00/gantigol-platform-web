@@ -131,7 +131,8 @@ class MediaServiceProvider extends ServiceProvider
     private function loadBladeAliases(): void
     {
         Blade::include('medias::includes.media-library-modal', 'mediaLibraryModal');
-        Blade::include('medias::components.media-picker', 'mediaPicker');
+        Blade::include('medias::includes.filter-media-by-category', 'filterMediaByCategory');
+        Blade::include('medias::includes.media-picker', 'mediaPicker');
     }
     
     private function publishPublicAssets(): void

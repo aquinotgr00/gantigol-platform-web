@@ -6,6 +6,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    @stack('pre-core-style')
     @include('admin::includes-nassau.core-style')
     @stack('styles')
 </head>
@@ -14,27 +15,32 @@
     <div>
         <div class="container-fluid">
             <div class="row">
-                <!-- start sidebar -->
+                {{-- start sidebar --}}
                 @include('admin::includes-nassau.sidebar')
-                <!-- end sidebar -->
-
+                {{-- end sidebar --}}
 
                 <div class="col-md-9 ml-sm-auto col-lg-10 main">
-                    <!-- start header -->
-                    @if(isset($data)) 
+                    @if(isset($data))
+                    {{-- start header --}}
                     @include('admin::includes-nassau.sidebar-heading',$data)
+                    {{-- end header --}}
                     @endif 
-                    <!-- end header -->
+                    
                     @yield('content')
                 </div>
             </div>
         </div>
     </div>
-    <!-- start footer -->
-    @include('admin::includes-nassau.footer')
-    <!-- end footer -->
     
+    {{-- start footer --}}
+    @include('admin::includes-nassau.footer')
+    {{-- end footer --}}
+    
+    {{-- Logout Modal --}}
     @include('admin::auth.confirm-logout')
+    
+    {{-- Other Modals --}}
+    @yield('modals')
 
     @include('admin::includes-nassau.core-javascript')
     @stack('scripts')

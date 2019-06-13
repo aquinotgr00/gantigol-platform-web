@@ -2,7 +2,10 @@
 
 Route::prefix(config('medias.prefix', 'medias'))->middleware('auth:admin')->group(function () {
     
-    Route::get('library', 'MediaController@mediaLibrary')->name('media.library');
+    Route::get('library', 'MediaController@index')->name('media.library');
+    Route::get('library/create', 'MediaController@create')->name('media.library.create');
+    Route::get('library/store', 'MediaController@create')->name('media.library.store');
+    
     Route::post('category/add', 'MediaController@createMediaCategory')->name('media.storeCategory');
     Route::post('category/assign', 'MediaController@assignCategory')->name('media.assignMediaCategory');
     Route::post('projects/media', 'ContentMediaController@storeMedia')->name('projects.storeMedia');

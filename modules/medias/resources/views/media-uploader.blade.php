@@ -1,25 +1,13 @@
-@push('styles')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" />
-@endpush
-
-<form 
-    action="{{ route('projects.store') }}" 
-    method="POST" 
-    enctype="multipart/form-data" 
-    id="file-uploader" 
-    data-tmp-upload-url="{{ route('projects.storeMedia') }}"
-    data-on-successful-upload="{{$onMediaSelected??null}}">
+<form action="{{ route('projects.store') }}" method="post" id="media-upload" data-redirect-url="{{ route('media.library') }}">
     @csrf
-
-    <div class="form-group">
-        <label for="document">Documents</label>
-        <div class="needsclick dropzone" id="document-dropzone"></div>
+    <div class="dropzone dropzone-media needsclick dz-clickable" id="media-dropzone" data-dropzone-url="{{ route('projects.storeMedia') }}">
+        <div class="dz-message message-dz" data-dz-message style="display: block;">
+            <h1>Drop Files To Upload</h1>
+            <p>or click to browse</p>
+        </div>
     </div>
-    <div>
-        <input class="btn btn-primary" type="submit">
+
+    <div class="float-right mt-3">
+        <button type="submit" class="btn" disabled>Upload</button>
     </div>
 </form>
-
-@push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
-@endpush

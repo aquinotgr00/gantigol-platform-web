@@ -4,4 +4,3 @@
 <script src="{{ asset('vendor/admin/js/bootstrap/bootstrap.min.js') }}"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="{{ asset('vendor/admin/js/dropzone.js') }}"></script>
