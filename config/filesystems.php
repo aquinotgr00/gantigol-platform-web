@@ -65,7 +65,8 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY','hgcpPyMo3gNBpguKHZDsIY3Wu8equAfuW/ECNLbm'),
             'region' => env('AWS_DEFAULT_REGION','ap-southeast-1'),
             'bucket' => env('AWS_BUCKET','nassau-staging'),
-            'url' => env('AWS_URL'),
+            'url' => env('AWS_URL','nassau-staging.s3.amazonaws.com'),
+            'visibility' => 'public',
         ],
 
     ],
