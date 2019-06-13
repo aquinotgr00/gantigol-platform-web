@@ -21,10 +21,11 @@ class CreateProductsTable extends Migration
             $table->unsignedInteger('price');
             $table->unsignedInteger('weight')->nullable();
             $table->unsignedInteger('category_id')->nullable();
-            $table->text('size_codes')->nullable();
+            $table->text('keywords')->nullable();
             $table->boolean('status')->default(true);
             $table->boolean('visible')->default(true);
             $table->unsignedInteger('size_id')->nullable();
+            $table->string('variant_id')->nullable();
             $table->timestamps();
             
             //$table->foreign('category_id')->references('id')->on('product_categories')->onDelete('cascade');

@@ -34,7 +34,7 @@ class ProductAttributeController extends Controller
             'value' => 'required',
         ]);
         $productVariant = ProductVariantAttribute::create($request->except('_token'));
-        return redirect()->route('product-variant.show',$productVariant->id);
+        return redirect()->route('product-variant.index');
     }
 
     public function show(int $id)
@@ -54,12 +54,24 @@ class ProductAttributeController extends Controller
             'title'=>'Edit Product Variant',
             'back'=> route('product-variant.index'),
         ];
-        return view('product::product-variant.edit',compact('productVariant','data'));
+        $categories = [];
+        if (class_exists('\Modules\ProductCategory\ProductCategory')) {
+            $categories = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')
+                            ->with('subcategories')
+                            ->get();            
+        }
+        return view('product::product-variant.edit',compact('productVariant','data','categories'));
     }
 
     public function update(Request $request,int $id)
     {
-        # code...
+        $request->validate([
+            'attribute' => 'required'
+        ]);
+        $productVariantAttr = ProductVariantAttribute::findOrFail($id);
+        $productVariantAttr->update($request->only('attribute','value'));
+
+        return redirect()->route('product-variant.index');
     }
 
     public function destroy(int $id)

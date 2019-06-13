@@ -65,6 +65,13 @@ class MemberRegistrationServiceProvider extends ServiceProvider
                ->group(function () {
                    $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
                });
+               
+        $router->prefix(config('admin.prefix', 'admin'))
+               ->namespace('Modules\Membership\Http\Controllers')
+               ->middleware(['web','auth:admin'])
+               ->group(function () {
+                   $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+               });
     }
 
      /**

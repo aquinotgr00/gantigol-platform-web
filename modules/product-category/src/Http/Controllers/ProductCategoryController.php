@@ -38,7 +38,7 @@ class ProductCategoryController extends Controller
             'title' => ucwords('add new product categories'),
             'back' => route('product-categories.index')
         ];
-        $categories = ProductCategory::all();
+        $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
         return view('product-category::nassau.create', compact('data','categories'));
     }
 
@@ -63,30 +63,50 @@ class ProductCategoryController extends Controller
      */
     public function show(ProductCategory $productCategory)
     {
-        //
+        return redirect()->route('product-categories.index');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \Modules\ProductCategory\ProductCategory  $productCategory
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(ProductCategory $productCategory)
+    public function edit(int $id)
     {
-        return $this->form($productCategory);
+        $data = [
+            'title' => ucwords('Edit product category'),
+            'back' => route('product-categories.index')
+        ];
+        $category   = ProductCategory::findOrFail($id);
+        $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
+        return view('product-category::nassau.edit', compact('data','categories','category'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Modules\ProductCategory\ProductCategory  $productCategory
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ProductCategory $productCategory)
+    public function update(Request $request,int $id)
     {
-        return redirect_success('product-categories.index', 'Success', "Category {$productCategory->name} updated!");
+        $request->validate([
+           'name' => 'required'
+        ]);
+        
+        $productCategory = ProductCategory::findOrFail($id);
+        
+        if ($request->parent_id != $id ) {
+            
+            $productCategory->update([
+                'parent_id' => $request->parent_id,
+                'name' => $request->name
+            ]);
+        }
+        return redirect()->route('product-categories.index');
+        //return redirect_success('product-categories.index', 'Success', "Category {$productCategory->name} updated!");
     }
     
     /**

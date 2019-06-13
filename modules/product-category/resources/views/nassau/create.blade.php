@@ -10,11 +10,11 @@
         </div>
         <div class="form-group">
             <label for="exampleFormControlSelect1">Parent Category</label>
-            <select class="form-control" id="exampleFormControlSelect1" name="parent_id">
-            <option value="">Choose one</option>
+            <select name="parent_id" class="form-control">
                 @if(isset($categories))
-                @foreach($categories as $key => $value)
-                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                <option value="">Choose one</option>
+                @foreach($categories as $key => $category)
+                @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
                 @endforeach
                 @endif
             </select>

@@ -17,6 +17,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('list-membership.index') }}" {{ Route::is('list-membership.index')? 'class=active' :'' }}>
+                        Memberships
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('users.index') }}" {{ Route::is('users.index')? 'class=active' :'' }}>
                         Administrator
                     </a>

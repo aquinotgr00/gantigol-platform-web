@@ -32,11 +32,6 @@
                 <p>{{ number_format($productVariant->quantity_on_hand) }}</p>
             </div>
             <div class="col-sm form-group">
-                <label>Size Code</label>
-                <p>{{ $productVariant->size_code }}</p>
-            </div>
-        </div>
-        <div class="form-group">
             <label>Category</label>
             <p>
                 @if(isset($categories) && ($categories))
@@ -51,6 +46,7 @@
                 @endforeach
                 @endif
             </p>
+            </div>
         </div>
         <div class="mt-3">
             <label>Log Activity</label>

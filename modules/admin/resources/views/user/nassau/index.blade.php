@@ -2,6 +2,7 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -14,7 +15,7 @@
     <tool class="navbar navbar-expand-lg">
         <form class="form-inline my-2 my-lg-0">
             <div class="input-group srch">
-                <input type="text" class="form-control search-box" placeholder="Search">
+                <input type="search" id="search" class="form-control search-box" placeholder="Search">
                 <div class="input-group-append">
                     <button class="btn btn-search" type="button">
                         <i class="fa fa-search"></i>
@@ -29,6 +30,7 @@
         </form>
     </tool>
 </div>
+<hr/>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -61,7 +63,11 @@
                 </td>
                 @can('edit-user')
                 <td>
-                    @smallRoundButton(['icon'=>'fa-pen','title'=>'Edit','route'=>route('users.edit',['user'=>$user])])
+                    <a href="{{ route('users.edit',['user'=>$user]) }}" 
+                        class="btn btn-table circle-table edit-table" 
+                        data-toggle="tooltip" 
+                        data-placement="top" title="" data-original-title="Edit">
+                    </a>
                 </td>
                 @endcan
             </tr>
@@ -79,5 +85,16 @@
         let action = '{{ route("users.status", "@@") }}'.replace('@@', $(this).data('user'))
         $('<form method="post" action="' + action + '">@csrf @method("PUT")</form>').appendTo('body').submit()
     })
+    
+    $(document).ready(function(){
+        var datatables = $('#dataTable').DataTable();
+        
+        $('#dataTable_filter').css('display','none');
+
+        $('#search').on('keyup', function () {
+            
+            datatables.search(this.value).draw();
+        });
+    });
 </script>
 @endpush

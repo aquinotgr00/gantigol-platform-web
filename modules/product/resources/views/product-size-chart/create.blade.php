@@ -14,9 +14,9 @@
         <div class="form-group">
             <label for="">Product Category</label>
             <select name="category_id" class="form-control">
-                @if(isset($productCategory))
+                @if(isset($categories))
                 <option value="0">Choose one</option>
-                @foreach($productCategory as $key => $category)
+                @foreach($categories as $key => $category)
                 @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
                 @endforeach
 

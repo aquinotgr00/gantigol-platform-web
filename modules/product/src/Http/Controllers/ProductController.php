@@ -69,7 +69,8 @@ class ProductController extends Controller
             'price',
             'activity_id',
             'category_id',
-            'status'
+            'status',
+            'keywords'
         ));
 
         if ($request->has('sku')) {
@@ -80,11 +81,11 @@ class ProductController extends Controller
             ) {
                 $new_variant = ProductVariant::create([
                     'sku'=> $request->sku,
-                    'size_code'=> $request->size_code,
                     'product_id'=> $product->id,
                     'price' => $request->price,
                     'initial_balance' => $request->initial_balance,
                     'quantity_on_hand' => $request->initial_balance,
+                    'variant' => 'ALL SIZE'
                 ]);
             }
         }
@@ -102,7 +103,6 @@ class ProductController extends Controller
 
                     ProductVariant::create([
                         'variant'=> $value,
-                        'size_code'=> $request->list_size[$key],
                         'sku'=> $trim_sku,
                         'product_id'=> $product->id,
                         'price' => $request->list_price[$key],
@@ -138,7 +138,7 @@ class ProductController extends Controller
         }
         
         $data = [
-            'title' => ucwords($product->name),
+            'title' => ucwords($product->name.' #'.$productVariant->variant),
             'back' => route('product.index')
         ];
         return view("product::product.show",compact('product','productVariant','categories','data'));
@@ -163,7 +163,14 @@ class ProductController extends Controller
             'title' => $product->name,
             'back' => route('product.index')
         ];
-        return view("product::product.edit",compact('product','productVariant','data','related_tags'));
+        $categories = [];
+        if (class_exists('\Modules\ProductCategory\ProductCategory')) {
+            $categories = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')
+                            ->with('subcategories')
+                            ->get();            
+            
+        }
+        return view("product::product.edit",compact('product','productVariant','data','related_tags','categories'));
     }
     /**
      * Update the specified resource in storage.
@@ -188,19 +195,16 @@ class ProductController extends Controller
         ));
 
         //activity log
-        $user = Auth::user();
-        activity()
-            ->performedOn($productVariant)
-            ->causedBy($user)
-            ->withProperties([
-                'activity' => 'Change Description'
-            ])
-            ->log('Change Description');
-        
-        $productVariant->update(
-        $request->only(
-            'size_code'
-        ));
+        foreach ($product->variants as $index => $variant) {
+            $user = Auth::user();
+            activity()
+                ->performedOn($variant)
+                ->causedBy($user)
+                ->withProperties([
+                    'activity' => 'Change Description'
+                ])
+                ->log('Change Description');
+        }
         
         if ($request->has('tags')) {
             $tags = explode(',',$request->tags);
@@ -286,7 +290,7 @@ class ProductController extends Controller
         })
         ->addColumn('name', function ($data) {
             $link  = '<a href="'.route('product.show',$data->id).'" >';
-            $link .= $data->name.' #'.$data->size_code;
+            $link .= $data->name.' #'.$data->variant;
             $link .= '</a>';
             return $link;
         })
@@ -299,7 +303,7 @@ class ProductController extends Controller
             $button .= '<a href="#" 
                         data-target="#ModalAdjusment" data-toggle="modal" 
                         class="btn btn-table circle-table adjustment-table" 
-                        data-id="10" 
+                        data-id="'.$data->id.'" 
                         data-placement="top" 
                         title="Adjustment"></a>';
             $button .= '<a href="'.route('product.set-visible',$data->product_id).'"';

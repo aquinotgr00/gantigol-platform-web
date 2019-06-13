@@ -8,18 +8,17 @@
         @csrf
         <div class="form-group">
             <label for="">Size Chart Name</label>
-            <input type="text" name="name" class="form-control" />
+            <input type="text" name="name" class="form-control" value="{{ $productSize->name }}" />
         </div>
         <div id="tableDiv"></div>
         <div class="form-group">
             <label for="">Product Category</label>
             <select name="category_id" class="form-control">
-                @if(isset($productCategory))
-                <option value="0">Choose one</option>
-                @foreach($productCategory as $key => $value)
-                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                @if(isset($categories))
+                <option value="">Choose one</option>
+                @foreach($categories as $key => $category)
+                @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
                 @endforeach
-
                 @endif
             </select>
         </div>
