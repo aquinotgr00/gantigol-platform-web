@@ -80,6 +80,20 @@ class BlogApiController extends Controller
         return json_encode($data);
     }
 
+    /**
+     * Create a new controller get five hot post.
+     *
+     * @return mixed
+     */
+    public function getHotPost(Request $request, $limit = 5 )
+    {
+        $data['post'] = $this->blogs->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
+        ->orderBy('blogs.count', 'desc')
+        ->limit($limit)
+        ->get();
+        return json_encode($data);
+    }
+
 
     /**
      * Create a new controller get recent data many post using feature search.
