@@ -220,27 +220,7 @@
                 return false;
             }
         });
-        /*
-        $('#form-add-product').submit(function (event) {
-
-            event.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: $(this).attr('action'),
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    if (data.id > 0) {
-                        alert('Success');
-                        window.location.href = "{{ route('product.index') }}";
-                    }
-                }
-            });
-            return false;
-        });*/
-
+        
         $('#form-add-new-variant').submit(function (event) {
 
             event.preventDefault();
@@ -379,23 +359,19 @@
 
             var results = cartesian.apply(this, attributes);
             var tbody = '';
-
+            var price_global = $('input[name="price"]').val();
             $.each(results, function (key, val) {
                 tbody += '<tr>';
                 tbody += '<td>' + val.join(' ').toUpperCase();
                 tbody += '<input type="hidden" name="list_variant[]" value="' + val.join(' ') + '" /></td>';
                 tbody += '<td>';
                 tbody += '<div class="form-group">';
-                tbody += '<label>Size Code</label>';
-                tbody += '<input type="text" name="list_size[]" class="form-control"/>';
-                tbody += '</div>';
-                tbody += '<div class="form-group">';
                 tbody += '<label>SKU</label>';
                 tbody += '<input type="text" name="list_sku[]" class="form-control"/>';
                 tbody += '</div>';
                 tbody += '<div class="form-group">';
                 tbody += '<label>Price</label>';
-                tbody += '<input type="number" name="list_price[]"  class="form-control"/>';
+                tbody += '<input type="number" name="list_price[]"  class="form-control" value="'+price_global+'"/>';
                 tbody += '</div>';
                 tbody += '<div class="form-group">';
                 tbody += '<label>Initial Stock</label>';

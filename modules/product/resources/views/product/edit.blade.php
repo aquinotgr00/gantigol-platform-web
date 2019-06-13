@@ -33,26 +33,22 @@
                 <label>Stock</label>
                 <p>{{ number_format($productVariant->quantity_on_hand) }}</p>
             </div>
-        </div>
-        <div class="form-group">
+            <div class="col-sm form-group">
             <label>Category</label>
             <p>
-            @if(!is_null($productVariant->product->category))
-            @php
-            $category = $productVariant->product->category;
-            @endphp
-            
-            @include('product::includes.productcategory-row', ['category'=>$category, 'parent'=>''])
+                @if(isset($categories) && ($categories))
+                @foreach ($categories->all() as $category)
 
-            @else
-            <br>-
-            @endif
+                @include('product::includes.productcategory-row', [
+                'category'=>$category,
+                'parent'=>'',
+                'category_id'=>$product->category->id
+                ])
+
+                @endforeach
+                @endif
             </p>
-        </div>
-        <div class="form-group">
-            <label for="sizeCode">Size Code</label>
-            <input type="text" class="form-control" id="sizeCode" name="size_code"
-                value="{{ $productVariant->size_code }}">
+            </div>
         </div>
         <div class="form-group">
             <label for="InputCategoryRelatedTag">Related Tag</label>

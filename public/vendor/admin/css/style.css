@@ -523,18 +523,18 @@ img .add-svg{
 	background-image: none;
 }
 .dropzone-secondary {
-    background: white;
-    border: 1px dashed #B3B8C7;
+    background: white !important;
+    border: 1px dashed #B3B8C7 !important;
 	border-radius: 2px;
     width: 80px;
 	height: 80px;
     margin-right: auto;
     margin-bottom: 7px;
-    background-image: url(../images/image-plus.svg);
-    background-size: 50%;
-    background-repeat: no-repeat;
-    background-position: center;
-    min-height: 80px;
+    background-image: url(../images/image-plus.svg) !important;
+    background-size: 50% !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    min-height: 80px !important;
 }
 .dropzone .dz-message{
 	display: none;

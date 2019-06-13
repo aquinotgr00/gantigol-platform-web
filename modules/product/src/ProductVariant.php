@@ -20,11 +20,7 @@ class ProductVariant extends Model
     public function setSizeCodeAttribute($value) {
         $this->attributes['size_code'] = strtoupper($value);
     }
-    
-    public function orders() {
-        return $this->hasMany("\Modules\Product\OrderItem","productvariant_id");
-    }
-    
+        
     public function getNameAttribute() {
         if($this->product) {
             return $this->product->name.' #Size: '.$this->size_code;

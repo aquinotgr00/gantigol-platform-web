@@ -45,4 +45,12 @@ class ProductCategory extends Model
     {
         return $this->parentCategory()->with('parentRecursive');
     }
+
+    public function sizeChart()
+    {
+        if (class_exists('\Modules\Product\ProductSizeChart')) {
+            return $this->hasOne(\Modules\Product\ProductSizeChart::class, 'category_id', 'id');
+        }
+        return null;
+    }
 }

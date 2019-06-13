@@ -21,16 +21,16 @@ class ProductSizeChartController extends Controller
     {
         $data['title'] = 'Product Size Chart';
         $data['back'] = route('product-size-chart.index');
-        $productCategory = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
-        return view('product::product-size-chart.create', compact('productCategory', 'data'));
+        $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
+        return view('product::product-size-chart.create', compact('categories', 'data'));
     }
 
     public function show(int $id)
     {
         $productSize = ProductSizeChart::findOrFail($id);
         $categories = [];
-        if (class_exists('\Modules\ProductCategory\ProductCategory')) {
-            $categories = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')
+        if (class_exists('\Modules\categories\categories')) {
+            $categories = \Modules\categories\categories::whereNull('parent_id')
                             ->with('subcategories')
                             ->get();            
             
@@ -45,6 +45,7 @@ class ProductSizeChartController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'category_id'=>'required'
         ]);
 
         $productSize = ProductSizeChart::create($request->except('_token'));
@@ -54,52 +55,23 @@ class ProductSizeChartController extends Controller
 
     public function edit(int $id)
     {
-        $productSize = ProductSizeChart::findOrFail($id);
-        $data['title'] = 'Product Size Chart';
-        $data['back'] = route('product-size-chart.index');
-        return view('product::product-size-chart.edit', compact('productSize', 'data'));
+        $productSize    = ProductSizeChart::findOrFail($id);
+        $data['title']  = 'Product Size Chart';
+        $data['back']   = route('product-size-chart.index');
+        $categories     = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
+        return view('product::product-size-chart.edit', compact('productSize', 'data','categories'));
     }
 
     public function update(Request $request, int $id)
     {
         $request->validate([
             'name' => 'required',
+            'category_id'=>'required'
         ]);
 
         $productSize = ProductSizeChart::findOrFail($id);
 
-        $charts = [];
-
-        if ($request->has('body') && $request->has('head')) {
-            foreach ($request->head[0] as $key => $value) {
-                $charts[$value] = $request->body[$key];
-            }
-        }
-
-        if ($request->hasFile('image')) {
-
-            $image_path = storage_path($productSize->image);
-            if (File::exists($image_path)) {
-                File::delete($image_path);
-            }
-            $image = $request->image->store('public/images');
-            $productSize->update([
-                'image' => $image,
-            ]);
-        }
-        if ($charts) {
-            $json = json_encode($charts);
-            $productSize->update([
-                'charts' => $json,
-            ]);
-        }
-
-        $productSize->update([
-            'name' => $request->name,
-            'codes' => $request->codes,
-        ]);
-
-        return redirect()->route('product-size-chart.show', $productSize->id);
+        return redirect()->route('product-size-chart.index');
     }
 
     public function destroy(int $id)

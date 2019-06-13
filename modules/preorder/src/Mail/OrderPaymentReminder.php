@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Modules\Preorder\Transaction;
 
 class OrderPaymentReminder extends Mailable
 {
@@ -17,6 +18,12 @@ class OrderPaymentReminder extends Mailable
      * @var object
      */
     private $transaction;
+    /**
+     * amount of reminder
+     *
+     * @var int
+     */
+    private $times;
 
     /**
      * Create a new message instance.
@@ -24,9 +31,10 @@ class OrderPaymentReminder extends Mailable
      * @param object $transaction
      * @return mixed
      */
-    public function __construct($transaction)
+    public function __construct(int $times,Transaction $transaction)
     {
-        $this->transaction = $transaction;
+        $this->times        = $times;
+        $this->transaction  = $transaction;
     }
 
     /**
@@ -36,7 +44,8 @@ class OrderPaymentReminder extends Mailable
      */
     public function build()
     {
-        return $this->subject('Payment Reminder')
+        
+        return $this->subject('Payment Reminder #'.$this->times)
         ->markdown('preorder::emails.orders.payment-reminder')->with([
             'transaction' => $this->transaction
         ]);

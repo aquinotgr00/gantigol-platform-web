@@ -86,7 +86,6 @@
         $('#ModalAdjusment').on('shown.bs.modal', function (e) {
             var button = e.relatedTarget;
             var id = $(button).data('id');
-            console.log(id);
             $('input[name="product_variants_id"]').val(id);
 
         });
@@ -106,6 +105,8 @@
                     }
                 }
             });
+
+            location.reload();
         });
 
         $('#dataTable_filter').css('display','none');

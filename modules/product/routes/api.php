@@ -10,6 +10,7 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
-Route::apiResource('items', 'Api\\ProductApiController');
+Route::get('items', 'Api\\ProductApiController@index')->name('product.items');
 Route::post('/upload/image-product','Api\\ProductApiController@uploadImage')->name('upload.image-product');
 Route::get('/variant/{id}','Api\\ProductApiController@showProductVariant')->name('variant.show');
+Route::get('items/{id}', 'Api\\ProductApiController@show');

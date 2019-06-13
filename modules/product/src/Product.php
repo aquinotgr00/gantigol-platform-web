@@ -9,12 +9,12 @@ class Product extends Model
     use \Conner\Tagging\Taggable;
 
     protected $casts = [ 'size_codes' => 'array' ];
-    protected $fillable = ['name', 'description', 'image', 'category_id', 'price', 'weight', 'size_id', 'status'];
+    protected $fillable = ['name', 'description', 'image', 'category_id', 'price', 'weight', 'size_id', 'status','keywords'];
     protected $appends = ['size_available'];
 
 
     public function category() {
-        return $this->belongsTo('\Modules\ProductCategory\ProductCategory','category_id');
+        return $this->belongsTo('\Modules\ProductCategory\ProductCategory','category_id','id');
     }
 
     public function size() {
