@@ -32,6 +32,7 @@ class AdminServiceProvider extends ServiceProvider
         'searchbar',
         'addNewButton',
         'pageHeader',
+        'sidebarNavItem'
     ];
     
     private $bladeComponents = ['modal','toast','indexPage','table'];
