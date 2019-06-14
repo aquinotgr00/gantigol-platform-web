@@ -10,11 +10,11 @@ class CustomerProfile extends Model
     protected $fillable = [
         "name",
         "email",
-        'phone', 
-        'gender', 
-        'address', 
-        'subdistrict_id', 
-        'zip_code', 
+        'phone',
+        'gender',
+        'address',
+        'subdistrict_id',
+        'zip_code',
         'birthdate',
         'member_discount_id',
         'last_login',
@@ -40,7 +40,8 @@ class CustomerProfile extends Model
         return strtoupper($value);
     }
     
-    public function subdistrict() {
+    public function subdistrict()
+    {
         if (class_exist('\Modules\Shipment\Subdistrict')) {
             return $this->belongsTo('\Modules\Shipment\Subdistrict');
         }

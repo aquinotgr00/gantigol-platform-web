@@ -1,0 +1,23 @@
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M27.75 14C27.75 21.5939 21.5939 27.75 14 27.75C6.40608 27.75 0.25 21.5939 0.25 14C0.25 6.40608 6.40608 0.25 14 0.25C21.5939 0.25 27.75 6.40608 27.75 14Z" fill="#4285F4"/>
+<path d="M27.75 14C27.75 21.5939 21.5939 27.75 14 27.75C6.40608 27.75 0.25 21.5939 0.25 14C0.25 6.40608 6.40608 0.25 14 0.25C21.5939 0.25 27.75 6.40608 27.75 14Z" stroke="url(#paint0_linear)" stroke-width="0.5"/>
+<path d="M27.75 14C27.75 21.5939 21.5939 27.75 14 27.75C6.40608 27.75 0.25 21.5939 0.25 14C0.25 6.40608 6.40608 0.25 14 0.25C21.5939 0.25 27.75 6.40608 27.75 14Z" stroke="url(#paint1_linear)" stroke-width="0.5"/>
+<g clip-path="url(#clip0)">
+<path d="M19.375 7.99988H8.125C7.50391 7.99988 7 8.50378 7 9.12488V16.6249C7 17.246 7.50391 17.7499 8.125 17.7499H12.625L12.25 18.8749H10.5625C10.2508 18.8749 10 19.1257 10 19.4374C10 19.7491 10.2508 19.9999 10.5625 19.9999H16.9375C17.2492 19.9999 17.5 19.7491 17.5 19.4374C17.5 19.1257 17.2492 18.8749 16.9375 18.8749H15.25L14.875 17.7499H19.375C19.9961 17.7499 20.5 17.246 20.5 16.6249V9.12488C20.5 8.50378 19.9961 7.99988 19.375 7.99988ZM19 16.2499H8.5V9.49988H19V16.2499Z" fill="white"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear" x1="0.136997" y1="0" x2="0.136997" y2="27.726" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0"/>
+<stop offset="0.8" stop-opacity="0.02"/>
+<stop offset="1" stop-opacity="0.04"/>
+</linearGradient>
+<linearGradient id="paint1_linear" x1="0" y1="0" x2="0" y2="28" gradientUnits="userSpaceOnUse">
+<stop stop-color="white" stop-opacity="0.12"/>
+<stop offset="0.2" stop-color="white" stop-opacity="0.06"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0">
+<rect width="13.5" height="12" fill="white" transform="translate(7 7.99988)"/>
+</clipPath>
+</defs>
+</svg>

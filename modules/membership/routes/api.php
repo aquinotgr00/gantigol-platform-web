@@ -10,4 +10,6 @@
       'middleware' => 'auth:api'
     ], function () {
         Route::get('request/verification', 'ApiMembershipController@requestToken')->name("auth.request.verification");
+        Route::get('membership/get-user', 'ApiMembershipController@getMember')->name("auth.membership.user");
+        Route::post('membership/update-user', 'ApiMembershipController@updateMember')->name("auth.membership.user");
     });

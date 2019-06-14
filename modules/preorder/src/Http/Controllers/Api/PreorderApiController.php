@@ -10,8 +10,6 @@ use Modules\Preorder\Http\Resources\PreOrderResource;
 use Modules\Preorder\PreOrder;
 use Modules\Product\Product;
 use Modules\Product\ProductImage;
-use Modules\Product\ProductSize;
-use Modules\Product\ProductVariant;
 use Validator;
 
 class PreorderApiController extends Controller
@@ -61,7 +59,7 @@ class PreorderApiController extends Controller
 
         $request->request->add(['product_id' => $new_product->id]);
 
-        $preOrder = PreOrder::create($request->only('product_id', 'quota', 'end_date', 'status','start_date'));
+        $preOrder = PreOrder::create($request->only('product_id', 'quota', 'end_date', 'status', 'start_date'));
 
         // add product images
         if ($request->hasFile('images')) {
@@ -76,7 +74,7 @@ class PreorderApiController extends Controller
                 $newImage->save();
             }
         }
-       
+        
         return new PreOrderResource($preOrder);
     }
     /**

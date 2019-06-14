@@ -38,5 +38,12 @@ return [
             'id'=>'ninja',
             'name'=>'Ninja Xpress (NINJA)',
         ]
+    ],
+    'Reminder'=>[
+        'time'=>date('H:i',mktime(8,0)),
+        'expired'=>[
+            'amount'=>(env('APP_ENV')=='production')?1440:4,
+            'unit'=>'minutes'
+        ]
     ]
 ];

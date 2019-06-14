@@ -82,7 +82,7 @@ class MediaServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $path => resource_path('views/vendor/admins'),
+                $path => resource_path('views/vendor/media'),
             ], 'medias:views');
         }
     }
@@ -132,7 +132,7 @@ class MediaServiceProvider extends ServiceProvider
     {
         Blade::include('medias::includes.media-library-modal', 'mediaLibraryModal');
         Blade::include('medias::includes.filter-media-by-category', 'filterMediaByCategory');
-        Blade::include('medias::includes.media-picker', 'mediaPicker');
+        Blade::component('medias::components.media-picker', 'mediaPicker');
     }
     
     private function publishPublicAssets(): void

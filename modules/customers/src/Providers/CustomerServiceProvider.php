@@ -54,7 +54,7 @@ class CustomerServiceProvider extends ServiceProvider
     {
         $routeRegistrar->prefix(config('admin.prefix', 'admin'))
             ->namespace('Modules\Customers\Http\Controllers')
-            ->middleware(['web'])
+            ->middleware(['web','auth:admin'])
             ->group(function () {
                 $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
             });

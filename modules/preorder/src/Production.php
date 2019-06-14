@@ -16,6 +16,7 @@ class Production extends Model
     protected $fillable = [
         'transaction_id',
         'tracking_number',
+        'status',
         'production_batch_id'
     ];
     /**

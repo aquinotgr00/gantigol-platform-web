@@ -5,7 +5,6 @@
 @endpush
 
 @push('styles')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
 <style>
     .add-img-featured {
         padding: 10px;
@@ -39,13 +38,13 @@
         </div>
         <div class="form-group">
             <label for="parent-category">Parent Category</label>
-            <select class="form-control" id="parent-category">
-                <option></option>
-                <option>Parent Category 01</option>
-                <option>Parent Category 02</option>
-                <option>Parent Category 03</option>
-                <option>Parent Category 04</option>
-                <option>Parent Category 05</option>
+            <select name="parent_id" class="form-control" id="parent-category">
+                @if(isset($categories))
+                <option value="">Choose one</option>
+                @foreach($categories as $key => $category)
+                @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
+                @endforeach
+                @endif
             </select>
         </div>
         <div class="float-right">
@@ -57,9 +56,9 @@
         <div class="mb-4">
             <label>Featured Image</label>
             <div class="mb-2">
-                <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="updateCategoryImage">
+                @mediaPicker(['singleSelect'=>true, 'onSelect'=>'updateCategoryImage'])
                     <img src="{{ $category->image_id?$category->image->getUrl():asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
-                </a>
+                @endmediaPicker
             </div>
             <small>
                 <span>Image size must be 1920x600 with maximum file size</span>
@@ -70,13 +69,11 @@
     </div>
 
 </div>
-
 @endsection
 
 @mediaLibraryModal
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
 <script>
 	function updateCategoryImage(selectedMedia) {
         const {id,url} = selectedMedia[0]

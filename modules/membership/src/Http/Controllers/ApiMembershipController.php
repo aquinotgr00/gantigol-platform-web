@@ -127,6 +127,18 @@ class ApiMembershipController extends Controller
         dispatch(new \Modules\Membership\Jobs\SendEmailMembership($data));
     }
 
+    /**
+     * sending email and access token to Forgot / reset password
+     *
+     * @param  array  $data
+     *
+     * @return void
+     */
+    public function sendEmailAndTokenReset($data)
+    {
+        dispatch(new \Modules\Membership\Jobs\SendEmailMembershipResetPassword($data));
+    }
+
 
     /**
      * Login member and create token
@@ -323,7 +335,7 @@ class ApiMembershipController extends Controller
                     'email'=>$request->email,
                     'content'=>$request->url_act."/".$token
                     ];
-                $this->sendEmailAndToken($data);
+                $this->sendEmailAndTokenReset($data);
             }
             $code = 200;
         }
@@ -346,7 +358,7 @@ class ApiMembershipController extends Controller
         $check = $this->password_reset->where('token', $request->token)->first();
         if (!is_null($check)) {
             $member = $this->members->findForPassport($check->email);
-            $this->members->where('email', $check->email)->update(['password'=>$request->password]);
+            $this->members->where('email', $check->email)->update(['password'=>bcrypt($request->password)]);
             $token = $this->accessTokenMember($member->id);
             $response = ["message"=>"Success change password",
                         "access_token"=>$token
@@ -354,5 +366,56 @@ class ApiMembershipController extends Controller
             $code = 200;
         }
          return response()->json(['data'=>$response], $code);
+    }
+
+    /**
+     * Update data member
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return mixed
+     */
+    public function updateMember(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'dob' => 'string',
+            'address' => 'string',
+            'subdistrict' => 'string',
+            'city' => 'string',
+            'province' => 'string',
+            'postal_code' => 'string',
+            'gender'=>'string'
+        ]);
+        $member = $this->members->where('id',$request->user()->id)->update([
+            'name' => $request->name,
+            'dob' => $request->dob,
+            'address' => $request->address,
+            'subdistrict' => $request->subdistrict,
+            'city' => $request->city,
+            'province' => $request->province,
+            'gender'=> $request->gender,
+            'postal_code' => $request->postal_code,
+        ]);
+        $response = "Data failed to update";
+        if ($member) {
+            $response = "Data updated";
+        }
+       
+        return response()->json([
+            'message'=>$response,
+            'user'=>$request->user()
+        ], 201);
+    }
+
+    /**
+     * get data member
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return mixed
+     */
+    public function getMember(Request $request)
+    {
+       
+        return $request->user();
     }
 }

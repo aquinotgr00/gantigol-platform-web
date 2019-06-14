@@ -15,7 +15,7 @@ class CustomerApiController extends Controller
     public function index(Request $request)
     {
         $customer = CustomerProfile::with('user')
-        ->orderBy('created_at','DESC')
+        ->orderBy('created_at', 'DESC')
         ->paginate();
         return new CustomerResource($customer);
     }
@@ -60,6 +60,7 @@ class CustomerApiController extends Controller
         
         $customer = CustomerProfile::create([
             'name' => $request->name,
+            'email' => $request->email,
             'address' => $request->address,
             'subdistrict_id' => $request->subdistrict_id,
             'birthdate' => $request->birthdate,
@@ -70,7 +71,7 @@ class CustomerApiController extends Controller
         return new CustomerResource($customer);
     }
 
-    public function update(Request $request,int $id)
+    public function update(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'email',
@@ -84,14 +85,10 @@ class CustomerApiController extends Controller
         }
         try {
             $customer = CustomerProfile::findOrFail($id);
-            foreach ($request->all() as $key => $value) {
-                $customer->$key = $value;
-            }
-            $customer->update();
+            $customer->update($request->except('_method','_token'));
             return new CustomerResource($customer);
         } catch (ModelNotFoundException $exception) {
             return response()->json(['data'=>$exception->getMessage()]);
         }
     }
-
 }

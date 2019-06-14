@@ -16,6 +16,7 @@ class CreateTableContent extends Migration
         Schema::create('contents', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
+            $table->text('description');
             $table->timestamps();
         });
     }

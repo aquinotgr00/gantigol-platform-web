@@ -15,12 +15,16 @@ class CustomerController extends Controller
         $data = [
             'title' => 'Customers'
         ];
-        return view('customers::customers.index',compact('data'));
+        return view('customers::customers.index', compact('data'));
     }
 
     public function create()
     {
-        return view('customers::customers.create');
+        $data = [
+            'title' => 'Add New Customer',
+            'back' => route('list-customer.index')
+        ];
+        return view('customers::customers.create',compact('data'));
     }
 
     public function show(int $id)
@@ -30,7 +34,7 @@ class CustomerController extends Controller
             'title' => ucwords($customer->name),
             'back' => route('list-customer.index')
         ];
-        return view('customers::customers.show',compact('customer','data'));
+        return view('customers::customers.show', compact('customer', 'data'));
     }
 
     public function edit(int $id)

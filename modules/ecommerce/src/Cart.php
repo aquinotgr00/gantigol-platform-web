@@ -3,20 +3,19 @@
 namespace Modules\Ecommerce;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cart extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'total',
         'coupon',
-        'amount_items'    
+        'user_id',
+        'amount_items',
+        'session'
     ];
     
     public function getItems()
     {
-        return $this->hasMany('\Modules\Ecommerce\CartItems','cart_id','id');
+        return $this->hasMany('\Modules\Ecommerce\CartItems', 'cart_id', 'id');
     }
 }

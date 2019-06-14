@@ -47,3 +47,7 @@ Route::prefix('ongkir')
     });
 
 Route::get('/checkout-shipping', 'Api\\CheckoutApiController@withShipping')->name('checkout.shipping');
+
+Route::get('all-transaction', 'Api\\TransactionApiController@getAll');
+
+Route::post('update-courier', 'Api\\ProductionApiController@updateCourier')->name('production.update-courier');

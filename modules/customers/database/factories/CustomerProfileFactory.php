@@ -9,9 +9,9 @@ $factory->define(Modules\Customers\CustomerProfile::class, function (Faker $fake
         'phone'=>$faker->e164PhoneNumber,
         'gender'=>$faker->randomElement(['m','f']),
         'address'=>$faker->address,
-        'birthdate'=>$faker->dateTimeInInterval('-30 years','+20 years'),
+        'birthdate'=>$faker->dateTimeInInterval('-30 years', '+20 years'),
         'last_login'=>$faker->dateTimeThisMonth(),
-        'user_id'=>function() use($registrationDate) {
+        'user_id'=>function () use ($registrationDate) {
             return factory(App\User::class)->create([
                 'created_at'=>$registrationDate,
                 'updated_at'=>$registrationDate

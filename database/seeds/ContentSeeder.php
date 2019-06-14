@@ -11,7 +11,6 @@ class ContentSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('contents')->delete();
         DB::table('contents')->insert([
             'title' => 'Pictures of otters',
             'description' => 'A lot of cute otters.',

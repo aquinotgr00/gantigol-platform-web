@@ -13,7 +13,7 @@ class ProductSize extends Model
         'codes' => 'array',
     ];
     
-    protected $fillable = ['name','codes'];
+    protected $fillable = ['name','codes','charts','image'];
 
     public function products() {
         return $this->hasMany("\Modules\Product\Product","category_id");

@@ -1,8 +1,9 @@
+@push('pre-core-style')
+<link rel="stylesheet" type="text/css" href="{{ asset('vendor/admin/css/dropzone.min.css') }}">
+@endpush
+
 @push('styles')
 <link rel="stylesheet" type="text/css" href="{{ asset('vendor/media/css/medialib.css') }}">
-<style>
-    
-</style>
 @endpush
 
 @section('modals')

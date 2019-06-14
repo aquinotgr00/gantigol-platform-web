@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductVariant extends Model
 {
-    protected $fillable = ['product_id','variant','size_code', 'sku', 'initial_balance', 'quantity_on_hand','isPrismSearch'];
-    protected $appends = ['name','description','price','stock','currency_code', 'image_urls'];
+    protected $fillable = ['product_id','variant','size_code','price', 'sku','image','description', 'initial_balance', 'quantity_on_hand','isPrismSearch'];
+    protected $appends = ['name','description','stock','currency_code', 'image_urls'];
     protected $casts = ['id'=>'string'];
     
     //use FormAccessible;
@@ -20,11 +20,7 @@ class ProductVariant extends Model
     public function setSizeCodeAttribute($value) {
         $this->attributes['size_code'] = strtoupper($value);
     }
-    
-    public function orders() {
-        return $this->hasMany("\Modules\Product\OrderItem","productvariant_id");
-    }
-    
+        
     public function getNameAttribute() {
         if($this->product) {
             return $this->product->name.' #Size: '.$this->size_code;
@@ -38,13 +34,13 @@ class ProductVariant extends Model
         }
         return $this->product;
     }
-    
+    /*
     public function getPriceAttribute() {
         if($this->product) {
             return (string) $this->product->price;
         }
         return $this->product;
-    }
+    }*/
     
     public function getStockAttribute() {
         return $this->quantity_on_hand;

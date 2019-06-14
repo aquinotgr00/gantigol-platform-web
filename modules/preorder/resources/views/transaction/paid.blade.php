@@ -6,13 +6,13 @@
             "order": [[3, "desc"]],
             "columns": [
                 { "data": "created_at" },
-                { "data": "invoice" },
                 { 
-                    "data": "name",
+                    "data": "invoice",
                     "render": function(data, type, row){
                         return '<a href="{{ url('admin/show-transaction') }}/'+row.id+'?preorder={{ $preOrder->id }}">'+data+'</a>';
                     } 
                 },
+                { "data": "name" },
                 {
                     "data": "orders",
                     "render": function (data, type, row) {

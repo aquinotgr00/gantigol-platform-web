@@ -4,11 +4,12 @@ namespace Modules\Membership;
 
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Gabievi\Promocodes\Traits\Rewardable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Member extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, Rewardable;
 
      /**
      * The attributes that are mass assignable.

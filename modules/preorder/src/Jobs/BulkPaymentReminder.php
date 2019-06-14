@@ -39,7 +39,7 @@ class BulkPaymentReminder implements ShouldQueue
         $items  = Transaction::getToReminder(3);//($repeat);
         foreach ($items as $key => $value) {
             try {
-                Mail::to($value->email)->send(new OrderPaymentReminder($value));
+                Mail::to($value->email)->send(new OrderPaymentReminder(3,$value));
                 $increment = 1;
                 $increment += intval($value->payment_reminder);
                 $transaction = Transaction::find($value->id);

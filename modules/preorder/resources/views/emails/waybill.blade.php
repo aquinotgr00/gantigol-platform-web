@@ -3,9 +3,8 @@
 @if(isset($production))
 
 # Your shipping number is
-> ID Transaction #{{ $production->getTransaction->id }}
 ## {{ $production->tracking_number }}
-
+> ID Transaction #{{ $production->getTransaction->invoice }}
 Thank u,
 {{ config('app.name') }}
 
