@@ -70,7 +70,9 @@ class ProductApiController extends Controller
         }
 
         foreach ($products as $key => $value) {
-            $value->category->sizeChart;
+            if (isset($value->category->sizeChart)) {
+                $value->category->sizeChart;
+            }
         }
         
         return new ProductResource($products);
@@ -91,7 +93,9 @@ class ProductApiController extends Controller
 
         $product->tags;
 
-        $product->category->sizeChart;
+        if (isset($product->category->sizeChart)) {
+            $product->category->sizeChart;
+        }
 
         return new ProductResource($product);
     }

@@ -59,7 +59,8 @@ class AllTransactionController extends Controller
             })
             ->filter(function ($query) use ($request) {
                 if ($request->has('invoice')) {
-                    $query->where('transactions.invoice', 'like', "%{$request->get('invoice')}%");
+                    $query->where('transactions.invoice', 'like', "%{$request->get('invoice')}%")
+                    ->orWhere('transactions.name','like',"%{$request->get('invoice')}%");
                 }
 
                 if ($request->has('date')) {

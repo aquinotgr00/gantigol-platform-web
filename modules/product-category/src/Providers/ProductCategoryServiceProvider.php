@@ -2,6 +2,7 @@
 
 namespace Modules\ProductCategory\Providers;
 
+use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Routing\RouteRegistrar;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,11 +23,12 @@ class ProductCategoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(RouteRegistrar $routeRegistrar)
+    public function boot(RouteRegistrar $routeRegistrar, Factory $factory)
     {
         $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadMigrations();
+        $this->loadFactories($factory);
         $this->loadRoutes($routeRegistrar);
         $this->loadViews();
     }
@@ -50,6 +52,13 @@ class ProductCategoryServiceProvider extends ServiceProvider
         }
     }
     
+    private function loadFactories(Factory $factory): void
+    {
+        if ($this->app->runningInConsole()) {
+            $factory->load(__DIR__ . '/../../database/factories');
+        }
+    }
+
     private function loadRoutes(RouteRegistrar $routeRegistrar): void
     {
         $routeRegistrar->prefix(config('admin.prefix', 'admin'))

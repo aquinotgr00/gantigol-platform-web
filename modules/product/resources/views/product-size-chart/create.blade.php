@@ -8,20 +8,27 @@
         @csrf
         <div class="form-group">
             <label for="">Size Chart Name</label>
-            <input type="text" name="name" class="form-control" />
+            <input type="text" name="name"
+                class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" id="name">
+            @if ($errors->has('name'))
+            <div class="invalid-feedback">{{ $errors->first('name') }}</div>
+            @endif
         </div>
         <div id="tableDiv"></div>
         <div class="form-group">
             <label for="">Product Category</label>
-            <select name="category_id" class="form-control">
+            <select name="category_id" class="form-control {{ $errors->has('category_id') ? ' is-invalid' : '' }}">
                 @if(isset($categories))
-                <option value="0">Choose one</option>
+                <option value="">Choose one</option>
                 @foreach($categories as $key => $category)
                 @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
                 @endforeach
 
                 @endif
             </select>
+            @if ($errors->has('category_id'))
+            <div class="invalid-feedback">{{ $errors->first('category_id') }}</div>
+            @endif
         </div>
         <div class="text-right">
             <button class="btn btn-success">

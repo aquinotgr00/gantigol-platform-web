@@ -25,6 +25,8 @@ class CheckoutApiController extends Controller
             'shipping_email' => 'required',
             'shipping_address' => 'required',
             'shipping_cost' => 'required',
+            'billing_name' => 'required',
+            'shipment_name' => 'required',
         ]);
 
         if ($validator->fails()) {

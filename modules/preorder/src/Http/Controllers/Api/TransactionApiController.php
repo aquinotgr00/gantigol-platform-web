@@ -10,10 +10,12 @@ use Modules\Preorder\PreOrder;
 use Modules\Preorder\Production;
 use Modules\Preorder\Transaction;
 use Modules\Product\ProductVariant;
+use Modules\Preorder\Traits\OrderTrait;
 use Validator;
 
 class TransactionApiController extends Controller
 {
+    use OrderTrait;
     /**
      * get all transaction
      *
@@ -110,6 +112,24 @@ class TransactionApiController extends Controller
             )
         );
         
+        if (
+                !is_null($transaction) &&
+                isset($transaction->id)
+            ) {
+            //create schduler
+            $this->scheduleReminders(3,$transaction);
+
+            if (class_exists('\Modules\Customers\CustomerProfile')) {
+                $new_customer = \Modules\Customers\CustomerProfile::create([
+                    'name' => $transaction->name,
+                    'email' => $transaction->email,
+                    'phone' => $transaction->phone,
+                    'address' => $transaction->address,
+                    'birthdate' => date('Y-m-d'),
+                ]);
+            }
+        }
+
         $invoice_id     = str_pad($transaction->id, 5, "0", STR_PAD_LEFT);
         $invoice_parts  = array('INV',date('Y-m-d'),$invoice_id);
         $invoice        = implode('-', $invoice_parts);

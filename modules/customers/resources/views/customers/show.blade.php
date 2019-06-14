@@ -1,5 +1,12 @@
 @extends('admin::layout-nassau')
 
+@push('styles')
+
+<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+
+@endpush
+
 @section('content')
 <!-- start info -->
 <div class="row">
@@ -44,14 +51,18 @@
         </div>
         <hr class="mt-0">
         <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Activity
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Orders
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="#">Add Stock</a>
-            <a class="dropdown-item" href="#">Reduce Stock</a>
-            <a class="dropdown-item" href="#">Change Description</a>
-            <a class="dropdown-item" href="#">Change Image</a>
+            @foreach(array_keys(config('ecommerce.order.status')) as $i => $order_filter)
+            @if($i != 6)
+            <a class="dropdown-item" class="filter-order" data-filter={{$i}} data-text="{{$order_filter}}" href="#">
+                {{$order_filter}}
+            </a>
+            @endif
+            @endforeach
         </div>
+        <input type="hidden" name="status" />
         <div class="row mt-4">
             <div class="col col-xs-4 pgntn">Showing 1 to 5 of 24 enteries</div>
             <div class="col col-xs-8 pgntn">
@@ -81,38 +92,6 @@
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <th>18-03-2019
-                                <br /><small>20:28:00</small></th>
-                            <td>INV-2019-08-03-00001</td>
-                            <td>Paid</td>
-                        </tr>
-                        <tr>
-                            <th>18-03-2019
-                                <br /><small>20:28:00</small></th>
-                            <td>INV-2019-08-03-00001</td>
-                            <td>Complete</td>
-                        </tr>
-                        <tr>
-                            <th>18-03-2019
-                                <br /><small>20:28:00</small></th>
-                            <td>INV-2019-08-03-00001</td>
-                            <td>Complete</td>
-                        </tr>
-                        <tr>
-                            <th>18-03-2019
-                                <br /><small>20:28:00</small></th>
-                            <td>INV-2019-08-03-00001</td>
-                            <td>Paid</td>
-                        </tr>
-                        <tr>
-                            <th>18-03-2019
-                                <br /><small>20:28:00</small></th>
-                            <td>INV-2019-08-03-00001</td>
-                            <td>Complete</td>
-                        </tr>
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -125,3 +104,42 @@
 
 @include('customers::customers.modal-edit',$customer);
 @endsection
+
+@push('scripts')
+
+<script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+
+        var dataTable = $('#dataTable').DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: {
+                url: '{{ route("list-customer.show",$customer->id) }}',
+                method: 'GET',
+                data: function (d) {
+                    d._token = "{{ csrf_token() }}",
+                    d.status = $('input[name="status"]').val()
+                }
+            },
+            order: [[0, "desc"]],
+            columns: [
+                { data: 'id', orderable: false },
+                { data: 'created_at' },
+                { data: 'invoice_id' },
+                { data: 'billing_name' },
+                { data: 'shipping_name' },
+                { data: 'order_status' }
+            ]
+        });
+
+        $('.dropdown-menu a').on("click", function (e) {
+            $('input[name="activity"]').val($(this).text());
+            dataTable.draw();
+        });
+    });
+
+</script>
+@endpush

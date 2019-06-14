@@ -3,6 +3,7 @@
 namespace Modules\Product\Seeders;
 
 use Illuminate\Database\Seeder;
+use DB;
 
 class ProductVariantsTableSeeder extends Seeder
 {

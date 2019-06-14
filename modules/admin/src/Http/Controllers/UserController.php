@@ -108,7 +108,12 @@ class UserController extends Controller
             'title' => 'Edit User',
             'back' => route('users.index')
         ];
-        return view('admin::user.nassau.edit', compact('user', 'privileges', 'roles','data'));
+        $groups = [];
+        foreach ($privileges as $key => $value) {
+            $groups[$value->privilegeCategory->name][] = $value;
+        }
+
+        return view('admin::user.nassau.edit', compact('user', 'privileges', 'roles','data','groups'));
     }
 
     /**

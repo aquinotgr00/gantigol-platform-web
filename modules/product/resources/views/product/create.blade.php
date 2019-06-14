@@ -10,10 +10,11 @@
     <form action="{{ route('product.store') }}" method="post" class="col-6" id="form-add-product">
         @csrf
         <div class="form-group">
-            <label for="exampleInputCategoryName">Product Title</label>
-            <input type="text" name="name" class="form-control" id="exampleInputCategoryName">
-            @if($errors->has('name'))
-            <small><code>{{ $errors->first('name') }}</code></small>
+            <label for="name">Product Title</label>
+            <input type="text" name="name"
+                class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" id="name">
+            @if ($errors->has('name'))
+            <div class="invalid-feedback">{{ $errors->first('name') }}</div>
             @endif
         </div>
         <div class="form-group">
@@ -21,10 +22,11 @@
             <textarea type="text" name="description" class="form-control" id="productDescription" rows="3"></textarea>
         </div>
         <div class="form-group">
-            <label for="exampleInputCategoryPrice">Price</label>
-            <input type="text" name="price" class="form-control" id="exampleInputCategoryPrice">
-            @if($errors->has('price'))
-            <small><code>{{ $errors->first('price') }}</code></small>
+            <label for="price">Price</label>
+            <input type="number" name="price"
+                class="form-control{{ $errors->has('price') ? ' is-invalid' : '' }}" id="price">
+            @if ($errors->has('price'))
+            <div class="invalid-feedback">{{ $errors->first('price') }}</div>
             @endif
         </div>
         <div class="form-group">

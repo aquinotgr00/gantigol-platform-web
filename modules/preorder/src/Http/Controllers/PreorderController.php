@@ -160,7 +160,7 @@ class PreorderController extends Controller
             'status' => ($request->status == 0)? 'draft' : 'publish'
         ]);
         
-        return redirect()->route('pending.transaction',$preOrder->id);
+        return redirect()->route('list-preorder.index');
     }
     /**
      * [edit description]
@@ -217,6 +217,6 @@ class PreorderController extends Controller
         if (!is_null($product)) {
             $product->update($request->only('description','status'));
         }
-        return redirect()->route('pending.transaction',$id);
+        return redirect()->route('list-preorder.index');
     }
 }
