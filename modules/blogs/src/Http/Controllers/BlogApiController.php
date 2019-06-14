@@ -74,9 +74,27 @@ class BlogApiController extends Controller
         ->paginate($limit);
         
         $data['highlight']= $this->blogs->where('highlight','yes')
+        ->whereNotNull('publish_date')
         ->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
         ->where('blog_category.name', $name)
         ->first();
+        return json_encode($data);
+    }
+
+    /**
+     * Create a new controller get five hot post.
+     *
+     * @return mixed
+     */
+    public function getHotPost(Request $request, $limit = 5 )
+    {
+        $data= $this->blogs
+        ->whereNull('deleted_at')
+        ->whereNotNull('publish_date')
+        ->orderBy('blogs.counter', 'desc')
+        ->limit($limit)
+        ->select('title','id','image')
+        ->get();
         return json_encode($data);
     }
 
