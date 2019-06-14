@@ -52,14 +52,25 @@ class MediaController extends Controller
      *
      * @return mixed
      */
-    public function mediaLibrary(Request $request)
+    public function index(Request $request)
     {
         if ($request->ajax()) {
-            return [ 'gallery'=>view('medias::media-gallery', ['isModal'=>true])->render() ];
+            return [ 'gallery'=>view('medias::media-gallery')->render() ];
         }
  
         return view('medias::media-library');
     }
+    
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function create()
+    {
+        return view('medias::media-library-uploader');
+    }
+    
     
     /**
      * view function media library (original).

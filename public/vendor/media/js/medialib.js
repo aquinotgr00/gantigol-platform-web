@@ -91,6 +91,9 @@ $(function() {
 		onSelectCallback = button.data('onSelect')
 		
 		resetState()
+
+		$(this).data('onSelect',onSelectCallback)
+		$(this).data('selected',false)
 		
 		$('input.dz-hidden-input[type=file]').prop('multiple', multiSelect)
 		

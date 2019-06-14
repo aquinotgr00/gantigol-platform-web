@@ -1,13 +1,11 @@
 @php
-    $singleMediaSelect = $single??false;
+    $singleSelect = $singleSelect??true;
+    $multiSelect = $multiSelect??!$singleSelect;
+    
 @endphp
 
-@if($singleMediaSelect)
-    @include('medias::includes.single-media-picker',['value'=>$value])
-@else
-    @include('medias::includes.multiple-media-picker', ['values'=>$values])
-@endif
+<a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="{{ $multiSelect }}" data-on-select="{{ $onSelect }}">
+    {{ $slot }}
+</a>
 
-@if($loadModal??true)
 @mediaLibraryModal
-@endif
