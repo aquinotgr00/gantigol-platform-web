@@ -9,3 +9,12 @@
 	border-color: #9ecaed;
 	box-shadow: 0 0 10px #9ecaed;
 }
+
+#all-media .pgntn {
+	padding-top: 7px;
+}
+
+.page-item.active .page-link {
+	color: initial;
+	background-color: initial;
+}

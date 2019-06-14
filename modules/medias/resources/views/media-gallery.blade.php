@@ -1,12 +1,18 @@
 {{-- start header --}}
+@php
+$asPage = $asPage??true;
+@endphp
 <div class="row">
-    <div class="col-6">
+    <div class="col-5">
         <form class="form-inline my-2 my-lg-0">
             @searchbar()
-            @if($asPage??true)
+            @if($asPage)
                 @addNewButton(['action'=>route('media.library.create')])
             @endif
         </form>
+    </div>
+    <div class="col pgntn">
+        {{ $media->appends([])->links($asPage?null:'medias::includes.pagination.bootstrap-4') }}
     </div>
     <div class="col">
         <div class="float-right">

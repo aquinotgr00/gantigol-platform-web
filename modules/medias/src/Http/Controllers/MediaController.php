@@ -55,7 +55,7 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return [ 'gallery'=>view('medias::media-gallery',['isModal'=>true])->render() ];
+            return [ 'gallery'=>view('medias::media-gallery')->render() ];
         }
  
         return view('medias::media-library');

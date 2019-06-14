@@ -9,7 +9,10 @@ const resetState = function() {
 	//modalStateResetHandler.forEach(f => f())
 	const mediaDropzone = Dropzone.forElement('#media-dropzone')
 	mediaDropzone.removeAllFiles()
+	mediaDropzone.options.maxFiles = multiSelect?null:1
+	
 	$('.media-file').removeClass('selected')
+	$('#media-library-modal-tab li:first-child a').tab('show')
 	selectedMedia = []
 }
 
@@ -83,14 +86,11 @@ const selectAndClose = function() {
 
 $(function() {
 	$('#media-library-modal').on('show.bs.modal', function (event) {
-		resetState()
-
 		const button = $(event.relatedTarget)
 		multiSelect = button.data('multiSelect')
 		onSelectCallback = button.data('onSelect')
-
-		$(this).data('onSelect',onSelectCallback)
-		$(this).data('selected',false)
+		
+		resetState()
 		
 		$('input.dz-hidden-input[type=file]').prop('multiple', multiSelect)
 		

@@ -6,6 +6,14 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+<style>
+    .add-img-featured {
+        padding: 10px;
+    }
+    .img-thumbnail {
+        object-fit: scale-down;
+    }
+</style>
 @endpush
 
 @section('content')

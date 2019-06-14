@@ -1,5 +1,8 @@
 @push('styles')
 <link rel="stylesheet" type="text/css" href="{{ asset('vendor/media/css/medialib.css') }}">
+<style>
+    
+</style>
 @endpush
 
 @section('modals')
@@ -9,7 +12,7 @@
     @slot('body')
         
         <div class="mb-3">
-            <ul class="nav nav-tabs">
+            <ul class="nav nav-tabs" id="media-library-modal-tab">
                 <li class="nav-item">
                     <a class="nav-link active" data-toggle="tab" href="#all-media">All Media</a>
                 </li>

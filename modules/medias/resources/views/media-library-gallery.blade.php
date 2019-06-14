@@ -1,5 +1,8 @@
 @push('styles')
 <link rel="stylesheet" type="text/css" href="{{ asset('vendor/media/css/medialib.css') }}">
+<style>
+    
+</style>
 @endpush
 
 @pageHeader(['title'=>'Media Library'])

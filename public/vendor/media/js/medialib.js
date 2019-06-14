@@ -2,9 +2,6 @@ let multiSelect = false
 let mediaLibraryIsModal = false
 let onSelectCallback = undefined
 
-const onSuccessfulUploadCallback = $('#media-upload').data('onSuccessfulUpload')
-const onMediaSelectedCallback = $('#media-gallery-with-pagination').data('onMediaSelected')
-
 let selectedMedia = []
 let modalStateResetHandler = []
 
@@ -12,7 +9,10 @@ const resetState = function() {
 	//modalStateResetHandler.forEach(f => f())
 	const mediaDropzone = Dropzone.forElement('#media-dropzone')
 	mediaDropzone.removeAllFiles()
+	mediaDropzone.options.maxFiles = multiSelect?null:1
+	
 	$('.media-file').removeClass('selected')
+	$('#media-library-modal-tab li:first-child a').tab('show')
 	selectedMedia = []
 }
 
@@ -86,11 +86,11 @@ const selectAndClose = function() {
 
 $(function() {
 	$('#media-library-modal').on('show.bs.modal', function (event) {
-		resetState()
-
 		const button = $(event.relatedTarget)
 		multiSelect = button.data('multiSelect')
 		onSelectCallback = button.data('onSelect')
+		
+		resetState()
 
 		$(this).data('onSelect',onSelectCallback)
 		$(this).data('selected',false)
@@ -127,9 +127,7 @@ $(function() {
 	$('.media-list').on('dblclick','.media-file', function(e) {
 		if(mediaLibraryIsModal) {
 			if(!multiSelect) {
-				//console.log($(this))
 				$(this).addClass('selected')
-				//$('#media-library-modal').modal('hide')
 				selectAndClose()
 			}
 		}
