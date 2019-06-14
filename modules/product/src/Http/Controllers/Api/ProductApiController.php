@@ -70,7 +70,11 @@ class ProductApiController extends Controller
         }
 
         foreach ($products as $key => $value) {
-            if (isset($value->category->sizeChart)) {
+            if (isset($value->category)) {
+                $value->category;
+            }
+
+            if (isset($value->category->sizeChart)) {                
                 $value->category->sizeChart;
             }
         }
@@ -93,10 +97,41 @@ class ProductApiController extends Controller
 
         $product->tags;
 
+        if (isset($product->category)) {
+            $product->category;
+        }
+
         if (isset($product->category->sizeChart)) {
             $product->category->sizeChart;
         }
 
         return new ProductResource($product);
+    }
+    /**
+     *
+     * @return void
+     */
+    public function getLastest()
+    {
+        $products = Product::with('variants')
+        ->orderBy('created_at','DESC')
+        ->orderBy('name','ASC')
+        ->with('preOrder')
+        ->where('visible',1)
+        ->where('status',1)
+        ->limit(3)
+        ->get();
+
+        foreach ($products as $key => $value) {
+            if (isset($value->category)) {
+                $value->category;
+            }
+            
+            if (isset($value->category->sizeChart)) {                
+                $value->category->sizeChart;
+            }
+        }
+
+        return new ProductResource($products);
     }
 }

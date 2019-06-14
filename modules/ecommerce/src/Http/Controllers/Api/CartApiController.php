@@ -43,12 +43,11 @@ class CartApiController extends Controller
 
             $cart = Cart::with('getItems')
                 ->where('session', $request->session)
-            //->where('user_id',$request->user_id)
+                //->where('user_id',$request->user_id)
                 ->get();
             foreach ($cart->getItems as $key => $value) {
                 $value->productVariant;
             }
-                
         }
 
         return new CartResource($cart);
@@ -67,7 +66,7 @@ class CartApiController extends Controller
             'total' => 'required|numeric',
             'user_id' => 'numeric',
         ]);
-        
+
         $user_id = 0;
 
         if ($validator->fails()) {
@@ -80,25 +79,24 @@ class CartApiController extends Controller
                 $user_id = $member->id;
             }
         }
-        
+
         $cart = new Cart;
 
         if ($user_id == 0) {
             $existCart = Cart::where('session', $request->session)->first();
-        }else{
+        } else {
             $existCart = Cart::where('session', $request->session)
-            ->where('user_id',$user_id)
-            ->first();
+                ->where('user_id', $user_id)
+                ->first();
 
             $cart->user_id = $user_id;
         }
-        
+
         if (is_null($existCart)) {
-        
+
             $cart->total = $request->total;
             $cart->session = $request->session;
             $cart->save();
-
         } else {
             $cart = $existCart;
         }
@@ -120,13 +118,13 @@ class CartApiController extends Controller
 
             if (isset($value['size_code'])) {
                 $cartItemExist = CartItems::where('cart_id', $cart->id)
-                ->where('product_id', $value['product_id'])
-                ->where('size_code', $value['size_code'])
-                ->first();
-            }else{
+                    ->where('product_id', $value['product_id'])
+                    ->where('size_code', $value['size_code'])
+                    ->first();
+            } else {
                 $cartItemExist = CartItems::where('cart_id', $cart->id)
-                ->where('product_id', $value['product_id'])
-                ->first();
+                    ->where('product_id', $value['product_id'])
+                    ->first();
             }
             if (is_null($cartItemExist)) {
                 $value = array_merge($value, ['cart_id' => $cart->id]);
@@ -189,7 +187,7 @@ class CartApiController extends Controller
             $amount_items += intval($value->qty);
             $total += intval($value->subtotal);
         }
-            
+
         $cart->update([
             'total' => $total,
             'amount_items' => $amount_items
@@ -219,7 +217,7 @@ class CartApiController extends Controller
         $cartItem   = CartItems::find($id);
         $cart       = null;
         if (!is_null($cartItem)) {
-            
+
             $cartItem->update($request->except('_token', '_method'));
 
             $cart           = Cart::find($cartItem->cart_id);
@@ -229,17 +227,16 @@ class CartApiController extends Controller
                 $amount_items += intval($value->qty);
                 $total += intval($value->subtotal);
             }
-            
+
             $cart->update([
                 'total' => $total,
                 'amount_items' => $amount_items
             ]);
-            
-            $cart->getItems;
 
+            $cart->getItems;
         }
-        
-        
+
+
         return new CartResource($cart);
     }
     /**
@@ -253,9 +250,9 @@ class CartApiController extends Controller
         $cart = Cart::find($id);
         if (!is_null($cart)) {
             $cart->delete();
-            return response()->json(['message'=>200]);
+            return response()->json(['message' => 200]);
         } else {
-            return response()->json(['message'=>204]);
+            return response()->json(['message' => 204]);
         }
     }
     /**
@@ -269,10 +266,9 @@ class CartApiController extends Controller
     {
         $cartItem = CartItems::find($id);
         if (
-                !is_null($cartItem) &&
-                ($cartItem->delete())
-            ) {
-            
+            !is_null($cartItem) && ($cartItem->delete())
+        ) {
+
             $cart   = Cart::find($cartItem->cart_id);
             $total  = 0;
             $amount_items   = 0;
@@ -280,16 +276,15 @@ class CartApiController extends Controller
                 $amount_items += intval($value->qty);
                 $total += intval($value->subtotal);
             }
-                
+
             $cart->update([
                 'total' => $total,
                 'amount_items' => $amount_items
             ]);
             $cart->getItems;
-            return response()->json(['data'=> $cart,'message'=>200]);
-
+            return response()->json(['data' => $cart, 'message' => 200]);
         } else {
-            return response()->json(['message'=>204]);
+            return response()->json(['message' => 204]);
         }
     }
     /**
@@ -301,8 +296,17 @@ class CartApiController extends Controller
     public function getWishList(int $id)
     {
         $cart = Cart::find($id);
-        $data = $cart->getItems->where('wishlist', 'true');
-        return new CartResource($data);
+        $newCart = Cart::find($id);
+        $items = $cart->getItems->where('wishlist', 'true');
+        foreach ($items as $key => $value) {
+            if (isset($value->productVariant->product)) {
+                $value->productVariant->product->name;
+            }
+        }
+        $obj = new \stdClass;
+        $obj->data = $newCart;
+        $obj->data->get_items = $items;
+        return response()->json($obj);
     }
     /**
      *
@@ -313,8 +317,18 @@ class CartApiController extends Controller
     public function getChecked(int $id)
     {
         $cart = Cart::find($id);
-        $data = $cart->getItems->where('checked', 'true');
-        return new CartResource($data);
+        $newCart = Cart::find($id);
+        $items = $cart->getItems->where('checked', 'true');
+        foreach ($items as $key => $value) {
+            if (isset($value->productVariant->product)) {
+                $value->productVariant->product->name;
+            }
+        }
+        $obj = new \stdClass;
+        $obj->data = $newCart;
+        $obj->data->get_items = $items;
+        return response()->json($obj);
+        //return new CartResource($data);
     }
     /**
      * get cart by user id and session
@@ -379,16 +393,16 @@ class CartApiController extends Controller
      * @param integer $user_id
      * @return void
      */
-    public function mergeCart(Request $request,int $user_id)
+    public function mergeCart(Request $request, int $user_id)
     {
         $validator = Validator::make($request->all(), [
             'session' => 'required',
         ]);
 
-        $userCarts      = Cart::where('user_id',$user_id)->orderBy('created_at','desc')->first();
-        $sessionCart    = Cart::where('session',$request->session)->first();
+        $userCarts      = Cart::where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+        $sessionCart    = Cart::where('session', $request->session)->first();
         $items          = [];
-        
+
         $total          = 0;
         $amount_items   = 0;
 
@@ -412,7 +426,7 @@ class CartApiController extends Controller
         if ($items) {
             $length = 5;
             $randomletter = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, $length);
-            
+
             $newCart = Cart::create([
                 'session' => $randomletter,
                 'user_id' => $user_id,
@@ -440,8 +454,8 @@ class CartApiController extends Controller
             }
             $newCart->getItems;
             return new CartResource($newCart);
-        }else{
-            return response()->json(['data'=> $items ]);
+        } else {
+            return response()->json(['data' => $items]);
         }
     }
     /**
@@ -452,8 +466,8 @@ class CartApiController extends Controller
      */
     public function getByUser(int $user_id)
     {
-        $userCarts      = Cart::where('user_id',$user_id)->orderBy('created_at','desc')->first();
-        
+        $userCarts      = Cart::where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+
         if (!is_null($userCarts)) {
             $userCarts->getItems;
         }

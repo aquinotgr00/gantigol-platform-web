@@ -5,6 +5,7 @@ namespace Modules\Admin\Providers;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RouteRegistrar;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Blade;
@@ -13,7 +14,28 @@ use Modules\Admin\Exceptions\ExceptionHandler as AdminHandler;
 
 class AdminServiceProvider extends ServiceProvider
 {
+    private $bladeNassauIncludes = [
+        'content',
+        'sidebar',
+        'sidebarDivider',
+        'sidebarToggler',
+        'topbar',
+        'topbarSidebarToggler',
+        'topbarSearch',
+        'topbarNavbar',
+        'scrollToTop',
+        'footer',
+        'smallRoundButton'
+    ];
     
+    private $bladeIncludes = [
+        'searchbar',
+        'addNewButton',
+        'pageHeader',
+        'sidebarNavItem'
+    ];
+    
+    private $bladeComponents = ['modal','toast','indexPage','table'];
     /**
      * Register services.
      *
@@ -33,7 +55,6 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->aliasMiddlewares($router);
         $this->loadBladeAliases();
-        $this->loadBladeAliasesNassau();
         $this->loadBreadcrumbs();
         $this->loadConfig();
         $this->loadHelper();
@@ -132,21 +153,17 @@ class AdminServiceProvider extends ServiceProvider
     
     private function loadBladeAliases(): void
     {
-        Blade::component('admin::components.modal', 'modal');
-        Blade::component('admin::components.page-heading', 'pageHeading');
-        Blade::component('admin::components.toast', 'toast');
+        foreach($this->bladeComponents as $component) {
+            Blade::component('admin::components.'.Str::kebab($component), $component);
+        }
         
-        Blade::include('admin::includes.content', 'content');
-        Blade::include('admin::includes.sidebar', 'sidebar');
-        Blade::include('admin::includes.sidebar-divider', 'sidebarDivider');
-        Blade::include('admin::includes.sidebar-toggler', 'sidebarToggler');
-        Blade::include('admin::includes.topbar', 'topbar');
-        Blade::include('admin::includes.topbar-sidebar-toggler', 'topbarSidebarToggler');
-        Blade::include('admin::includes.topbar-search', 'topbarSearch');
-        Blade::include('admin::includes.topbar-navbar', 'topbarNavbar');
-        Blade::include('admin::includes.scroll-to-top', 'scrollToTop');
-        Blade::include('admin::includes.footer', 'footer');
-        Blade::include('admin::includes.small-round-button', 'smallRoundButton');
+        foreach($this->bladeNassauIncludes as $include) {
+            Blade::include('admin::includes-nassau.'.Str::kebab($include), $include.'Nassau');
+        }
+        
+        foreach($this->bladeIncludes as $include) {
+            Blade::include('admin::includes.'.Str::kebab($include), $include);
+        }
     }
     
     private function loadBreadcrumbs(): void
@@ -156,20 +173,5 @@ class AdminServiceProvider extends ServiceProvider
         if (class_exists('Breadcrumbs')) {
             require __DIR__ . '/../../routes/breadcrumbs.php';
         }
-    }
-
-    private function loadBladeAliasesNassau(): void
-    {
-        Blade::include('admin::includes-nassau.content', 'contentNassau');
-        Blade::include('admin::includes-nassau.sidebar', 'sidebarNassau');
-        Blade::include('admin::includes-nassau.sidebar-divider', 'sidebarDividerNassau');
-        Blade::include('admin::includes-nassau.sidebar-toggler', 'sidebarTogglerNassau');
-        Blade::include('admin::includes-nassau.topbar', 'topbarNassau');
-        Blade::include('admin::includes-nassau.topbar-sidebar-toggler', 'topbarSidebarTogglerNassau');
-        Blade::include('admin::includes-nassau.topbar-search', 'topbarSearchNassau');
-        Blade::include('admin::includes-nassau.topbar-navbar', 'topbarNavbarNassau');
-        Blade::include('admin::includes-nassau.scroll-to-top', 'scrollToTopNassau');
-        Blade::include('admin::includes-nassau.footer', 'footerNassau');
-        Blade::include('admin::includes-nassau.small-round-button', 'smallRoundButtonNassau');
     }
 }

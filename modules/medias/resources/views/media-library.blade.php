@@ -1,7 +1,7 @@
-@extends('admin::layout')
+@extends('admin::layout-nassau')
 
 @section('content')
 
-@include('medias::media-gallery-and-uploader',['isModal'=>false])
+@include('medias::media-library-gallery')
 
 @endsection

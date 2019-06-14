@@ -66,7 +66,11 @@ class ContentMediaController extends Controller
     {
         $uploadedMedia = [];
         foreach ($request->input('document', []) as $file) {
-            $media = $this->contentalbum->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection();
+            $media = $this->contentalbum->addMedia(storage_path('tmp/uploads/' . $file))
+            ->addCustomHeaders([
+            'ACL' => 'public-read'
+        ])
+            ->toMediaCollection('default', 's3');
             $uploadedMedia[] = [
                 'id'=>$media->id,
                 'url'=>$media->getUrl()

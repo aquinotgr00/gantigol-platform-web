@@ -13,4 +13,5 @@
 Route::get('items', 'Api\\ProductApiController@index')->name('product.items');
 Route::post('/upload/image-product','Api\\ProductApiController@uploadImage')->name('upload.image-product');
 Route::get('/variant/{id}','Api\\ProductApiController@showProductVariant')->name('variant.show');
-Route::get('items/{id}', 'Api\\ProductApiController@show');
+Route::get('items/{id}', 'Api\\ProductApiController@show')->name('items.show');
+Route::get('items-latest', 'Api\\ProductApiController@getLastest')->name('items.latest');
