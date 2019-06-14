@@ -1,12 +1,14 @@
 @extends('admin::layout-nassau')
 
 @push('styles')
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{{asset('vendor/admin/css/dropzone.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('vendor/product/css/bootstrap-tagsinput.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('vendor/admin/css/style.css')}}">
+<style>
+    .add-img-featured {
+        padding: 10px;
+    }
+    .img-thumbnail {
+        object-fit: scale-down;
+    }
+</style>
 @endpush
 
 
@@ -42,21 +44,22 @@
                 </div>
               </form>
 
-                <div class="col-md-4 col-lg-5 pl-5 grs">
-                  <div class="mb-4">
-                    <label for="exampleFormControlSelect1">Featured Images</label>
-                    <div class="mb-2">
-                      <a href="#" data-toggle= modal role="button" data-target="#ModalMediaLibrary">
-                        <img class="img-fluid img-thumbnail add-img-featured" src="{{asset('vendor/admin/images/image-plus.svg')}}" alt="">
-                        
-                      </a>
+               <div class="col-md-4 col-lg-5 pl-5 grs">
+                    <div class="mb-4">
+                        <label>Featured Image</label>
+                        <div class="mb-2">
+                            @mediaPicker(['singleSelect'=>true, 'onSelect'=>'mediaLibraryGet'])
+                                <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
+                            @endmediaPicker
+                        </div>
+                        <small>
+                           <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
+                            <span>Image size must be 1920x600 with maximum file size</span>
+                            <span>400 kb</span>
+                        </small>
                     </div>
-                    <small><span>Image size must be 1920x600 with maximum file size</span>
-                    <span>400 kb</span></small>
-                  </div>
-                
+                    
                 </div>
-                @include('banners::component.media-modal')
 @endsection
 
 
@@ -102,27 +105,26 @@
   })
 </script>
 <script>
-      var uploadedDocumentMap = {}
-//dropzone upload
-Dropzone.options.documentDropzone = {
-  url: '{{ route('projects.storeMedia') }}',
-  maxFilesize: 2, // MB
-  addRemoveLinks: true,
-  headers,
-  success: function (file, response) {
-    $('form').append('<input type="hidden" name="document[]" value="' + response.name + '">')
-    uploadedDocumentMap[file.name] = response.name
-  },
-  removedfile: function (file) {
-    file.previewElement.remove()
-    let name = ''
-    if (typeof file.file_name !== 'undefined') {
-      name = file.file_name
-    } else {
-      name = uploadedDocumentMap[file.name]
+  function mediaLibraryGet(selectedMedia) {
+        const {id,url} = selectedMedia[0]
+        $('#fieldInputImage').val(url)
+        $('#product-category-image-id').val(id)
+        $('#product-category-image').attr('src',url)
+        $('#btn-delete').addClass('optional')
     }
-    $('form').find('input[name="document[]"][value="' + name + '"]').remove()
-  }
+     $('#media-picker .delete').click(function(event) {
+        event.preventDefault()
+        $('#product-category-image-id').val(null)
+        $('#product-category-image').attr('src',$('#product-category-image').data('defaultImage'))
+         $('#fieldInputImage').value(null)
+        $('#btn-delete').removeClass('optional')
+    });
+      $('#removeFeaturedImage').click(function(event) {
+        $('#product-category-image-id').val(null)
+        $('#product-category-image').attr('src','{{ asset('vendor/admin/images/image-plus.svg') }}')
+         $('#fieldInputImage').val(null)
+        $('#btn-delete').removeClass('optional')
+    });
+</script>
 
-}
 @endpush

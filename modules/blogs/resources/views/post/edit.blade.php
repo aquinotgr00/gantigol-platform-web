@@ -3,12 +3,16 @@
 @extends('admin::layout-nassau')
 
 @push('styles')
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{{asset('vendor/admin/css/dropzone.min.css')}}">
+
 <link rel="stylesheet" type="text/css" href="{{asset('vendor/product/css/bootstrap-tagsinput.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('vendor/admin/css/style.css')}}">
+<style>
+    .add-img-featured {
+        padding: 10px;
+    }
+    .img-thumbnail {
+        object-fit: scale-down;
+    }
+</style>
 @endpush
 
 
@@ -20,7 +24,7 @@
                 <div class="form-group">
                   <label for="exampleInputCategoryName">Blog Title</label>
                   <input type="hidden" name="id" value="{{$id}}">
-                  <input type="hidden" id="featured_image" name="image" value="{{$post->image}}">
+                  <input type="hidden" id="fieldInputImage" name="image" value="{{$post->image}}">
                   <input type="text" name="title" class="form-control" id="exampleInputCategoryName" value="{{$post->title}}">
                   @if($errors->has('title'))
                   <small class="text-red">{{$errors->first('title')}}</small>
@@ -60,18 +64,22 @@
                   <button type="submit" class="btn btn-outline-secondary" formaction="{{Route('blog.post.update')}}">Save As Draft</button>
                 </div>
               </form>
-                <div id="dropzone" class="col-md-4 col-lg-5 pl-5 grs">
-                  <div class="form-group">
-                    <label for="exampleFormControlSelect1">Featured Image</label>
-                    <form class="dropzone needsclick" id="demo-upload" action="/upload">
-                    </form>
-                    <small><span>Image size must be 1920x600 with maximum file size</span>
-                    <span>400 kb</span></small>
-                    @if($errors->has('image'))
-                    <small class="text-red">{{$errors->first('image')}}</small>
-                    @endif
-                  </div>
-            </div>
+                <div class="col-md-4 col-lg-5 pl-5 grs">
+                    <div class="mb-4">
+                        <label>Featured Image</label>
+                        <div class="mb-2">
+                            @mediaPicker(['singleSelect'=>true, 'onSelect'=>'mediaLibraryGet'])
+                                <img src="@if(empty($post->image)){{ asset('vendor/admin/images/image-plus.svg') }}@else{{$post->image}}@endif" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
+                            @endmediaPicker
+                        </div>
+                        <small>
+                            <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
+                            <span>Image size must be 1920x600 with maximum file size</span>
+                            <span>400 kb</span>
+                        </small>
+                    </div>
+                    
+                </div>
             
             <!-- end form -->
           </div>
@@ -81,7 +89,6 @@
 @endsection
       
 @push('scripts')
- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
  <script src="{{asset('vendor/product/js/bootstrap-tagsinput.js')}}"></script>
  <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
       <script>
@@ -94,4 +101,26 @@
           }
         });
       </script>
+      <script>
+  function mediaLibraryGet(selectedMedia) {
+        const {id,url} = selectedMedia[0]
+        $('#fieldInputImage').val(url)
+        $('#product-category-image-id').val(id)
+        $('#product-category-image').attr('src',url)
+        $('#btn-delete').addClass('optional')
+    }
+     $('#media-picker .delete').click(function(event) {
+        event.preventDefault()
+        $('#product-category-image-id').val(null)
+        $('#product-category-image').attr('src',$('#product-category-image').data('defaultImage'))
+         $('#fieldInputImage').value(null)
+        $('#btn-delete').removeClass('optional')
+    });
+      $('#removeFeaturedImage').click(function(event) {
+        $('#product-category-image-id').val(null)
+        $('#product-category-image').attr('src','{{ asset('vendor/admin/images/image-plus.svg') }}')
+         $('#fieldInputImage').val(null)
+        $('#btn-delete').removeClass('optional')
+    });
+</script>
 @endpush

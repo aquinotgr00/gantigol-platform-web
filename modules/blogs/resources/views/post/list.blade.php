@@ -34,6 +34,7 @@
                       <th scope="col">Category</th>
                       <th scope="col">Date Created</th>
                       <th scope="col">Date Published</th>
+                      <th scope="col">Highlight</th>
                       <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -57,7 +58,8 @@
                     { data: 'name', name: 'name' },
                     { data: 'create_date', name: 'create_date' },
                     { data: 'published_date', name: 'published_date' },
-                    { data: 'action', name: 'action' }
+                    { data: 'highlight', name: 'highlight' },
+                    { data: 'action', name: 'action' },
                 ]
             });
         });
