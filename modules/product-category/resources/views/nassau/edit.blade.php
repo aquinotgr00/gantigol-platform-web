@@ -71,8 +71,6 @@
 </div>
 @endsection
 
-@mediaLibraryModal
-
 @push('scripts')
 <script>
 	function updateCategoryImage(selectedMedia) {
