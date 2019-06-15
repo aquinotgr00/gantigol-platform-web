@@ -51,7 +51,8 @@ class BannerController extends Controller
      */
     public function index(){
     	$data['title'] = "Banner";
-    	return view('banners::banner.list',compact('data'));
+        $category = $this->banner_category->get();
+    	return view('banners::banner.list',compact('data','category'));
     }
 
     /**
