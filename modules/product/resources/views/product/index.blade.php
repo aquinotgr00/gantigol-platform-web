@@ -98,15 +98,15 @@
                 url: $(this).attr('action'),
                 data: $(this).serializeArray(),
                 success: function (data) {
+                    
                     if (data.id > 0) {
                         $('#ModalAdjusment').modal('hide');
+                        location.reload();
                     } else {
                         alert('Error! cant update stock adjustment');
                     }
                 }
             });
-
-            location.reload();
         });
 
         $('#dataTable_filter').css('display','none');

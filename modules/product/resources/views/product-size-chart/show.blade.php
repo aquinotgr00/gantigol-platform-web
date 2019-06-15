@@ -36,12 +36,8 @@
     <div id="dropzone" class="col-md-4 col-lg-5 pl-5 grs">
         <div class="form-group">
             <label for="exampleFormControlSelect1">Featured Image</label>
-            <form class="dropzone needsclick" id="demo-upload" action="{{ route('upload.image-product') }}">
-            </form>
-            <small>
-                <span>Image size must be 1920x600 with maximum file size</span>
-                <span>400 kb</span>
-            </small>
+            <br/>
+            <img src="{{ $productSize->image }}" alt="{{ $productSize->name }} image" class="img-fluid img-thumbnail"/>
         </div>
     </div>
 

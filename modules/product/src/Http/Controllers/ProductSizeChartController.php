@@ -45,9 +45,11 @@ class ProductSizeChartController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'category_id'=>'required'
+            'category_id'=>'required',
+            'image' => 'required',
+            'image_id' => 'numeric'
         ]);
-
+        
         $productSize = ProductSizeChart::create($request->except('_token'));
 
         return redirect()->route('product-size-chart.index');
@@ -66,11 +68,13 @@ class ProductSizeChartController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'category_id'=>'required'
+            'category_id'=>'required',
+            'image' => 'required',
+            'image_id' => 'numeric'
         ]);
 
         $productSize = ProductSizeChart::findOrFail($id);
-
+        $productSize->update($request->except('_token','_method'));
         return redirect()->route('product-size-chart.index');
     }
 
@@ -92,10 +96,7 @@ class ProductSizeChartController extends Controller
                 return '<a href="'.route('product-size-chart.show',$data->id).'">' . $data->name . '</a>';
             })
             ->addColumn('image', function ($data) {
-                $image_url = str_replace('public', 'storage', $data->image);
-                $image_url = url($image_url);
-
-                return '<img src="' . $image_url . '" alt="#">';
+                return '<img src="' . $data->image . '" alt="'.$data->name.' image">';
             })
             ->addColumn('action', function ($data) {
                 $button = '<a href="' . route('product-size-chart.edit', $data->id) . '" class="btn btn-table circle-table edit-table"';

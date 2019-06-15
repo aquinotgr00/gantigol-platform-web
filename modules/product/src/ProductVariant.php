@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVariant extends Model
 {
     protected $fillable = ['product_id','variant','size_code','price', 'sku','image','description', 'initial_balance', 'quantity_on_hand','isPrismSearch'];
-    protected $appends = ['name','description','stock','currency_code', 'image_urls'];
+    protected $appends = ['stock','currency_code'];
     protected $casts = ['id'=>'string'];
     
     //use FormAccessible;
@@ -49,7 +49,7 @@ class ProductVariant extends Model
     public function getCurrencyCodeAttribute() {
         return 'IDR';
     }
-    
+    /*
     public function getImageUrlsAttribute() {
         if($this->product) {
             $images = [$this->urlToPath($this->product->image,$this->isPrismSearch)];
@@ -68,4 +68,5 @@ class ProductVariant extends Model
             return $url;
         }
     }
+    */
 }

@@ -10,8 +10,11 @@
 
     @forelse($groups as $key => $group)
     <div>
+        <ul class="flex-column privilage-item">
+
+        </ul>
         <a href="#{{ $key.'Collapse' }}" data-toggle="collapse" aria-expanded="false">{{ ucwords($key) }}</a>
-        
+        <hr>
         <ul class="collapse list-privilage" id="{{ $key.'Collapse' }}">
             @foreach($group as $index => $data)
 

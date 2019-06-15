@@ -8,7 +8,7 @@ use Modules\Preorder\PreOrder;
 use Modules\Product\Product;
 use Modules\Product\ProductVariant;
 use Modules\Product\ProductVariantAttribute;
-use Modules\Preorder\Jobs\BulkPaymentReminder;
+use Modules\Product\ProductImage;
 
 class PreorderController extends Controller
 {
@@ -97,7 +97,9 @@ class PreorderController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:products',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
+            'image' => 'required',
+            'category_id'=>'required'
         ]);
         
         $product = Product::create(
@@ -107,7 +109,8 @@ class PreorderController extends Controller
             'price',
             'activity_id',
             'category_id',
-            'status'
+            'status',
+            'image'
         ));
 
         if ($request->has('sku')) {
@@ -123,6 +126,7 @@ class PreorderController extends Controller
                     'price' => $request->price,
                     'initial_balance' => $request->initial_balance,
                     'quantity_on_hand' => $request->initial_balance,
+                    'variant' => 'ALL SIZE'
                 ]);
             }
         }
@@ -140,7 +144,6 @@ class PreorderController extends Controller
 
                     ProductVariant::create([
                         'variant'=> $value,
-                        'size_code'=> $request->list_size[$key],
                         'sku'=> $trim_sku,
                         'product_id'=> $product->id,
                         'price' => $request->list_price[$key],
@@ -159,6 +162,15 @@ class PreorderController extends Controller
             'end_date' => $request->end_date,
             'status' => ($request->status == 0)? 'draft' : 'publish'
         ]);
+
+        if ($request->has('images')) {
+            foreach ($request->images as $key => $value) {
+                $newProductImage = ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $value
+                ]);
+            }
+        }
         
         return redirect()->route('list-preorder.index');
     }
@@ -209,13 +221,28 @@ class PreorderController extends Controller
             'start_date'=> 'date',
             'end_date'=> 'date',
             'quota'=> 'numeric',
+            'image' => 'required'
         ]);
         $preOrder   = PreOrder::findOrFail($id);
         $preOrder->update($request->only('quota','start_date','end_date'));
         
         $product    = Product::find($preOrder->product_id);
         if (!is_null($product)) {
-            $product->update($request->only('description','status'));
+            $product->update($request->only('description','status','image'));
+        }
+        if ($request->has('images')) {
+            if (isset($product->images)) {
+                foreach ($product->images as $key => $value) {
+                    $productImage = ProductImage::find($value->id);
+                    $productImage->delete();
+                }
+            }
+            foreach ($request->images as $key => $value) {
+                $newProductImage = ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $value
+                ]);
+            }
         }
         return redirect()->route('list-preorder.index');
     }

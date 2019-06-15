@@ -39,7 +39,7 @@ class AdjustmentController extends Controller
     {
         $method = array('+' => "Stock Additions", '-'=> "Stock Reduction");
 
-        $productVariants = ProductVariant::with(['product.category.parentCategories'])->orderBy("created_at", "DESC")->get();
+        $productVariants = ProductVariant::with(['product.category.parentCategory'])->orderBy("created_at", "DESC")->get();
         $data = [
             'title' => 'New Adjustment',
             'back' => route('adjustment.index')

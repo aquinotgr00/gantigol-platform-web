@@ -46,7 +46,7 @@
             <label>Featured Image</label>
             <div class="mb-2">
                 @mediaPicker(['singleSelect'=>true, 'onSelect'=>'updateCategoryImage'])
-                    <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
+                <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
                 @endmediaPicker
             </div>
             <small>

@@ -8,7 +8,6 @@
 @push('scripts')
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.select.min.js') }}"></script>
 
 <script>
     $(document).ready(function () {
@@ -43,7 +42,7 @@
                 {
                     "data": "product.price",
                     "render": function (data, type, row) {
-                        return "Rp " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        return "Rp " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");    
                     }
                 },
                 {
