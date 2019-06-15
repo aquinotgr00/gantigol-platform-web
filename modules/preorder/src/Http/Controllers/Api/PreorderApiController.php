@@ -181,8 +181,14 @@ class PreorderApiController extends Controller
         }
         $preOrder = PreOrder::with('product')->get();
         $byStatus = $preOrder->where('status', $request->status);
+        
         foreach ($byStatus as $key => $value) {
-            $value->product->firstImage;
+            if (isset($value->product)) {
+                $value->product;
+            }
+            if (isset($value->product->firstImage)) {
+                $value->product->firstImage;
+            }
         }
         return new PreOrderResource($byStatus);
     }

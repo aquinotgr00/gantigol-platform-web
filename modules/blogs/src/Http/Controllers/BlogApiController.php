@@ -73,6 +73,7 @@ class BlogApiController extends Controller
         ->where('blog_category.name', $name)
         ->whereNotNull('blogs.publish_date')
         ->orderBy('blogs.created_at', 'desc')
+        ->select('blogs.*','blog_category.name')
         ->paginate($limit);
         
         $data['highlight']= $this->blogs->where('highlight','yes')

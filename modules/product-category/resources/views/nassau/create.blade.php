@@ -17,7 +17,12 @@
         @csrf
         <div class="form-group">
             <label for="exampleInputCategoryName">Category Name</label>
-            <input type="text" name="name" class="form-control" id="exampleInputCategoryName" >
+            <input type="text" name="name"
+                class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" id="name">
+            @if ($errors->has('name'))
+            <div class="invalid-feedback">{{ $errors->first('name') }}</div>
+            @endif
+            
         </div>
         <div class="form-group">
             <label for="exampleFormControlSelect1">Parent Category</label>
@@ -41,7 +46,7 @@
             <label>Featured Image</label>
             <div class="mb-2">
                 @mediaPicker(['singleSelect'=>true, 'onSelect'=>'updateCategoryImage'])
-                    <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
+                <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
                 @endmediaPicker
             </div>
             <small>

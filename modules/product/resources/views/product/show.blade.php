@@ -3,6 +3,15 @@
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<style>
+    .add-img-featured {
+        padding: 10px;
+    }
+
+    .img-thumbnail {
+        object-fit: scale-down;
+    }
+</style>
 @endpush
 
 @push('scripts')
@@ -32,20 +41,20 @@
                 <p>{{ number_format($productVariant->quantity_on_hand) }}</p>
             </div>
             <div class="col-sm form-group">
-            <label>Category</label>
-            <p>
-                @if(isset($categories) && ($categories))
-                @foreach ($categories->all() as $category)
+                <label>Category</label>
+                <p>
+                    @if(isset($categories) && ($categories))
+                    @foreach ($categories->all() as $category)
 
-                @include('product::includes.productcategory-row', [
-                'category'=>$category,
-                'parent'=>'',
-                'category_id'=>$product->category->id
-                ])
+                    @include('product::includes.productcategory-row', [
+                    'category'=>$category,
+                    'parent'=>'',
+                    'category_id'=> (isset($product->category->id))? $product->category->id : null
+                    ])
 
-                @endforeach
-                @endif
-            </p>
+                    @endforeach
+                    @endif
+                </p>
             </div>
         </div>
         <div class="mt-3">
@@ -53,8 +62,7 @@
             <hr class="mt-0">
         </div>
         <div class="dropdown mt-4">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Activity
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Activity
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" href="#">Add Stock</a>
@@ -79,8 +87,29 @@
         </div>
     </form>
 
-    <div id="dropzone" class="col-md-4 col-lg-5 pl-5 grs">
-
+    <div class="col-md-4 col-lg-5 pl-5 grs">
+        <div class="form-group">
+            <label>Featured Image</label><br>
+            <img src="{{ $product->image }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured " />
+        </div>
+        <div class="addtional-images">
+            @if(isset($product->images))
+            @foreach($product->images as $index => $image)
+            <input type="hidden" name="images[]" value="{{ $image->image }}" />
+            <div class="mb-2 hovereffect float-left">
+                <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" alt="">
+                <div class="overlay-additional btn-img">
+                    <span>
+                        <a href="#" class="btn btn-table circle-table edit-table mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"></a>
+                    </span>
+                    <span data-toggle=modal role="button" data-target="#ModalMediaLibrary">
+                        <a href="#" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>
+                    </span>
+                </div>
+            </div>
+            @endforeach
+            @endif
+        </div>
     </div>
 </div>
 
@@ -88,8 +117,7 @@
 
 @push('scripts')
 <script>
-
-    $(function () {
+    $(function() {
 
         var dataTable = $('#dataTable').DataTable({
             processing: true,
@@ -98,21 +126,30 @@
             ajax: {
                 url: '{{ route("ajax.detail-product-activities",$productVariant->id) }}',
                 method: 'POST',
-                data: function (d) {
+                data: function(d) {
                     d._token = "{{ csrf_token() }}",
                         d.activity = $('input[name="activity"]').val()
                 }
             },
-            order: [[0, "desc"]],
-            columns: [
-                { data: 'date' },
-                { data: 'name' },
-                { data: 'activity' },
-                { data: 'notes' }
+            order: [
+                [0, "desc"]
+            ],
+            columns: [{
+                    data: 'date'
+                },
+                {
+                    data: 'name'
+                },
+                {
+                    data: 'activity'
+                },
+                {
+                    data: 'notes'
+                }
             ]
         });
 
-        $('.dropdown-menu a').on("click", function (e) {
+        $('.dropdown-menu a').on("click", function(e) {
             $('input[name="activity"]').val($(this).text());
             dataTable.draw();
         });

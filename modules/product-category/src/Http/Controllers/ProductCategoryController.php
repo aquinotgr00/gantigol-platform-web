@@ -70,13 +70,10 @@ class ProductCategoryController extends Controller
      */
     public function edit(int $id)
     {
-        $data = [
-            'title' => ucwords('Edit product category'),
-            'back' => route('product-categories.index')
-        ];
         $category   = ProductCategory::findOrFail($id);
         $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
-        return view('product-category::nassau.edit', compact('data','categories','category'));
+        
+        return view('product-category::nassau.edit', compact('categories','category'));
     }
 
     /**
@@ -98,8 +95,10 @@ class ProductCategoryController extends Controller
             
             $productCategory->update([
                 'parent_id' => $request->parent_id,
-                'name' => $request->name
+                'name' => $request->name,
+                'image_id'=> $request->image_id
             ]);
+            
         }
         return redirect()->route('product-categories.index');
         //return redirect_success('product-categories.index', 'Success', "Category {$productCategory->name} updated!");

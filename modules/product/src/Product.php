@@ -8,9 +8,11 @@ class Product extends Model
 {   
     use \Conner\Tagging\Taggable;
 
+    public $related = null;
+
     protected $casts = [ 'size_codes' => 'array' ];
     protected $fillable = ['name', 'description', 'image', 'category_id', 'price', 'weight', 'size_id', 'status','keywords'];
-    protected $appends = ['size_available'];
+    protected $appends = ['size_available','related'];
 
 
     public function category() {
@@ -72,6 +74,11 @@ class Product extends Model
     
     public function getSizeAvailableAttribute() {
         return [];
+    }
+    
+    public function getRelatedAttribute()
+    {
+        return $this->related;
     }
 
     public static function getNextID()

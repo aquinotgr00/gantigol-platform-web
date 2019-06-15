@@ -65,5 +65,25 @@ class AdminAuthServiceProvider extends ServiceProvider
             $privilegeId = Privilege::where('name', 'edit user privileges')->value('id');
             return !$user->id || ($admin->id!==$user->id && $admin->privileges->contains('privilege_id', $privilegeId));
         });
+
+        Gate::define('product-management', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'product management')->value('id'));
+        });
+
+        Gate::define('order-management', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'order management')->value('id'));
+        });
+
+        Gate::define('preorder-management', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'preorder management')->value('id'));
+        });
+
+        Gate::define('content-management', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'content management')->value('id'));
+        });
+
+        Gate::define('promo-management', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'promo management')->value('id'));
+        });
     }
 }

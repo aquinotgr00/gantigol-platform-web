@@ -18,16 +18,29 @@
         @endcan
 
         @if(class_exists('\Modules\Product\Product'))
-            @include('product::includes.sidebar-nav-item')
+            @can('product-management')
+                @include('product::includes.sidebar-nav-item')
+            @endcan
+        @endif
+        @if(class_exists('\Modules\Ecommerce\Cart'))
+            @can('order-management')
+                @include('ecommerce::includes.sidebar-nav-item')
+            @endcan
         @endif
         @if(class_exists('\Modules\Preorder\PreOrder'))
-            @include('preorder::includes.sidebar-nav-item')
+            @can('preorder-management')
+                @include('preorder::includes.sidebar-nav-item')
+            @endcan
         @endif
         @if(class_exists('\Modules\Blogs\Blog'))
-            @include('blogs::includes.sidebar-nav-item')
+            @can('content-management')
+                @include('blogs::includes.sidebar-nav-item')
+            @endcan
         @endif
         @if(class_exists('\Modules\Promo\Promocode'))
-            @include('promo::includes.sidebar-nav-item')
+            @can('promo-management')
+                @include('promo::includes.sidebar-nav-item')
+            @endcan
         @endif
         
 

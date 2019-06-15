@@ -4,6 +4,7 @@ namespace Modules\Product\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Product\ProductSize;
+
 class ProductSizesTableSeeder extends Seeder
 {
     /**

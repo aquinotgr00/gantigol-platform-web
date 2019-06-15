@@ -16,7 +16,7 @@
 @endpush
 
 @section('content')
-@pageHeader(['title'=>'Add New Product Categories', 'back'=>route('product-categories.index')])
+@pageHeader(['title'=>'Edit Product Categories', 'back'=>route('product-categories.index')])
 
 <div class="row pl-3">
     <form class="col-md-6 col-lg7 pl-0" method="post" action="{{ route('product-categories.update',$category) }}">
@@ -41,14 +41,14 @@
             <select name="parent_id" class="form-control" id="parent-category">
                 @if(isset($categories))
                 <option value="">Choose one</option>
-                @foreach($categories as $key => $category)
-                @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
+                @foreach($categories as $key => $kat)
+                @include('product::includes.productcategory-option', ['category'=>$kat, 'parent'=>''])
                 @endforeach
                 @endif
             </select>
         </div>
         <div class="float-right">
-            <button type="submit" class="btn btn-success" formaction="#">Submit</button>
+            <button type="submit" class="btn btn-success">Submit</button>
         </div>
     </form>
 
@@ -75,7 +75,7 @@
 <script>
 	function updateCategoryImage(selectedMedia) {
         const {id,url} = selectedMedia[0]
-        
+        console.log(id);
         $('#product-category-image-id').val(id)
         $('#product-category-image').attr('src',url)
         $('#btn-delete').addClass('optional')

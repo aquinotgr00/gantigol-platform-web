@@ -62,6 +62,17 @@ class ProductApiController extends Controller
             ->where('status',1)
             ->get();
         }
+
+        if ($request->has('price')) {
+            if (in_array($request->price,array('asc','desc'))) {
+                $products = Product::with('variants')
+                ->with('preOrder')
+                ->where('visible',1)
+                ->where('status',1)
+                ->orderBy('price',$request->price)
+                ->get();
+            }
+        }
         
         foreach ($products as $key => $value) {
             foreach ($value->tags as $index => $tag) {
@@ -70,7 +81,13 @@ class ProductApiController extends Controller
         }
 
         foreach ($products as $key => $value) {
-            $value->category->sizeChart;
+            if (isset($value->category)) {
+                $value->category;
+            }
+
+            if (isset($value->category->sizeChart)) {                
+                $value->category->sizeChart;
+            }
         }
         
         return new ProductResource($products);
@@ -89,10 +106,86 @@ class ProductApiController extends Controller
         ->where('id',$id)
         ->first();
 
-        $product->tags;
+        if (isset($product->tags)) {
+            $product->tags;
 
-        $product->category->sizeChart;
+            $tags = [];
+            foreach ($product->tags as $key => $value) {
+                $tags[] = $value->name;
+            }
+            $related = Product::withAnyTag($tags)->get();
+            $product->related = $related;
+            $product->related;
+        }
+
+        if (isset($product->category)) {
+            $product->category;
+        }
+
+        if (isset($product->category->sizeChart)) {
+            $product->category->sizeChart;
+        }
+
+        if (isset($product->images)) {
+            $product->images;
+        }
 
         return new ProductResource($product);
+    }
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function showProductVariant(Request $request)
+    {
+        $id = $request->input("id");
+
+        if (!empty($id)) {
+            $productVariants = ProductVariant::with(['product.category.parentCategory'])->where('id', $id)->first();
+
+            if (!empty($productVariants)) {
+
+                $image = url($productVariants->image);
+
+                $data = array('image' => $image, 'stock' => $productVariants->quantity_on_hand, 'product_name' => "{$productVariants->product->name} - {$productVariants->variant} - {$productVariants->sku}");
+
+                $data = array('status' => true, 'msg' => "Success", "data" => $data);
+            } else {
+                $data = array('status' => false, 'msg' => "Not Found Product Variant with ID {$id}.", "data" => array());
+            }
+        } else {
+            $data = array('status' => false, 'msg' => "Not Found Product Variant ID.", "data" => array());
+        }
+
+        return $data;
+    }
+    /**
+     *
+     * @return void
+     */
+    public function getLastest()
+    {
+        $products = Product::with('variants')
+        ->orderBy('created_at','DESC')
+        ->orderBy('name','ASC')
+        ->with('preOrder')
+        ->where('visible',1)
+        ->where('status',1)
+        ->limit(3)
+        ->get();
+
+        foreach ($products as $key => $value) {
+            if (isset($value->category)) {
+                $value->category;
+            }
+            
+            if (isset($value->category->sizeChart)) {                
+                $value->category->sizeChart;
+            }
+        }
+
+        return new ProductResource($products);
     }
 }

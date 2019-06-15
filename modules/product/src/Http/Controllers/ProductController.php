@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Modules\Product\Product;
 use Modules\Product\ProductVariant;
-use Modules\Product\ProductVariantAttribute;
+use Modules\Product\ProductImage;
 use Modules\Inventory\Adjustment;
-use Modules\ProductCategory\ProductCategory;
 use Spatie\Activitylog\Models\Activity;
 use Validator;
 use DataTables;
@@ -59,7 +58,9 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:products',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
+            'category_id' => 'required|numeric',
+            'image' => 'required',
         ]);
         
         $product = Product::create(
@@ -70,7 +71,8 @@ class ProductController extends Controller
             'activity_id',
             'category_id',
             'status',
-            'keywords'
+            'keywords',
+            'image'
         ));
 
         if ($request->has('sku')) {
@@ -111,6 +113,16 @@ class ProductController extends Controller
                     ]);
 
                 }
+            }
+        }
+
+        if ($request->has('images')) {
+            dd($request->images);
+            foreach ($request->images as $key => $value) {
+                $productImage = ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $value
+                ]);
             }
         }
         
@@ -182,7 +194,8 @@ class ProductController extends Controller
     public function update(Request $request, int $id)
     {
         $request->validate([
-            'description' => 'required'
+            'description' => 'required',
+            'image' => 'required'
         ]);
         $productVariant = ProductVariant::findOrFail($id);
         
@@ -191,7 +204,8 @@ class ProductController extends Controller
         $product->update(
         $request->only(
             'description',
-            'status'
+            'status',
+            'image'
         ));
 
         //activity log
@@ -209,6 +223,21 @@ class ProductController extends Controller
         if ($request->has('tags')) {
             $tags = explode(',',$request->tags);
             $product->retag($tags); 
+        }
+
+        if ($request->has('images')) {
+            if (isset($product->images)) {
+                foreach ($product->images as $key => $value) {
+                    $productImage = ProductImage::find($value->id);
+                    $productImage->delete();
+                }
+            }
+            foreach ($request->images as $key => $value) {
+                $newProductImage = ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $value
+                ]);
+            }
         }
 
         return redirect()->route('product.show',$productVariant->id);

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Modules\Customers\CustomerProfile;
 use Session;
 use Validator;
+use DataTables;
 
 class CustomerController extends Controller
 {
@@ -27,13 +28,28 @@ class CustomerController extends Controller
         return view('customers::customers.create',compact('data'));
     }
 
-    public function show(int $id)
+    public function show(Request $request,int $id)
     {
         $customer   = CustomerProfile::findOrFail($id);
         $data       = [
             'title' => ucwords($customer->name),
             'back' => route('list-customer.index')
         ];
+
+        if (request()->ajax()) {        
+            if (class_exists('\Modules\Ecommerce\Order')) {
+                $orders = \Modules\Ecommerce\Order::where('customer_id',$customer->id)
+                ->with('items')
+                ->get();
+                return DataTables::of($orders)
+                ->addColumn('status', function($query){
+                    return array_keys(config('ecommerce.order.status'))[$query->order_status];
+                })
+                ->make(true);
+            }
+            
+        }
+
         return view('customers::customers.show', compact('customer', 'data'));
     }
 

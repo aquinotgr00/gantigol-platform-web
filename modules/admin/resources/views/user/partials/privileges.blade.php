@@ -1,58 +1,55 @@
-<div class="accordion mb-4" id="privileges">
+<hr>
+<div class="collapse show" id="collapseSuperAdmin">
+    @if(isset($groups))
+    
     @php
-    $categoryName = '';
-    $cardState = 'show';
+    
     $selectedPrivileges = $user->privileges->pluck('privilege_id')->all();
-    @endphp
-    @forelse($privileges as $privilege)
-    @php
-    if($categoryName !== $privilege->privilegeCategory->name) {
-    if(!empty($categoryName)) {
-    @endphp
-</div>
-</div>
-</div>
-</div>
-@php
-$cardState = '';
-}
+    
+    @endphp 
 
-$categorySlug = str_slug($privilege->privilegeCategory->name)
-@endphp
-<div class="flex-column privilage-item">
-    <!-- Card Header - Accordion -->
-    <a href="#{{ $categorySlug }}-privilege" data-toggle="collapse" role="button" aria-expanded="true"
-        aria-controls="{{ $categorySlug }}-privilege">
-        <h6 class="m-0 font-weight-bold text-primary">{{ $privilege->privilegeCategory->name }}</h6>
-    </a>
-    <hr>
-    <!-- Card Content - Collapse -->
-    <div class="collapse {{ $cardState }} list-privilage" id="{{ $categorySlug }}-privilege" data-parent="#privileges">
+    @forelse($groups as $key => $group)
+    <div>
+        <ul class="flex-column privilage-item">
 
-        @php
-        $categoryName = $privilege->privilegeCategory->name;
-        }
+        </ul>
+        <a href="#{{ $key.'Collapse' }}" data-toggle="collapse" aria-expanded="false">{{ ucwords($key) }}</a>
+        <hr>
+        <ul class="collapse list-privilage" id="{{ $key.'Collapse' }}">
+            @foreach($group as $index => $data)
 
-        $privilegeSlug = str_slug($privilege->name);
+            @php
+            
+            $checked = '';
+            
+            if(array_search($data->id, $selectedPrivileges, true)!==false) {
+                $checked = 'checked';
+            }
+            @endphp
 
-        $checked = '';
-        if(array_search($privilege->id, $selectedPrivileges, true)!==false) {
-        $checked = 'checked';
-        }
-        @endphp
-        <div class="form-check mb-3">
-            <input type="checkbox" name="privilege[][privilege_id]" value="{{ $privilege->id }}"
-                class="custom-control-input chk-privilege" id="chk-{{ $privilegeSlug }}" {{$checked}}
-                @cannot('edit-user-privileges',$user) disabled @endcannot>
-            <label class="custom-control-label" for="chk-{{ $privilegeSlug }}">{{ $privilege->name }}</label>
-        </div>
+            <li>
+                
+                <div class="form-check mb-3">
+                    <input 
+                    type="checkbox"
+                    name="privilege[][privilege_id]" value="{{ $data->id }}"
+                    class="form-check-input"
+                    @cannot('edit-user-privileges',$user) disabled @endcannot
+                    {{ $checked }} />
+                    <label class="form-check-label style-privilage" >{{ ucwords($data->name) }}</label>
+                </div>
+            </li>
+            @endforeach
+        </ul>
 
-        @empty
-        <p>No privileges available</p>
-        @endforelse
-        @if(!empty($categoryName))
-
+        </li>
+        </ul>
     </div>
-</div>
-@endif
+    @empty
+        <div>
+            <p>No Privilages</p>
+        </div>
+    @endforelse
+
+    @endif
 </div>

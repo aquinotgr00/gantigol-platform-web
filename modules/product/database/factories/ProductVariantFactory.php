@@ -11,6 +11,7 @@ $factory->define(\Modules\Product\ProductVariant::class, function (Faker $faker)
 
     return [
         'product_id' => $product->id,
+        'variant' => $this->faker->randomElement(['L Merah', 'XL Merah', 'L Hitam', 'XL Hitam']),
         'size_code' => $sizes[rand(0,count($sizes)-1)],
         'sku' => $faker->shuffle('abcdefghijklmnopqrstuvwxyz'),
         'initial_balance' => $initBalance,

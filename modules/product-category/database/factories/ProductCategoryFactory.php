@@ -2,10 +2,10 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\ProductCategory::class, function (Faker $faker) {
+$factory->define(\Modules\ProductCategory\ProductCategory::class, function (Faker $faker) {
     return [
         'name'=>$faker->word,
-        'image'=>null,
+        'image_id'=>null,
         'parent_id'=>null
     ];
 });
