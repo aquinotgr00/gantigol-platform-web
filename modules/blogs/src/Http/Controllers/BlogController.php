@@ -55,7 +55,9 @@ class BlogController extends Controller
      */
     public function list()
     {
-        $blogs = $this->blogs->leftjoin('blog_category', 'blogs.category_id', '=', 'blog_category.id')
+        $blogs = $this->blogs
+                ->orderBy('blogs.id', 'desc')
+                ->leftjoin('blog_category', 'blogs.category_id', '=', 'blog_category.id')
                 ->select('blogs.*', 'blog_category.name')
                 ->get();
         return Datatables::of($blogs)
@@ -82,10 +84,14 @@ class BlogController extends Controller
                                         'title' => 'Hide On Website'
                                     ];
                                 }
-                                return  '<a href="'.Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]).'" class="btn btn-table circle-table" data-toggle="tooltip" data-placement="top" title="Highlight"><i class="fa fa-globe"></i></a>
-                                <a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
+                                return  '<a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
                                         <a href="'.$data["route"].'" class="btn btn-table circle-table '.$data["button"].'" data-toggle="tooltip" data-placement="top" title="'.$data['title'].'"></a>';
                              })
+                                ->addColumn('highlight', function ($blogs) {
+                                
+                                return '<a href="'.Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]).'" class="btn btn-table btn-default " title="Highlight"><button class="btn btn-default">'.$blogs->highlight.'</button></a>';
+                            })
+                            ->rawColumns(['highlight', 'action'])
                             ->make(true);
     }
 
@@ -178,7 +184,7 @@ class BlogController extends Controller
             'title' => 'required',
             'category_id' => 'required',
             'body' =>'required',
-            // 'image'=>'required',
+            'image'=>'required',
         ]);
         $request->request->add(['publish_date' => Carbon::now()]);
         if (!empty($id)) {

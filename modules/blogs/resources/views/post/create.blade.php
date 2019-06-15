@@ -3,12 +3,15 @@
 @extends('admin::layout-nassau')
 
 @push('styles')
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{{asset('vendor/admin/css/dropzone.min.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('vendor/product/css/bootstrap-tagsinput.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('vendor/admin/css/style.css')}}">
+<style>
+    .add-img-featured {
+        padding: 10px;
+    }
+    .img-thumbnail {
+        object-fit: scale-down;
+    }
+</style>
 @endpush
 
 
@@ -59,18 +62,20 @@
                 </div>
               </form>
                 <div class="col-md-4 col-lg-5 pl-5 grs">
-                  <div class="mb-4">
-                    <label for="exampleFormControlSelect1">Featured Images</label>
-                    <div class="mb-2">
-                      <a href="#" data-toggle= modal role="button" data-target="#ModalMediaLibrary">
-                        <img class="img-fluid img-thumbnail add-img-featured" src="{{asset('vendor/admin/images/image-plus.svg')}}" alt="">
-                        
-                      </a>
+                    <div class="mb-4">
+                        <label>Featured Image</label>
+                        <div class="mb-2">
+                            @mediaPicker(['singleSelect'=>true, 'onSelect'=>'mediaLibraryGet'])
+                                <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
+                            @endmediaPicker
+                        </div>
+                        <small>
+                           <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
+                            <span>Image size must be 1920x600 with maximum file size</span>
+                            <span>400 kb</span>
+                        </small>
                     </div>
-                    <small><span>Image size must be 1920x600 with maximum file size</span>
-                    <span>400 kb</span></small>
-                  </div>
-                
+                    
                 </div>
             
             <!-- end form -->
@@ -79,9 +84,7 @@
       </div> 
     </div>
 @endsection
-@include('banners::component.media-modal')
 @push('scripts')
- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
  <script src="{{asset('vendor/product/js/bootstrap-tagsinput.js')}}"></script>
  <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
       <script>
@@ -194,44 +197,28 @@
           }
         });
       </script>
-<!-- start paginationscript -->
-<script type="text/javascript">
-   //pagination
-                    $(function() {
-                        $("#loading-render").hide();
-
-                        $('body').on('click', '.pagination a', function(e) {
-                            e.preventDefault();
-                            $("#loading-render").show();
-                            $(".loaded-media").hide();
-                            var url = $(this).attr('href');  
-                            getMedia(url);
-                            window.history.pushState("", "", url);
-                        });
-
-                        function getMedia(url) {
-                            $.ajax({
-                                url : url  
-                            }).done(function (data) {
-                                $("#loading-render").hide();
-                                $(".loaded-media").show();
-                                $('.list-media').html(data);  
-                            }).fail(function () {
-                                $("#loading-render").hide();
-                                $(".loaded-media").show();
-                                alert('Media could not be loaded.');
-                            });
-                        }
-                    });
-  $('body').on('click', '.list-media-picker', function(e) {
-    $('.list-media-picker').removeClass( "pickedImage" )
-    $(this).addClass( "pickedImage" )
-    
-  })
-  $('body').on('click', '#buttonSelectImage', function(e) {
-    $('#fieldInputImage').val($('.pickedImage').data('src'))
-    $('.add-img-featured').attr({ "src": $('.pickedImage').data('src') })
-  })
-</script>
-<!-- end paginationscript -->
+<!-- start script media -->
+    <script type="text/javascript">
+    function mediaLibraryGet(selectedMedia) {
+        const {id,url} = selectedMedia[0]
+        $('#fieldInputImage').val(url)
+        $('#product-category-image-id').val(id)
+        $('#product-category-image').attr('src',url)
+        $('#btn-delete').addClass('optional')
+    }
+     $('#media-picker .delete').click(function(event) {
+        event.preventDefault()
+        $('#product-category-image-id').val(null)
+        $('#product-category-image').attr('src',$('#product-category-image').data('defaultImage'))
+         $('#fieldInputImage').value(null)
+        $('#btn-delete').removeClass('optional')
+    });
+      $('#removeFeaturedImage').click(function(event) {
+        $('#product-category-image-id').val(null)
+        $('#product-category-image').attr('src','{{ asset('vendor/admin/images/image-plus.svg') }}')
+         $('#fieldInputImage').val(null)
+        $('#btn-delete').removeClass('optional')
+    });
+    </script>
+<!-- end script media -->
 @endpush
