@@ -61,7 +61,10 @@ class BannerController extends Controller
      * @return mixed
      */
     public function indexCreate(){
-    	$data['title'] = "Create Banner";
+        $data = [
+            'title' => ucwords('Create Banner'),
+            'back' => route('banner.index')
+        ];
         $media = $this->medias->getMediaPaginate();
     	$category = $this->banner_category->get();
     	return view('banners::banner.create',compact('data','category','media'));
