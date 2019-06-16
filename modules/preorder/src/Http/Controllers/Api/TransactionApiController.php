@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Modules\Preorder\Http\Resources\TransactionResource;
 use Modules\Preorder\PreOrdersItems;
 use Modules\Preorder\PreOrder;
-use Modules\Preorder\Production;
+use Modules\Preorder\SettingReminder;
 use Modules\Preorder\Transaction;
 use Modules\Product\ProductVariant;
 use Modules\Preorder\Traits\OrderTrait;
@@ -117,7 +117,9 @@ class TransactionApiController extends Controller
                 isset($transaction->id)
             ) {
             //create schduler
-            $this->scheduleReminders(3,$transaction);
+            $settingReminder =  SettingReminder::first();
+            $repeat = (isset($settingReminder->repeat))? $settingReminder->repeat : 3;
+            $this->scheduleReminders($repeat,$transaction);
 
             if (class_exists('\Modules\Customers\CustomerProfile')) {
                 $new_customer = \Modules\Customers\CustomerProfile::create([
@@ -137,15 +139,7 @@ class TransactionApiController extends Controller
         $update_transaction = Transaction::find($transaction->id);
         
         if ($update_transaction->count() > 0) {
-            $preOrder = PreOrder::find($request->pre_order_id);
-            if ($preOrder->count() > 0) {
-                $order_received = intval($preOrder->order_received);
-                $order_received +=1;
-
-                $preOrder->order_received = $order_received;
-                $preOrder->update();
-            }
-
+            
             $update_transaction->invoice =$invoice;
             $update_transaction->update();
         }
@@ -227,9 +221,20 @@ class TransactionApiController extends Controller
             return new TransactionResource($validator->messages());
         }
         $transaction = Transaction::find($request->id);
-        $transaction->update([
-            'status' => 'paid',
-        ]);
+        if (!is_null($transaction)) {
+            $preOrder = PreOrder::find($transaction->pre_order_id);
+            if (!is_null($preOrder)) {
+                $order_received = intval($preOrder->order_received);
+                $order_received +=1;
+
+                $preOrder->order_received = $order_received;
+                $preOrder->update();
+            }
+            
+            $transaction->update([
+                'status' => 'paid',
+            ]);
+        }
         $transaction->orders;
         return new TransactionResource($transaction);
     }

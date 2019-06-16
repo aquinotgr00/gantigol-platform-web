@@ -3,11 +3,20 @@
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/jszip.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/pdfmake.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/vfs_fonts.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.print.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.colVis.min.js') }}"></script>
 @endpush
 
 @section('content')

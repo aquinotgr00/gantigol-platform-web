@@ -97,15 +97,7 @@
             @foreach($product->images as $index => $image)
             <input type="hidden" name="images[]" value="{{ $image->image }}" />
             <div class="mb-2 hovereffect float-left">
-                <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" alt="">
-                <div class="overlay-additional btn-img">
-                    <span>
-                        <a href="#" class="btn btn-table circle-table edit-table mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"></a>
-                    </span>
-                    <span data-toggle=modal role="button" data-target="#ModalMediaLibrary">
-                        <a href="#" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>
-                    </span>
-                </div>
+                <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}">
             </div>
             @endforeach
             @endif

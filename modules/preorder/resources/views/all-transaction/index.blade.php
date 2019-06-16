@@ -5,18 +5,18 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
-
+<link href="{{ asset('vendor/admin/css/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet">
 @endpush
 
 @section('content')
 <!-- start tools -->
 <div class="row mb-3">
-    <div class="col">
+    <!--<div class="col">
         <div class="form-group">
             <label for="exampleInputCategoryRelatedTag">Production date</label>
             <input type="text" class="form-control" id="datetimepicker1">
         </div>
-    </div>
+    </div>-->
     <div class="col-md-2">
         <div class="form-group">
             <label for="exampleFormControlSelect1">Status</label>
@@ -99,6 +99,14 @@
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="{{ asset('vendor/admin/js/datatables/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/jszip.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/pdfmake.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/vfs_fonts.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.print.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.colVis.min.js') }}"></script>
 <script>
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip()
@@ -130,7 +138,9 @@
                     }
                 },
                 { data: 'status' }
-            ]
+            ],
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print']
         });
 
         $('select[name="status"]').on("change", function (e) {
@@ -145,6 +155,14 @@
             $('input[name="id[]"]').prop('checked', this.checked);
         });
         
+        $('.dt-buttons').css('display', 'none');
+
+        $.each($('.btn-line'), function(key, value) {
+            $(value).click(function(){
+                var selector = $(value).data('trigger');
+                $('.'+selector).click();
+            });
+        });
     });
 </script>
 

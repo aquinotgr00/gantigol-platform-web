@@ -1,29 +1,22 @@
 @extends('admin::layout-nassau')
 
 @push('styles')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.css"
-    rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.css" rel="stylesheet" />
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet">
 @endpush
 
 @section('content')
 <!-- start tools -->
 <div class="row mb-3">
-    <div class="col">
-        <div class="form-group">
-            <label for="exampleInputCategoryRelatedTag">Production date</label>
-            <input type="text" name="order_daterange" class="form-control" id="datetimepicker1">
-        </div>
-    </div>
     <div class="col-md-2">
         <div class="form-group">
             <label for="filter-text">Status</label>
             <select name="status" class="form-control" id="filter-text">
                 @foreach(array_keys(config('ecommerce.order.status')) as $i => $order_filter)
                 @if($i != 6)
-                <option class="filter-order" data-filter={{$i}} data-text="{{$order_filter}}"
-                    value="{{ $order_filter }}">{{$order_filter}}</option>
+                <option class="filter-order" data-filter={{$i}} data-text="{{$order_filter}}" value="{{ $order_filter }}">{{$order_filter}}</option>
                 @endif
                 @endforeach
             </select>
@@ -48,8 +41,7 @@
     </div>
     <div class="col-md-1">
         <div class="mt-reset">
-            <button class="btn circle-table btn-reset" data-toggle="tooltip" data-placement="top" title=""
-                data-original-title="Reset" id="reset-all">
+            <button class="btn circle-table btn-reset" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reset" id="reset-all">
             </button>
         </div>
 
@@ -60,9 +52,9 @@
                 <label>Export Data</label>
             </div>
             <div class="btn-group" role="group" aria-label="#">
-                <button type="button" class="btn btn-line">PDF</button>
-                <button type="button" class="btn btn-line">Excel</button>
-                <button type="button" class="btn btn-line">Print</button>
+                <button type="button" data-trigger="buttons-pdf" class="btn btn-line">PDF</button>
+                <button type="button" data-trigger="buttons-excel" class="btn btn-line">Excel</button>
+                <button type="button" data-trigger="buttons-print" class="btn btn-line">Print</button>
             </div>
         </div>
     </div>
@@ -99,8 +91,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.js"></script>
 
+<script src="{{ asset('vendor/admin/js/datatables/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/jszip.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/pdfmake.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/vfs_fonts.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.print.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.colVis.min.js') }}"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         var dataTable = $('#dataTable').DataTable({
             processing: true,
@@ -109,34 +109,59 @@
             ajax: {
                 url: '{{ route("order-transaction.index") }}',
                 method: 'GET',
-                data : function(d){
+                data: function(d) {
                     d._token = "{{ csrf_token() }}",
-                    d.invoice = $('input[name="invoice_id"]').val(),
-                    d.status = $('select[name="status"]').val()
+                        d.invoice = $('input[name="invoice_id"]').val(),
+                        d.status = $('select[name="status"]').val()
                 }
             },
-            order: [[0, "desc"]],
-            columns: [
-                { data: 'id', orderable: false },
-                { data: 'created_at' },
-                { data: 'invoice_id' },
-                { data: 'billing_name' },
-                { data: 'shipping_name' },
-                { data: 'order_status' }
-            ]
+            order: [
+                [0, "desc"]
+            ],
+            columns: [{
+                    data: 'id',
+                    orderable: false
+                },
+                {
+                    data: 'created_at'
+                },
+                {
+                    data: 'invoice_id'
+                },
+                {
+                    data: 'billing_name'
+                },
+                {
+                    data: 'shipping_name'
+                },
+                {
+                    data: 'order_status'
+                }
+            ],
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print']
         });
 
-        $('input[name="invoice_id"]').on("keyup keydown", function (e) {
+        $('input[name="invoice_id"]').on("keyup keydown", function(e) {
             dataTable.draw();
         });
 
-        $('select[name="status"]').change(function (e) {
+        $('select[name="status"]').change(function(e) {
             dataTable.draw();
         });
-        
 
-        $('#selectAll').click(function(){
+
+        $('#selectAll').click(function() {
             $('input[name="id[]"]').prop('checked', this.checked);
+        });
+
+        $('.dt-buttons').css('display', 'none');
+
+        $.each($('.btn-line'), function(key, value) {
+            $(value).click(function(){
+                var selector = $(value).data('trigger');
+                $('.'+selector).click();
+            });
         });
     });
 </script>

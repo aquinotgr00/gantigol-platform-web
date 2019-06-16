@@ -5,7 +5,6 @@ namespace Modules\Product\Http\Controllers;
 use App\Http\Controllers\Controller;
 use DataTables;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Modules\ProductCategory\ProductCategory;
 use Modules\Product\ProductSizeChart;
 
@@ -68,13 +67,12 @@ class ProductSizeChartController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'category_id'=>'required',
-            'image' => 'required',
-            'image_id' => 'numeric'
+            'category_id'=>'required'
         ]);
 
         $productSize = ProductSizeChart::findOrFail($id);
         $productSize->update($request->except('_token','_method'));
+        
         return redirect()->route('product-size-chart.index');
     }
 
