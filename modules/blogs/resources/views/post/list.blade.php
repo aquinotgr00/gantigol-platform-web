@@ -9,19 +9,25 @@
              <!-- start tools -->
             <div>
                   <tool class="navbar navbar-expand-lg">
-                  <form class="form-inline my-2 my-lg-0">
+                  <div class="form-inline my-2 my-lg-0">
                       <div class="input-group srch">
-                      <input type="text" class="form-control search-box" placeholder="Search">
+                      <input type="text" class="form-control search-box" id="searchField" placeholder="Search">
                         <div class="input-group-append">
                             <button class="btn btn-search" type="button">
                               <i class="fa fa-search"></i>
                             </button>
                          </div>
+                         <select class="form-control search-box" id="searchCategory">
+                            <option value="">All</option>
+                            @foreach($category as $i=>$row)
+                            <option value="{{$row->name}}">{{$row->name}}</option>
+                            @endforeach
+                          </select>
                     </div>
                       <a class="btn sub-circle my-2 my-sm-0" href="{{ Route('blog.post.create')}}" role="button">
                         <img class="add-svg" src="{{asset('vendor/admin/images/Add.svg')}}" alt="add-image">
                       </a>
-                  </form>
+                  </div>
               </tool>
             </div>
             <!-- end tools -->
@@ -44,15 +50,23 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script>
         $(function() {
-            $('#post-table').DataTable({
+          var delay = (function(){
+              var timer = 0;
+              return function(callback, ms, that){
+                clearTimeout (timer);
+                timer = setTimeout(callback.bind(that), ms);
+              };
+            })();
+            var list = $('#post-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{!! route('blog.post.list') !!}',
+                "dom": 'lrtip',
+                ajax: {
+                'url':'{!! route('blog.post.list') !!}'                },
                 columns: [
                     { data: 'title', name: 'title' },
                     { data: 'name', name: 'name' },
@@ -62,6 +76,17 @@
                     { data: 'action', name: 'action' },
                 ]
             });
+
+            $('#searchField').keyup(function(){
+                delay(function(){
+                list.search( $('#searchField').val()).draw();
+                  }, 1000, this);
+              });
+             $('#searchCategory').change(function(){
+                list.column(1).search($('#searchCategory').val()).draw();
+              });
         });
+
+         
       </script>
 @endpush

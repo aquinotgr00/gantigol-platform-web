@@ -25,16 +25,23 @@ class BlogController extends Controller
      * @var mixed blogs
      */
     protected $blogs;
+    /**
+     * Create a new parameter.
+     *
+     * @var mixed blogs
+     */
+    protected $blogCategory;
 
      /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(Content $mediaModel, Blog $blogs)
+    public function __construct(Content $mediaModel, Blog $blogs, BlogCategory $blogCategory)
     {
         $this->blogs = $blogs;
         $this->medias = $mediaModel;
+        $this->blogCategory = $blogCategory;
     }
 
     /**
@@ -45,7 +52,8 @@ class BlogController extends Controller
     public function index()
     {
         $data['title'] = 'Post';
-        return view('blogs::post.list', compact('data'));
+        $category = $this->blogCategory->get();
+        return view('blogs::post.list', compact('data','category'));
     }
 
     /**
