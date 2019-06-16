@@ -21,7 +21,7 @@ class CreateCartItemsTable extends Migration
             $table->unsignedInteger('qty');
             $table->unsignedInteger('price')->nullable();
             $table->unsignedInteger('subtotal')->nullable();
-            $table->enum('wishlist',['true','false'])->nullable();
+            $table->enum('wishlist',['true','false'])->default('false');
             $table->enum('checked',['true','false'])->default('true');
             $table->text('notes')->nullable();
             $table->softDeletes();

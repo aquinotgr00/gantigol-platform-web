@@ -16,9 +16,7 @@ class ProductCategoryController extends Controller
      */
     public function index()
     {
-        //$this->authorize('index', Auth::user());
-        
-        $categories = ProductCategory::all();
+        $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
         return view('product-category::nassau.index', compact('categories'));
     }
 
@@ -133,5 +131,31 @@ class ProductCategoryController extends Controller
         }else{
             return response()->json(['data'=>0]);
         }
+    }
+
+    public function apiProductCategories()
+    {
+        $items = [];
+        $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
+        $list = '';
+        foreach ($categories as $key => $category) {
+            $string = view('product::includes.productcategory-api', [
+                'category'=>$category, 
+                'parent'=>'', 'parentSizeCodes'=>''
+                ])->render();
+            $string = trim(preg_replace('/\s\s+/', ' ', $string)); 
+            $list .= $string;
+        }
+        $items  = explode('^',$list);
+        $list   = [];
+        foreach ($items as $key => $value) {
+            $trim = trim($value);
+            if (!empty($trim)) {
+                $keys   = ['id','name','image']; 
+                $data   = explode(';',$trim);
+                $list[] = array_combine($keys,$data);
+            }
+        }
+        return response()->json($list);
     }
 }
