@@ -46,7 +46,7 @@ class Order extends Model
         'order_status',
         'notes'
     ];
-    protected $appends = ['invoice_date', 'invoice_status', 'buyer_name', 'guest','coba_dong'];
+    protected $appends = ['invoice_date', 'invoice_status', 'buyer_name', 'guest'];
     
     public function user() {
         return $this->belongsTo('App\User', 'customer_id');
@@ -80,10 +80,6 @@ class Order extends Model
         return $isGuest->name;
     }
     
-    public function getCobaDongAttribute() {
-        return $this->billing_subdistrict.$this->billing_city;
-    }
-
     public static function getTableName()
     {
         return with(new static)->getTable();

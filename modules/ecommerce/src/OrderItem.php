@@ -16,15 +16,26 @@ class OrderItem extends Model
         'review',
         'review_status',
         'rating',
-        'review_date'
+        'review_date',
+        'order_id'
     ];
     
+    protected $appends = ['subtotal'];
+
     public function productVariant() {
-        return $this->belongsTo(ProductVariant::class,'productvariant_id');
+        if (class_exists('\Modules\Product\ProductVariant')) {
+            return $this->belongsTo(\Modules\Product\ProductVariant::class,'productvariant_id');
+        }
+        return null;
     }
 
     public function order() {
         return $this->belongsTo(Order::class, 'order_id');
     }
 
+    public function getSubtotalAttribute()
+    {
+        $subtotal = intval($this->qty) * intval($this->price);
+        return $subtotal;
+    }
 }
