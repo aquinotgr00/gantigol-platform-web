@@ -17,3 +17,4 @@ Route::post('ajax/all-product', 'ProductController@ajaxAllProduct')->name('ajax.
 Route::post('ajax/detail-product-activities/{id}', 'ProductController@ajaxDetailProductActivites')->name('ajax.detail-product-activities');
 
 Route::get('product/set-visible/{id}', 'ProductController@setVisibleProduct')->name('product.set-visible');
+Route::get('product/delete-image/{id}', 'ProductController@deleteImage')->name('product.delete-image');
