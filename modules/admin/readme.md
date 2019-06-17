@@ -19,7 +19,7 @@ admin@mail.com
 Open1234
 ```
 
-publish public asset
+### Publish public asset
 ```php
 php artisan vendor:publish --tag=admin:public
 ```

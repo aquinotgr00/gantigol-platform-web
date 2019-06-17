@@ -8,7 +8,7 @@
 
 @section('modals')
 
-<!-- Media Library Modal -->
+{{-- Media Library Modal --}}
 @modal(['id'=>'media-library-modal','title'=>'Media Library', 'size'=>'lg', 'verticalCenter'=>true])
     @slot('body')
         

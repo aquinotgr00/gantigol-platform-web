@@ -24,7 +24,10 @@
                     @if ($page == $paginator->currentPage())
                         <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
                     @else
-                        <li class="page-item"><a class="page-link ajax" href="{{ route('media.library',['page'=>$page]) }}">{{ $page }}</a></li>
+                        @php
+                            $customUrl = array_merge(request()->only('s','c'), ['page'=>$page]);
+                        @endphp
+                        <li class="page-item"><a class="page-link ajax" href="{{ route('media.library', $customUrl) }}">{{ $page }}</a></li>
                     @endif
                 @endforeach
             @endif
