@@ -55,8 +55,8 @@ $('#all-media').on('click', '.page-link.ajax', function(event) {
 
 	$.get($(this).attr('href')).done(function(data) {
 		const {gallery, links} = data
-		console.log(gallery, links)
-		//$('#media-gallery-with-pagination').html(gallery)
+		$('.media-list').html(gallery)
+		$('#all-media .pgntn').html(links)
 	})
 })
 
