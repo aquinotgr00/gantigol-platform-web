@@ -50,14 +50,16 @@ if(typeof Dropzone === 'function') {
 	}
 }
 
+function handleGalleryResponse(data) {
+	const {gallery, links} = data
+	$('.media-list').html(gallery)
+	$('#all-media .pgntn').html(links)
+}
+
 $('#all-media').on('click', '.page-link.ajax', function(event) {
 	event.preventDefault()
 
-	$.get($(this).attr('href')).done(function(data) {
-		const {gallery, links} = data
-		console.log(gallery, links)
-		//$('#media-gallery-with-pagination').html(gallery)
-	})
+	$.get($(this).attr('href')).done(handleGalleryResponse)
 })
 
 const selectAndClose = function() {
@@ -73,22 +75,13 @@ const selectAndClose = function() {
 
 $(function() {
 	modalStateResetHandler.push(function() {
-		$.get($('#search-form').attr('action')).done(function(data) {
-			const {gallery, links} = data
-			console.log(gallery, links)
-			//$('#media-gallery-with-pagination').html(gallery)
-		})
+		$.get($('#search-form').attr('action')).done(handleGalleryResponse)
 	})
 	
 	$('#search-form').submit(function(event) {
 		if(!$(this).data('enableSubmit')) {
 			event.preventDefault()
-			$.get($('#search-form').attr('action'),{s:$('input[name=s]').val()}).done(function(data) {
-				const {gallery, links} = data
-				//console.log(gallery, links)
-				$('.media-list').html(gallery)
-				$('#all-media .pgntn').html(links)
-			})
+			$.get($('#search-form').attr('action'),{s:$('input[name=s]').val()}).done(handleGalleryResponse)
 		}
     })
 	
