@@ -80,6 +80,7 @@ class BlogApiController extends Controller
         ->whereNotNull('publish_date')
         ->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
         ->where('blog_category.name', $name)
+        ->select('blogs.*','blog_category.name')
         ->first();
         return json_encode($data);
     }
