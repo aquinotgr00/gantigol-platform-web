@@ -96,11 +96,11 @@ class BlogController extends Controller
                                         <a href="'.$data["route"].'" class="btn btn-table circle-table '.$data["button"].'" data-toggle="tooltip" data-placement="top" title="'.$data['title'].'"></a>';
                              })
                                 ->addColumn('highlight', function ($blogs) {
-                                    $disabling="";
-                                    if(empty($blogs->published_date)){
-                                        $disabling="disabled";
+                                     $url=Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]);
+                                    if(empty($blogs->publish_date)){
+                                        $url="#";
                                     }
-                                return '<a href="'.Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]).'" '.$disabling.' class="btn btn-table btn-default " title="Highlight"><button class="btn btn-default">'.$blogs->highlight.'</button></a>';
+                                return '<a href="'.$url.'" class="btn btn-table btn-default " title="Highlight"><button class="btn btn-default">'.$blogs->highlight.'</button></a>';
                             })
                             ->rawColumns(['highlight', 'action'])
                             ->make(true);
