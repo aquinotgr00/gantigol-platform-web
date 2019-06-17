@@ -25,7 +25,7 @@
                           </select>
                     </div>
                       <a class="btn sub-circle my-2 my-sm-0" href="{{Route('banner.create')}}" role="button">
-                        <img class="add-svg" src="{{asset('vendor/admin/images/Add.svg')}}" alt="add-image">
+                        <img class="add-svg" src="{{asset('vendor/admin/images/add.svg')}}" alt="add-image">
                       </a>
                   </div>
               </tool>
@@ -68,6 +68,7 @@
                 processing: true,
                 serverSide: true,
                 "dom": 'lrtip',
+                "ordering": false,
                 ajax: '{!! route('banner.list') !!}',
                 columns: [
                     { data: 'title', name: 'title' },

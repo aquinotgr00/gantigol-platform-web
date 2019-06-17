@@ -31,9 +31,13 @@
                   @endif
                 </div>
                 <div class="form-group">
+                  <label for="InputCategoryTag">Image Source</label>
+                  <input type="text" name="source_image" class="form-control" value="{{$post->source_image}}"  data-role="author">
+                </div>
+                <div class="form-group">
                   <label for="exampleFormControlSelect1">Blog Category</label>
                   <select class="form-control" name="category_id" id="exampleFormControlSelect1">
-                        <option value="">Select Product Category</option>
+                        <option value="">Select Post Category</option>
                         @foreach($categories as $i=>$row)
                           <option value="{{$row->id}}" @if($row->id == $post->category_id) selected @endif>{{ucfirst($row->name)}}</option>
                         @endforeach
@@ -49,7 +53,10 @@
                     <small class="text-red">{{$errors->first('body')}}</small>
                     @endif
                 </div>
-                
+                <div class="form-group">
+                  <label for="InputCategoryTag">Author</label>
+                  <input type="text" name="author" class="form-control" value="{{$post->author}}"  data-role="author">
+                </div>
                 <div class="form-group">
                   <label for="exampleInputCategoryPrize">Tags</label>
                   <input type="text" name="tags" class="form-control" id="exampleInputCategoryPrize" value="{{implode( ", ", $tags )}}" data-role="tagsinput">
@@ -92,7 +99,114 @@
  <script src="{{asset('vendor/product/js/bootstrap-tagsinput.js')}}"></script>
  <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
       <script>
-        tinymce.init({selector:'textarea'});
+        var dialogConfigQuote =  {
+          title: 'quote text',
+          body: {
+            type: 'panel',
+            items: [
+              {
+                type: 'input',
+                name: 'quote',
+                label: 'Enter quote'
+              },
+              {
+                type: 'input',
+                name: 'quotewriter',
+                label: 'Enter quote writer'
+              }
+            ]
+          },
+          buttons: [
+            {
+              type: 'cancel',
+              name: 'closeButton',
+              text: 'Cancel'
+            },
+            {
+              type: 'submit',
+              name: 'submitButton',
+              text: 'Quote',
+              primary: true
+            }
+          ],
+          initialData: {
+            quote: 'Lorem Ipsum Doloret amet',
+            quotewriter:'John Doe'
+          },
+          onSubmit: function (api) {
+            var data = api.getData();
+
+            tinymce.activeEditor.execCommand('mceInsertContent', false, '<blockquote><p>' + data.quote + '</p><footer><small>- '+data.quotewriter+' -</small></footer></blockquote>');
+            api.close();
+          }
+        };
+
+      var dialogConfigHotLink =  {
+          title: 'Hot Link',
+          body: {
+            type: 'panel',
+            items: [
+              {
+                type: 'input',
+                name: 'titlepost',
+                label: 'Enter title'
+              },
+              {
+                type: 'input',
+                name: 'url',
+                label: 'Enter url'
+              }
+            ]
+          },
+          buttons: [
+            {
+              type: 'cancel',
+              name: 'closeButton',
+              text: 'Cancel'
+            },
+            {
+              type: 'submit',
+              name: 'submitButton',
+              text: 'Hot Link',
+              primary: true
+            }
+          ],
+          initialData: {
+            titlepost: 'Lorem Ipsum Doloret amet'
+          },
+          onSubmit: function (api) {
+            var data = api.getData();
+
+            tinymce.activeEditor.execCommand('mceInsertContent', false, '<p class="hotlink"><a style="color:red;" href="'+data.url+'">' + data.titlepost + '</a></p>');
+            api.close();
+          }
+        };
+
+        tinymce.init({
+          selector:'textarea',
+           toolbar: 'dialog-quote-btn|dialog-hotlink-btn',
+           setup: function (editor) {
+            editor.ui.registry.addButton('dialog-quote-btn', {
+              text: 'Quote',
+              onAction: function () {
+                editor.windowManager.open(dialogConfigQuote)
+              }
+            }),
+            editor.ui.registry.addButton('dialog-hotlink-btn', {
+              text: 'Hot Link',
+              onAction: function () {
+                editor.windowManager.open(dialogConfigHotLink)
+              }
+            })
+          }
+        });
+        $('#form-post-create').on('keyup keypress', function(e) {
+          var keyCode = e.keyCode || e.which;
+          if (keyCode === 13) { 
+            e.preventDefault();
+            return false;
+          }
+        });
         $('#form-post-create').on('keyup keypress', function(e) {
           var keyCode = e.keyCode || e.which;
           if (keyCode === 13) { 
