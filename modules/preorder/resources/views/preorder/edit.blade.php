@@ -94,12 +94,12 @@
                 <div class="mb-2">
                     <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="selectFeatureImage">
                         @php
-                        
+
                         $img_url = asset('vendor/admin/images/image-plus.svg');
                         if(strlen($product->image) > 10){
                         $img_url = $product->image;
                         }
-                        
+
                         @endphp
                         <img src="{{ $img_url }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}" />
                         @if ($errors->has('image'))
@@ -107,8 +107,11 @@
                         @endif
                     </a>
                 </div>
-                <small><span>Image size must be 1920x600 with maximum file size</span>
-                    <span>400 kb</span></small>
+                <small>
+                    <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
+                    <span>Image size must be 1920x600 with maximum file size</span>
+                    <span>400 kb</span>
+                </small>
             </div>
 
             <div>
@@ -220,6 +223,11 @@
 
         tinymce.init({
             selector: '#productDescription'
+        });
+
+        $('#removeFeaturedImage').click(function(event) {
+            $('#img-placeholder').attr('src', '{{ asset('vendor/admin/images/image-plus.svg') }}')
+            $('#btn-delete').removeClass('optional')
         });
 
     });

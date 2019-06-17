@@ -44,7 +44,8 @@ class Order extends Model
         'payment_confirmation_link',
         'prism_checkout',
         'order_status',
-        'notes'
+        'notes',
+        'shipping_tracking_number'
     ];
     protected $appends = ['invoice_date', 'invoice_status', 'buyer_name', 'guest'];
     
@@ -91,5 +92,13 @@ class Order extends Model
         $statement = DB::select("SHOW TABLE STATUS LIKE '$table_name'");
         $nextId = $statement[0]->Auto_increment;
         return $nextId;
+    }
+
+    public function customer()
+    {
+        if (class_exists('\Modules\Customers\CustomerProfile')) {
+            return $this->belongsTo('\Modules\Customers\CustomerProfile', 'customer_id','id');
+        }
+        return null;
     }
 }

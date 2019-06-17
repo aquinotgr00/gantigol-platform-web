@@ -19,15 +19,18 @@
                     'status': 'publish'
                 }
             },
-            "order": [[2, "asc"]],
+            "order": [[0, "desc"]],
             "columns": [
+                {
+                    data : 'product.created_at'
+                },
                 {
                     "data": "product.image",
                     "render": function (data, type, row) {
                         if (data == null) {
                             return '-';
                         } else {
-                            return '<img src="' + data + '" style="width:100%;height:100%;" />';
+                            return '<img src="' + data + '" style="width:50px;" />';
                         }
                     }
                 },
@@ -67,7 +70,13 @@
                     }
                 }
 
-            ]
+            ],
+            order: [[ 0, "desc" ]],
+            columnDefs : [{
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+            }]
         });
         
         $('#dataTable_filter').css('display','none');
@@ -106,12 +115,13 @@
     </tool>
 </div>
 <!-- end tools -->
-
+<hr>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Image</th>
                 <th>Product Name</th>
                 <th>Po Due</th>

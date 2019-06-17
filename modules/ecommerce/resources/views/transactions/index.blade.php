@@ -14,6 +14,7 @@
         <div class="form-group">
             <label for="filter-text">Status</label>
             <select name="status" class="form-control" id="filter-text">
+                <option value="">Choose one</option>
                 @foreach(array_keys(config('ecommerce.order.status')) as $i => $order_filter)
                 @if($i != 6)
                 <option class="filter-order" data-filter={{$i}} data-text="{{$order_filter}}" value="{{ $order_filter }}">{{$order_filter}}</option>
@@ -28,6 +29,7 @@
             <input type="text" name="invoice_id" class="form-control" id="searchInvoice">
         </div>
     </div>
+    <!--
     <div class="col-md-1">
         <div class="form-group">
             <label for="exampleFormControlSelect1">Show</label>
@@ -44,8 +46,8 @@
             <button class="btn circle-table btn-reset" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reset" id="reset-all">
             </button>
         </div>
-
     </div>
+-->
     <div class="col">
         <div class="form-group">
             <div>
@@ -132,7 +134,7 @@
                     data: 'billing_name'
                 },
                 {
-                    data: 'shipping_name'
+                    data: 'shipment_name'
                 },
                 {
                     data: 'order_status'
@@ -158,9 +160,9 @@
         $('.dt-buttons').css('display', 'none');
 
         $.each($('.btn-line'), function(key, value) {
-            $(value).click(function(){
+            $(value).click(function() {
                 var selector = $(value).data('trigger');
-                $('.'+selector).click();
+                $('.' + selector).click();
             });
         });
     });

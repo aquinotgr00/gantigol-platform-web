@@ -95,7 +95,7 @@
             <div id="view-product-type"></div>
 
             <div id="input-simple-product" style="display:none;">
-                @include('product::includes.simple')
+                @include('product::includes.simple-preorder')
             </div>
             <div id="input-variant-product" style="display:none;">
                 @include('product::includes.variant')
@@ -208,9 +208,7 @@
     function setAllAttributes(attribute, data) {
         var input = '';
         $.each(data, function(key, value) {
-            if (key != 0) {
-                input += '<input type="checkbox" name="' + attribute + '" title="' + value + '" value="' + value + '"/>&nbsp;' + value;
-            }
+            input += '<input type="checkbox" name="' + attribute + '" title="' + value + '" value="' + value + '"/>&nbsp;' + value;
         });
         $('#value').html(input);
         //$("#value").zInput();
@@ -340,8 +338,15 @@
             var index = $(button).data('id');
 
             $('input[name="index"]').val(index);
+            var send = [];
+            $.each(values, function(key, val) {
+                if (key != 0) {
+                    send.push(val);
+                }
+            });
 
-            getAllAttributes(name);
+            setAllAttributes(name, send);
+            //getAllAttributes(name);
 
             var form_action_url = $('#form-add-value-variant').attr('action');
             $('#form-add-value-variant').attr('action', form_action_url + '/' + values[0]);
@@ -438,20 +443,12 @@
                 tbody += '<input type="hidden" name="list_variant[]" value="' + val.join(' ') + '" /></td>';
                 tbody += '<td>';
                 tbody += '<div class="form-group">';
-                tbody += '<label>Size Code</label>';
-                tbody += '<input type="text" name="list_size[]" class="form-control"/>';
-                tbody += '</div>';
-                tbody += '<div class="form-group">';
                 tbody += '<label>SKU</label>';
                 tbody += '<input type="text" name="list_sku[]" class="form-control"/>';
                 tbody += '</div>';
                 tbody += '<div class="form-group">';
                 tbody += '<label>Price</label>';
                 tbody += '<input type="number" name="list_price[]"  class="form-control"/>';
-                tbody += '</div>';
-                tbody += '<div class="form-group">';
-                tbody += '<label>Initial Stock</label>';
-                tbody += '<input type="number" name="list_initial[]"  class="form-control"/>';
                 tbody += '</div>';
                 tbody += '</td>';
                 tbody += '</tr>';

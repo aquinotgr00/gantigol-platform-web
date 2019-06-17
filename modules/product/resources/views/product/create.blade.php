@@ -184,7 +184,7 @@
 
         $.ajax({
             type: "GET",
-            url: "{{ route('ajax.variant-values') }}/",
+            url: "{{ route('ajax.variant-values') }}",
             data: {
                 attribute: attribute,
             },
@@ -198,9 +198,7 @@
     function setAllAttributes(attribute, data) {
         var input = '';
         $.each(data, function (key, value) {
-            if (key != 0) {
-                input += '<input type="checkbox" name="' + attribute + '" title="' + value + '" value="' + value + '"/>&nbsp;' + value;
-            }
+            input += '<input type="checkbox" name="' + attribute + '" title="' + value + '" value="' + value + '"/>&nbsp;' + value;
         });
         $('#value').html(input);
         //$("#value").zInput();
@@ -329,8 +327,15 @@
             var index = $(button).data('id');
 
             $('input[name="index"]').val(index);
-
-            getAllAttributes(name);
+            var send = [];
+            $.each(values,function(key,val){
+                if (key != 0) {
+                    send.push(val);
+                }
+            });
+            
+            setAllAttributes(name,send);
+            //getAllAttributes(name);
 
             var form_action_url = $('#form-add-value-variant').attr('action');
             $('#form-add-value-variant').attr('action', form_action_url + '/' + values[0]);

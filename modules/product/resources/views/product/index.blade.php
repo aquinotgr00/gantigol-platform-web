@@ -36,6 +36,7 @@
     <table class="table" id="dataTable">
         <thead>
             <tr>
+                <th scope="col">#</th>
                 <th scope="col">Images</th>
                 <th scope="col">Product Name</th>
                 <th scope="col">Current Stock</th>
@@ -63,7 +64,7 @@
         }
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         var datatables = $('#dataTable').DataTable({
             processing: true,
             serverSide: true,
@@ -74,31 +75,49 @@
                     "_token": "{{ csrf_token() }}"
                 }
             },
-            columns: [
-                { data: 'image' },
-                { data: 'name' },
-                { data: 'quantity_on_hand' },
-                { data: 'price' },
-                { data: 'action' },
-            ]
+            columns: [{
+                    data: 'created_at'
+                },
+                {
+                    data: 'image'
+                },
+                {
+                    data: 'name'
+                },
+                {
+                    data: 'quantity_on_hand'
+                },
+                {
+                    data: 'price'
+                },
+                {
+                    data: 'action'
+                },
+            ],
+            order: [[ 0, "desc" ]],
+            columnDefs : [{
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+            }]
         });
 
-        $('#ModalAdjusment').on('shown.bs.modal', function (e) {
+        $('#ModalAdjusment').on('shown.bs.modal', function(e) {
             var button = e.relatedTarget;
             var id = $(button).data('id');
             $('input[name="product_variants_id"]').val(id);
 
         });
 
-        $('#form-add-adjustment').submit(function (event) {
+        $('#form-add-adjustment').submit(function(event) {
             event.preventDefault();
 
             $.ajax({
                 type: "POST",
                 url: $(this).attr('action'),
                 data: $(this).serializeArray(),
-                success: function (data) {
-                    
+                success: function(data) {
+
                     if (data.id > 0) {
                         $('#ModalAdjusment').modal('hide');
                         location.reload();
@@ -109,10 +128,10 @@
             });
         });
 
-        $('#dataTable_filter').css('display','none');
+        $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function () {
-            
+        $('.search-box').on('keyup', function() {
+
             datatables.search(this.value).draw();
         });
     });

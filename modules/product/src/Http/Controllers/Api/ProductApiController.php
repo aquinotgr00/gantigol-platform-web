@@ -110,7 +110,10 @@ class ProductApiController extends Controller
             foreach ($product->tags as $key => $value) {
                 $tags[] = $value->name;
             }
-            $related = Product::withAnyTag($tags)->get();
+            $related = Product::withAnyTag($tags)
+                        ->limit(3)
+                        ->get();
+                        
             $product->related = $related;
             $product->related;
         }
@@ -165,15 +168,19 @@ class ProductApiController extends Controller
      *
      * @return void
      */
-    public function getLastest()
+    public function getLastest(Request $request)
     {
+        $limit = 4;
+        if ($request->has('limit')) {
+            $limit = intval($request->limit);
+        }
         $products = Product::with('variants')
         ->orderBy('created_at','DESC')
         ->orderBy('name','ASC')
         ->with('preOrder')
         ->where('visible',1)
         ->where('status',1)
-        ->limit(3)
+        ->limit($limit)
         ->get();
 
         foreach ($products as $key => $value) {

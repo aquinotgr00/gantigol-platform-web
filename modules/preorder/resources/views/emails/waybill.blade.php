@@ -1,13 +1,11 @@
 @component('mail::message')
 
-@if(isset($production))
 
 # Your shipping number is
-## {{ $production->tracking_number }}
-> ID Transaction #{{ $production->getTransaction->invoice }}
+## {{ (isset($tracking_number))? $tracking_number : ''  }}
+> ID Transaction #{{ (isset($invoice))? $invoice : '' }}
 Thank u,
 {{ config('app.name') }}
 
-@endif
 
 @endcomponent

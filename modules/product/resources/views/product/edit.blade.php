@@ -86,13 +86,13 @@
                 <div class="mb-2">
                     <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="selectFeatureImage">
                         @php
-                        
+
                         if(strlen($product->image) > 10){
-                            $img_url = $product->image; 
+                        $img_url = $product->image;
                         }else{
-                            $img_url = asset('vendor/admin/images/image-plus.svg'); 
+                        $img_url = asset('vendor/admin/images/image-plus.svg');
                         }
-                            
+
                         @endphp
                         <img src="{{ $img_url }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}" />
                         @if ($errors->has('image'))
@@ -100,8 +100,11 @@
                         @endif
                     </a>
                 </div>
-                <small><span>Image size must be 1920x600 with maximum file size</span>
-                    <span>400 kb</span></small>
+                <small>
+                    <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
+                    <span>Image size must be 1920x600 with maximum file size</span>
+                    <span>400 kb</span>
+                </small>
             </div>
 
             <div>
@@ -110,13 +113,7 @@
                     <div class="col-md-4">
                         <div class="mb-2">
                             <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="true" data-on-select="selectAddtionalImage">
-                                @php
-                                $img_url = asset('vendor/admin/images/image-plus.svg');
-                                if(strlen($product->image) > 10){
-                                    $img_url = $product->image;
-                                }
-                                @endphp
-                                <img src="{{ $img_url }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
+                                <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
                             </a>
                         </div>
                     </div>
@@ -129,20 +126,10 @@
                         <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" id="img-{{ $image->id }}">
                         <div class="overlay-additional btn-img">
                             <span>
-                                <a href="#"
-                                class="btn btn-table circle-table edit-table mr-2 btn-edit-img"
-                                data-toggle="modal"
-                                data-target="#media-library-modal"
-                                data-id="{{ $image->id }}"
-                                data-multi-select="false" data-on-select="editAddtionalImage" 
-                                title="Edit this image"></a>
+                                <a href="#" class="btn btn-table circle-table edit-table mr-2 btn-edit-img" data-toggle="modal" data-target="#media-library-modal" data-id="{{ $image->id }}" data-multi-select="false" data-on-select="editAddtionalImage" title="Edit this image"></a>
                             </span>
                             <span>
-                                <a href="{{ route('product.delete-image',$image->id) }}"
-                                class="btn btn-table circle-table delete-table btn-delete-image"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Remove this image"></a>
+                                <a href="{{ route('product.delete-image',$image->id) }}" class="btn btn-table circle-table delete-table btn-delete-image" data-toggle="tooltip" data-placement="top" title="Remove this image"></a>
                             </span>
                         </div>
                     </div>
@@ -185,16 +172,21 @@
             selector: '#productDescription'
         });
 
-        $('.btn-delete-image').click(function(){
+        $('.btn-delete-image').click(function() {
             if (confirm('Are u sure?')) {
                 return true;
             }
             return false;
         });
 
-        $('.btn-edit-img').click(function(){
+        $('.btn-edit-img').click(function() {
             var id = $(this).data('id');
             $('input[name="addtional_images_selected"]').val(id);
+        });
+
+        $('#removeFeaturedImage').click(function(event) {
+            $('#img-placeholder').attr('src', '{{ asset('vendor/admin/images/image-plus.svg') }}')
+            $('#btn-delete').removeClass('optional')
         });
 
     });
@@ -209,14 +201,14 @@
     }
 
     function editAddtionalImage(images) {
-        
+
         const {
             id,
             url
         } = images[0]
         var obj_id = $('input[name="addtional_images_selected"]').val();
-        $('#img-'+obj_id).attr('src', url);
-        $('#input-img-'+obj_id).val(url);
+        $('#img-' + obj_id).attr('src', url);
+        $('#input-img-' + obj_id).val(url);
     }
 
     function selectAddtionalImage(images) {
