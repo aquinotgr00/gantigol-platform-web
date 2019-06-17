@@ -29,9 +29,13 @@
                   @endif
                 </div>
                 <div class="form-group">
+                  <label for="InputCategoryTag">Image Source</label>
+                  <input type="text" name="source_image" class="form-control" >
+                </div>
+                <div class="form-group">
                   <label for="exampleFormControlSelect1">Blog Category</label>
                   <select class="form-control" name="category_id" id="exampleFormControlSelect1">
-                        <option value="">Select Product Category</option>
+                        <option value="">Select Post Category</option>
                         @foreach($categories as $i=>$row)
                           <option value="{{$row->id}}">{{ucfirst($row->name)}}</option>
                         @endforeach
@@ -47,7 +51,10 @@
                     <small class="text-red">{{$errors->first('body')}}</small>
                     @endif
                 </div>
-                
+                <div class="form-group">
+                  <label for="InputCategoryTag">Author</label>
+                  <input type="text" name="author" class="form-control"  >
+                </div>
                 <div class="form-group">
                   <label for="InputCategoryTag">Tags</label>
                   <input type="text" name="tags" class="form-control" id="InputCategoryTag" data-role="tagsinput">
