@@ -4,12 +4,9 @@ namespace Modules\Product\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Modules\Product\Http\Resources\ProductResource;
 use Modules\Product\Product;
-use Modules\Product\ProductImage;
 use Modules\Product\ProductVariant;
-use Validator;
 
 class ProductApiController extends Controller
 {

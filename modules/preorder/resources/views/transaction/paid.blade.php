@@ -1,23 +1,28 @@
 @push('scripts')
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var datatables = $('#paidDatatable').DataTable({
             "ajax": "{{ route('transaction.paid',$preOrder->id) }}",
-            "order": [[3, "desc"]],
-            "columns": [
-                { "data": "created_at" },
-                { 
-                    "data": "invoice",
-                    "render": function(data, type, row){
-                        return '<a href="{{ url('admin/show-transaction') }}/'+row.id+'?preorder={{ $preOrder->id }}">'+data+'</a>';
-                    } 
+            "order": [
+                [3, "desc"]
+            ],
+            "columns": [{
+                    "data": "created_at"
                 },
-                { "data": "name" },
+                {
+                    "data": "invoice",
+                    "render": function(data, type, row) {
+                        return '<a href="{{ url('admin/show-transaction') }}/' + row.id + '?preorder={{ $preOrder->id }}">' + data + '</a>';
+                    }
+                },
+                {
+                    "data": "name"
+                },
                 {
                     "data": "orders",
-                    "render": function (data, type, row) {
+                    "render": function(data, type, row) {
                         var variant_qty = "";
-                        $.each(data, function (key, val) {
+                        $.each(data, function(key, val) {
                             variant_qty += val.size.toUpperCase() + " : ";
                             variant_qty += val.qty + "<br/>";
                         });
@@ -25,15 +30,17 @@
                     }
                 }
             ],
-            "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+            "fnRowCallback": function(nRow, aData, iDisplayIndex) {
                 var index = iDisplayIndex + 1;
                 $('td:eq(0)', nRow).html(index);
                 return nRow;
-            }
+            },
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print']
 
         });
-        
-        $('#form-create-batch').submit(function (e) {
+
+        $('#form-create-batch').submit(function(e) {
             e.preventDefault();
             $.ajax({
                 type: "POST",
@@ -41,13 +48,22 @@
                 data: $(this).serializeArray(),
                 dataType: "json",
                 cache: false,
-                success: function (data) {
+                success: function(data) {
                     console.log(data);
                     $('#exampleModal').modal('hide');
                     window.location.href = "{{ route('pending.transaction',$preOrder->id) }}";
                 }
             });
 
+        });
+
+        $('.dt-buttons').css('display', 'none');
+
+        $.each($('.btn-line'), function(key, value) {
+            $(value).click(function(){
+                var selector = $(value).data('trigger');
+                $('.'+selector).click();
+            });
         });
     });
 </script>
@@ -70,9 +86,9 @@
                     <label>Export Data</label>
                 </div>
                 <div class="btn-group" role="group" aria-label="#">
-                    <button type="button" class="btn btn-line">PDF</button>
-                    <button type="button" class="btn btn-line">Excel</button>
-                    <button type="button" class="btn btn-line">Print</button>
+                    <button type="button" data-trigger="buttons-pdf" class="btn btn-line">PDF</button>
+                    <button type="button" data-trigger="buttons-excel" class="btn btn-line">Excel</button>
+                    <button type="button" data-trigger="buttons-print" class="btn btn-line">Print</button>
                 </div>
             </div>
         </div>

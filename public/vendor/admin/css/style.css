@@ -54,7 +54,8 @@ small span{
     z-index: 100;
     padding: 0;
     background: #F4F5FA;
-    padding: 23px 0 0 27px;
+	padding: 23px 0 0 27px;
+	overflow-y : scroll;
 }
 .sidebar hr{
 	margin-right: 27px;

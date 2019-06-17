@@ -21,9 +21,10 @@
 @section('content')
 <!-- start form -->
 <div class="row pl-3">
-    <form class="col-md-6 col-lg7 pl-0" action="{{ route('product-size-chart.store') }}"
+    <form class="col-md-6 col-lg7 pl-0" action="{{ route('product-size-chart.update',$productSize->id) }}"
         method="post" enctype='multipart/form-data'>
         @csrf
+        @method('PUT')
         <div class="form-group">
             <label for="">Size Chart Name</label>
             <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" value="{{ $productSize->name }}" />
@@ -57,10 +58,11 @@
     </form>
     <div id="dropzone" class="col-md-4 col-lg-5 pl-5 grs">
         <div class="form-group">
-            <label for="exampleFormControlSelect1">Featured Image</label>
+            <label for="exampleFormControlSelect1">Featusred Image</label>
             <br>
+            
             @mediaPicker(['singleSelect'=>true, 'onSelect'=>'selectSizeChartImage'])
-            <img src="{{ $productSize->image }}" id="product-size-chart-image" 
+            <img src="{{ $productSize->image }}" id="img-placeholder" 
             class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}"
             />
             @if ($errors->has('image'))

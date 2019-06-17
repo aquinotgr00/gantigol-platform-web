@@ -220,16 +220,24 @@ class PreorderController extends Controller
             'description'=> 'required',
             'start_date'=> 'date',
             'end_date'=> 'date',
-            'quota'=> 'numeric',
-            'image' => 'required'
+            'quota'=> 'numeric'
         ]);
         $preOrder   = PreOrder::findOrFail($id);
         $preOrder->update($request->only('quota','start_date','end_date'));
         
         $product    = Product::find($preOrder->product_id);
         if (!is_null($product)) {
-            $product->update($request->only('description','status','image'));
+            $trim_img = trim($request->image);
+            
+            if (empty($trim_img)) {
+                $product->update($request->only('description','status'));
+            }else{
+                $product->update($request->only('description','status','image'));
+                
+            }
+            
         }
+        
         if ($request->has('images')) {
             if (isset($product->images)) {
                 foreach ($product->images as $key => $value) {

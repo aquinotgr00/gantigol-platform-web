@@ -107,45 +107,65 @@ class CheckoutApiController extends Controller
 
         if ($request->items) {
             $items = $request->items;
-        } elseif ($request->has('session')) {
+        } 
+        
+        if ($request->has('session')) {
             $cart = Cart::where('session', $request->session)->first();
+            
             if (!is_null($cart)) {
-                
-                $data = $cart->getItems->where('checked', 'true');
-
-                foreach ($data as $key => $value) {
-                    $items[] = [
-                        'productvariant_id' => $value->product_id,
-                        'qty' => $value->qty,
-                        'price' => $value->price
-                    ];
-                    $itemCart = CartItems::find($value->id);
-                    $itemCart->delete();
+                if (isset($cart->getItems)) {
+                    foreach ($cart->getItems as $key => $value) {
+                        if ($value->checked == 'true') {
+                            $items[] = [
+                                'productvariant_id' => $value->product_id,
+                                'qty' => $value->qty,
+                                'price' => $value->price
+                            ];
+                            $itemCart = CartItems::find($value->id);
+                            if (!is_null($itemCart)) {
+                               //$itemCart->delete();
+                            }
+                        }
+                    }
                 }
             }
-
+            /*
+            if (
+                !is_null($cart) &&
+                !isset($cart->getItems)
+                ) {
+                $cart->delete();
+            }*/
+        
         }
+        
+        $total_amount = 0;
 
         if ($items) {
             foreach ($items as $key => $value) {
-                try {
-
-                    $productVariant = ProductVariant::findOrFail($value['productvariant_id']);
-
-                    $order_item = new OrderItem;
-                    $order_item->order_id = $order->id;
-                    $order_item->productvariant_id = $productVariant->id;
-                    $order_item->qty = $value['qty'];
-                    $order_item->price = $value['price'];
-                    $order_item->save();
-
-                } catch (ModelNotFoundException $exception) {
-
+                $itemVariant = ProductVariant::find($value['productvariant_id']);
+                if (!is_null($itemVariant)) {
+                    $value = array_merge($value,['order_id'=> $order->id]);
+                    $orderItem = OrderItem::create($value);
+                    if (isset($orderItem->subtotal)) {
+                        $total_amount += intval($orderItem->subtotal);
+                    }
                 }
             }
         }
 
-        $order->items;
+        $order->update([
+            'total_amount' => $total_amount
+        ]);
+        
+        if (isset($order->items)) {
+            foreach ($order->items as $key => $value) {
+                if (isset($value->productVariant)) {
+                    $value->productVariant;
+                }
+            }
+        }
+    
         return response()->json($order);
     }
 }

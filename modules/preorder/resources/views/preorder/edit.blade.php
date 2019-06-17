@@ -93,8 +93,15 @@
                 <label for="exampleFormControlSelect1">Featured Image</label>
                 <div class="mb-2">
                     <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="selectFeatureImage">
-
-                        <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}" />
+                        @php
+                        
+                        $img_url = asset('vendor/admin/images/image-plus.svg');
+                        if(strlen($product->image) > 10){
+                        $img_url = $product->image;
+                        }
+                        
+                        @endphp
+                        <img src="{{ $img_url }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}" />
                         @if ($errors->has('image'))
                         <p class="is-valid-image-feedback">{{ $errors->first('image') }}</p>
                         @endif
@@ -115,17 +122,18 @@
                         </div>
                     </div>
                     <div class="addtional-images"></div>
+                    <input type="hidden" name="addtional_images_selected" />
                     @if(isset($product->images))
                     @foreach($product->images as $index => $image)
-                    <input type="hidden" name="images[]" value="{{ $image->image }}" />
+                    <input type="hidden" name="images[]" value="{{ $image->image }}" id="input-img-{{ $image->id }}" />
                     <div class="mb-2 hovereffect float-left">
-                        <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" alt="">
+                        <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" id="img-{{ $image->id }}">
                         <div class="overlay-additional btn-img">
                             <span>
-                                <a href="#" class="btn btn-table circle-table edit-table mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"></a>
+                                <a href="#" class="btn btn-table circle-table edit-table mr-2 btn-edit-img" data-toggle="modal" data-target="#media-library-modal" data-id="{{ $image->id }}" data-multi-select="false" data-on-select="editAddtionalImage" title="Edit this image"></a>
                             </span>
-                            <span data-toggle=modal role="button" data-target="#ModalMediaLibrary">
-                                <a href="#" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>
+                            <span>
+                                <a href="{{ route('product.delete-image',$image->id) }}" class="btn btn-table circle-table delete-table btn-delete-image" data-toggle="tooltip" data-placement="top" title="Remove this image"></a>
                             </span>
                         </div>
                     </div>
@@ -168,7 +176,7 @@
 
     function selectAddtionalImage(images) {
         var html = '';
-        $.each(images, function (key, value) {
+        $.each(images, function(key, value) {
             html += templateAddtionalImage(value.url);
         });
         $('.addtional-images').html(html);
@@ -197,6 +205,16 @@
         return template;
     }
 
+    function editAddtionalImage(images) {
+
+        const {
+            id,
+            url
+        } = images[0]
+        var obj_id = $('input[name="addtional_images_selected"]').val();
+        $('#img-' + obj_id).attr('src', url);
+        $('#input-img-' + obj_id).val(url);
+    }
 
     $(function() {
 

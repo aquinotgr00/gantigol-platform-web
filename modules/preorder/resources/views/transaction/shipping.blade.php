@@ -20,10 +20,10 @@
     }
 
     function showModalCourier(obj) {
-        var id              = $(obj).attr('id');
-        var courier_name    = $(obj).attr('placeholder');
-        var courier_type    = $(obj).data('type');
-        var courier_fee     = $(obj).data('fee');
+        var id = $(obj).attr('id');
+        var courier_name = $(obj).attr('placeholder');
+        var courier_type = $(obj).data('type');
+        var courier_fee = $(obj).data('fee');
         $('#ModalInputShippingNumber').modal('show');
 
         $('input[name="courier_name"]').val(courier_name);
@@ -32,7 +32,7 @@
         $('input[name="production_id"]').val(id);
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         var production_json = $('#p-production-json').val();
 
         var selected = JSON.parse(production_json);
@@ -44,31 +44,34 @@
 
         var dataTable = $('#datatable-shipping').DataTable({
             "data": selected.get_productions,
-            "columns": [
-                { "data": "get_transaction.created_at" },
-                { 
-                    "data": "get_transaction.invoice",
-                    "render": function(data, type, row){
-                        return '<a href="{{ url('admin/show-transaction') }}/'+row.get_transaction.id+'?preorder={{ $preOrder->id }}">'+data+'</a>';
-                    } 
+            "columns": [{
+                    "data": "get_transaction.created_at"
                 },
-                { "data": "get_transaction.name" },
+                {
+                    "data": "get_transaction.invoice",
+                    "render": function(data, type, row) {
+                        return '<a href="{{ url('admin/show-transaction') }}/' + row.get_transaction.id + '?preorder={{ $preOrder->id }}">' + data + '</a>';
+                    }
+                },
+                {
+                    "data": "get_transaction.name"
+                },
                 {
                     "data": "get_transaction.orders",
-                    "render": function (data, type, row) {
+                    "render": function(data, type, row) {
                         var qty_s = 0;
                         var qty_m = 0;
                         var qty_l = 0;
                         var qty_xl = 0;
                         var qty_n = 0;
                         var output = "";
-                        $.each(data, function (key, val) {
+                        $.each(data, function(key, val) {
                             var size_code = val.product_variant.size_code;
-                            
+
                             if (size_code.length > 0) {
                                 size_code = size_code.toLowerCase();
                             }
-                                
+
                             switch (size_code) {
                                 case 's':
                                     qty_s += parseInt(val.qty);
@@ -96,21 +99,21 @@
                 },
                 {
                     "data": "get_transaction.courier_name",
-                    "render": function (data, type, row) {
-                        
+                    "render": function(data, type, row) {
+
                         var input = '<input type="text" name="courier_name[]"';
                         input += ' onclick="showModalCourier(this)" ';
-                        input +=' class="form-control form-table form-success"';
-                        input +=' id="' + row.id + '"';
-                        input +=' data-fee="' + row.get_transaction.courier_fee + '"';
-                        input +=' data-type="' + row.get_transaction.courier_type + '"';
-                        input +=' placeholder="' + data + '">';
+                        input += ' class="form-control form-table form-success"';
+                        input += ' id="' + row.id + '"';
+                        input += ' data-fee="' + row.get_transaction.courier_fee + '"';
+                        input += ' data-type="' + row.get_transaction.courier_type + '"';
+                        input += ' placeholder="' + data + '">';
                         return input;
                     }
                 },
                 {
                     "data": "tracking_number",
-                    "render": function (data, type, row) {
+                    "render": function(data, type, row) {
                         var input = '<div class="input-group-append">';
                         input += "<input type='hidden' value='" + row.id + "' name='production_id[]' />";
                         input += '<input type="text" name="tracking_number[]" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
@@ -121,14 +124,16 @@
                 },
                 {
                     "data": "status",
-                    "render": function (data, type, row) {
+                    "render": function(data, type, row) {
                         return data.replace(/_/g, " ").toUpperCase();
                     }
                 }
-            ]
+            ],
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print']
         });
 
-        $('#form-input-shipping-number').submit(function (e) {
+        $('#form-input-shipping-number').submit(function(e) {
             e.preventDefault();
             $.ajax({
                 type: "POST",
@@ -136,7 +141,7 @@
                 data: $(this).serializeArray(),
                 dataType: "json",
                 cache: false,
-                success: function (data) {
+                success: function(data) {
                     if (typeof data.data.id !== "undefined") {
                         alert('Success ! add shipping number');
                         window.location.href = "{{ route('shipping.transaction',$preOrder->id) }}";
@@ -148,7 +153,7 @@
 
         });
 
-        $('#form-update-courier').submit(function (e) {
+        $('#form-update-courier').submit(function(e) {
             e.preventDefault();
             $.ajax({
                 type: "POST",
@@ -156,16 +161,25 @@
                 data: $(this).serializeArray(),
                 dataType: "json",
                 cache: false,
-                success: function (res) {
+                success: function(res) {
                     if (res.data.id > 0) {
                         $('#ModalInputShippingNumber').modal('hide');
-                    }else{
+                    } else {
                         alert('Error! failed to update courier');
                     }
                     location.reload();
                 }
             });
 
+        });
+
+        $('.dt-buttons').css('display', 'none');
+
+        $.each($('.btn-line'), function(key, value) {
+            $(value).click(function(){
+                var selector = $(value).data('trigger');
+                $('.'+selector).click();
+            });
         });
 
     });
@@ -192,9 +206,9 @@
                 <label>Export Data</label>
             </div>
             <div class="btn-group" role="group" aria-label="#">
-                <button type="button" class="btn btn-line">PDF</button>
-                <button type="button" class="btn btn-line">Excel</button>
-                <button type="button" class="btn btn-line">Print</button>
+                <button type="button" data-trigger="buttons-pdf" class="btn btn-line">PDF</button>
+                <button type="button" data-trigger="buttons-excel" class="btn btn-line">Excel</button>
+                <button type="button" data-trigger="buttons-print" class="btn btn-line">Print</button>
             </div>
         </div>
     </div>
@@ -202,7 +216,7 @@
 <!-- end tools -->
 
 <!-- start table -->
-<form  action="{{ route('store-shipping-number') }}" method="post">
+<form action="{{ route('store-shipping-number') }}" method="post">
     @csrf
     <input type="hidden" value="{{ $production_batch->id }}" name="batch_id" />
     <div class="table-responsive">

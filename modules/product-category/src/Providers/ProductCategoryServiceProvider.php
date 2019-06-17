@@ -63,9 +63,15 @@ class ProductCategoryServiceProvider extends ServiceProvider
     {
         $routeRegistrar->prefix(config('admin.prefix', 'admin'))
                ->namespace('Modules\ProductCategory\Http\Controllers')
-               ->middleware(['web'])
+               ->middleware(['web','auth:admin'])
                ->group(function () {
                     $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+               });
+        $routeRegistrar->prefix('api-product')
+               ->namespace('Modules\ProductCategory\Http\Controllers')
+               ->middleware(['api'])
+               ->group(function () {
+                   $this->loadRoutesFrom(__DIR__ . '/../../routes/api.php');
                });
     }
     

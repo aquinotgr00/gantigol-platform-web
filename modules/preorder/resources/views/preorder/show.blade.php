@@ -3,6 +3,15 @@
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<style>
+    .add-img-featured {
+        padding: 10px;
+    }
+
+    .img-thumbnail {
+        object-fit: scale-down;
+    }
+</style>
 @endpush
 
 @push('scripts')
@@ -67,8 +76,21 @@
         </div>
     </form>
 
-    <div id="dropzone" class="col-md-4 col-lg-5 pl-5 grs">
-
+    <div class="col-md-4 col-lg-5 pl-5 grs">
+        <div class="form-group">
+            <label>Featured Image</label><br>
+            <img src="{{ $product->image }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured " />
+        </div>
+        <div class="addtional-images">
+            @if(isset($product->images))
+            @foreach($product->images as $index => $image)
+            <input type="hidden" name="images[]" value="{{ $image->image }}" />
+            <div class="mb-2 hovereffect float-left">
+                <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}">
+            </div>
+            @endforeach
+            @endif
+        </div>
     </div>
 </div>
 
@@ -76,7 +98,7 @@
 
 @push('scripts')
 <script>
-    $(function () {
+    $(function() {
         $('#dataTable').dataTable();
     });
 </script>
