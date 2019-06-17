@@ -145,7 +145,7 @@ class BannerController extends Controller
         ]);
         $this->banner->where('id',$id)->update($request->except(['_token']));
       
-        return redirect()->route('banner.edit',$id);
+        return redirect()->route('banner.index');
     }
     /**
      * update a data created resource in storage.
