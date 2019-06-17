@@ -60,7 +60,7 @@
                         @include('product::includes.productcategory-row', [
                         'category'=>$category,
                         'parent'=>'',
-                        'category_id'=>$product->category->id
+                        'category_id'=>$product->category_id
                         ])
 
                         @endforeach

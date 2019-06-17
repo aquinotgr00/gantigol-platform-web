@@ -50,14 +50,19 @@
         </div>
         <div class="form-group">
             <label for="exampleFormControlSelect1">Product Category</label>
-            <select class="form-control" id="exampleFormControlSelect1" name="category_id">
-                <option value="0">Select Product Category</option>
+            <select class="form-control {{ $errors->has('category_id') ? ' is-invalid' : '' }}" 
+            id="exampleFormControlSelect1" name="category_id">
+                <option value="">Select Product Category</option>
                 @if(isset($categories) && ($categories))
                 @foreach ($categories->all() as $category)
                 @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
                 @endforeach
                 @endif
             </select>
+            @if ($errors->has('category_id'))
+            <div class="invalid-feedback">{{ $errors->first('category_id') }}</div>
+            @endif
+            
         </div>
         <div class="form-group">
             <label for="selectProductType">Product Type</label>

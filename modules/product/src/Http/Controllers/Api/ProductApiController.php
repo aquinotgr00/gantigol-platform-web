@@ -143,10 +143,13 @@ class ProductApiController extends Controller
             $productVariants = ProductVariant::with(['product.category.parentCategory'])->where('id', $id)->first();
 
             if (!empty($productVariants)) {
-
-                $image = url($productVariants->image);
-
-                $data = array('image' => $image, 'stock' => $productVariants->quantity_on_hand, 'product_name' => "{$productVariants->product->name} - {$productVariants->variant} - {$productVariants->sku}");
+                $data = array(
+                    'image' => (isset($productVariants->product->image))? $productVariants->product->image : '#', 
+                    'stock' => $productVariants->quantity_on_hand,
+                    'product_name' => "{$productVariants->product->name} - {$productVariants->variant} - {$productVariants->sku}",
+                    'variant' => $productVariants->variant,
+                    'price'=> $productVariants->price
+                );
 
                 $data = array('status' => true, 'msg' => "Success", "data" => $data);
             } else {
