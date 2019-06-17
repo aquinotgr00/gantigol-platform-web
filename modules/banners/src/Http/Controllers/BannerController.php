@@ -98,6 +98,7 @@ class BannerController extends Controller
         $list =  $this->banner->whereNull('banners.deleted_at')
         		->leftjoin('banner_category','banner_category.id','=','banners.placement')
         		->select('banners.*','banner_category.name as placement_name')
+                ->orderBy('banners.created_at', 'desc')
         		->get();
         return Datatables::of($list)
                              ->addColumn('action', function ($list) {
