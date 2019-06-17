@@ -13,3 +13,7 @@ run Content seeder
 php artisan db:seed --class=ContentSeeder
 ```
 
+### Publish public asset
+```php
+php artisan vendor:publish --tag=media:public
+```

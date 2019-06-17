@@ -4,7 +4,7 @@ $asPage = $asPage??true;
 @endphp
 <div class="row">
     <div class="col-5">
-        <form class="form-inline my-2 my-lg-0">
+        <form id="search-form" class="form-inline my-2 my-lg-0" action="{{ route('media.library') }}" data-enable-submit="{{ $asPage }}">
             @searchbar()
             @if($asPage)
                 @addNewButton(['action'=>route('media.library.create')])
@@ -12,7 +12,7 @@ $asPage = $asPage??true;
         </form>
     </div>
     <div class="col pgntn">
-        {{ $media->appends([])->links($asPage?null:'medias::includes.pagination.bootstrap-4') }}
+        {{ $media->appends(request()->only('s','c'))->links($asPage?null:'medias::includes.pagination.bootstrap-4') }}
     </div>
     <div class="col">
         <div class="float-right">

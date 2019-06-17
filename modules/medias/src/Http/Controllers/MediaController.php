@@ -55,10 +55,23 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return [ 'gallery'=>view('medias::media-gallery')->render() ];
+            $media = Content::find(1)->media()->where('collection_name', 'default');
+        
+            if($request->has('s')) {
+                $media = $media->where('file_name', 'like', '%'.$request->query('s').'%');
+            }
+
+            if($request->has('c')) {
+                $media = $media->where('category', $request->query('c'));
+            }
+
+            $media = $media->latest()->paginate(16);
+            return [ 'gallery'=>view('medias::media-gallery-ajax',compact('media'))->render(), 'links'=>view('medias::media-gallery-pagination-ajax',compact('media'))->render() ];
         }
- 
-        return view('medias::media-library');
+        
+        $mediaCategories = MediaCategories::all();
+        
+        return view('medias::media-library', compact('mediaCategories'));
     }
     
     /**

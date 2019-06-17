@@ -2,8 +2,7 @@
     All Categories
 </button>
 <div class="dropdown-menu" aria-labelledby="filter-media-by-category">
-    <a class="dropdown-item" href="#">Categories 1</a>
-    <a class="dropdown-item" href="#">Categories 2</a>
-    <a class="dropdown-item" href="#">Categories 3</a>
-    <a class="dropdown-item" href="#">Categories 4</a>
+    @foreach($mediaCategories as $category)
+        <a class="dropdown-item" href="#">{{ $category->title }}</a>
+    @endforeach
 </div>

@@ -6,7 +6,7 @@ let selectedMedia = []
 let modalStateResetHandler = []
 
 const resetState = function() {
-	//modalStateResetHandler.forEach(f => f())
+	modalStateResetHandler.forEach(f => f())
 	const mediaDropzone = Dropzone.forElement('#media-dropzone')
 	mediaDropzone.removeAllFiles()
 	mediaDropzone.options.maxFiles = multiSelect?null:1
@@ -50,28 +50,15 @@ if(typeof Dropzone === 'function') {
 	}
 }
 
-$('#media-gallery-with-pagination').on('click', '.page-link.ajax', function(event) {
+$('#all-media').on('click', '.page-link.ajax', function(event) {
 	event.preventDefault()
 
 	$.get($(this).attr('href')).done(function(data) {
-		const {gallery} = data
-		$('#media-gallery-with-pagination').html(gallery)
+		const {gallery, links} = data
+		console.log(gallery, links)
+		//$('#media-gallery-with-pagination').html(gallery)
 	})
 })
-
-if(mediaLibraryIsModal) {
-	modalStateResetHandler.push(function() {
-		$.get($('#media-gallery-with-pagination').data('mediaLibraryUrl')).done(function(data) {
-			const {gallery} = data
-			$('#media-gallery-with-pagination').html(gallery)
-		})
-	})
-	
-	function onMediaSelected() {
-		$('#media-library-modal').data('selected',true)
-		$('#media-library-modal').modal('hide')
-	}
-}
 
 const selectAndClose = function() {
 	selectedMedia = $('.media-file.selected').map(function() {
@@ -85,18 +72,34 @@ const selectAndClose = function() {
 }
 
 $(function() {
+	modalStateResetHandler.push(function() {
+		$.get($('#search-form').attr('action')).done(function(data) {
+			const {gallery, links} = data
+			console.log(gallery, links)
+			//$('#media-gallery-with-pagination').html(gallery)
+		})
+	})
+	
+	$('#search-form').submit(function(event) {
+		if(!$(this).data('enableSubmit')) {
+			event.preventDefault()
+			$.get($('#search-form').attr('action'),{s:$('input[name=s]').val()}).done(function(data) {
+				const {gallery, links} = data
+				//console.log(gallery, links)
+				$('.media-list').html(gallery)
+				$('#all-media .pgntn').html(links)
+			})
+		}
+    })
+	
 	$('#media-library-modal').on('show.bs.modal', function (event) {
 		const button = $(event.relatedTarget)
 		multiSelect = button.data('multiSelect')
 		onSelectCallback = button.data('onSelect')
 		
 		resetState()
-
-		$(this).data('onSelect',onSelectCallback)
-		$(this).data('selected',false)
 		
 		$('input.dz-hidden-input[type=file]').prop('multiple', multiSelect)
-		
 	})
 	
 	$('#media-upload').submit(function(event) {
@@ -136,6 +139,21 @@ $(function() {
 	$('#button-select-media').on('click', function (event) {
 		event.preventDefault()
 		selectAndClose()
+	})
+	
+	$('#button-add-media-category').on('click', function(event) {
+		event.preventDefault()
+		$.post($("#form-add-media-category").attr('action'),$("#form-add-media-category").serialize())
+		.done(function(response) {
+			const {id, title} = response.data
+			
+			$('#media-category').append($('<option>', { value: id,text: title }))
+			$('#new-media-category-modal').modal('hide')
+		})
+	})
+	
+	$('#media-category').change(function() {
+		console.log($(this).val())
 	})
 
 });
