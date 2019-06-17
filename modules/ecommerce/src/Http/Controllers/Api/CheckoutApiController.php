@@ -33,10 +33,10 @@ class CheckoutApiController extends Controller
             return response()->json($validator->messages());
         }
 
-        $order_next_id = Order::getNextID();
-        $invoice_id = str_pad($order_next_id, 5, "0", STR_PAD_LEFT);
-        $invoice_parts = array('INV', date('Y-m-d'), $invoice_id);
-        $invoice = implode('-', $invoice_parts);
+        $order_next_id      = Order::getNextID();
+        $invoice_id         = str_pad($order_next_id, 5, "0", STR_PAD_LEFT);
+        $invoice_parts      = array('INV', date('Y-m-d'), $invoice_id);
+        $invoice            = implode('-', $invoice_parts);
 
         $request->request->add(['invoice_id' => $invoice]);
 
@@ -45,8 +45,9 @@ class CheckoutApiController extends Controller
         if ($request->has('customer_id')) {
 
             $request->request->add(['customer_id' => $request->customer_id]);
+        }
 
-        } else if ($request->has('user_id')) {
+        if ($request->has('user_id')) {
 
             $member = Member::find($request->user_id);
 
@@ -56,7 +57,6 @@ class CheckoutApiController extends Controller
                 if (!is_null($customer_exist)) {
 
                     $customer_id = $customer_exist->id;
-
                 } else {
 
                     $new_customer = CustomerProfile::create([
@@ -74,9 +74,13 @@ class CheckoutApiController extends Controller
                 }
 
                 $request->request->add(['customer_id' => $customer_id]);
+            }
 
-            } else {
-                //member not exist
+        } else {
+
+            $customerExist = CustomerProfile::where('email', $request->shipping_name)->first();
+
+            if (is_null($customerExist)) {
                 $customer = CustomerProfile::create([
                     'name' => $request->shipping_name,
                     'email' => $request->shipping_email,
@@ -84,34 +88,23 @@ class CheckoutApiController extends Controller
                     'address' => $request->shipping_address,
                     'birthdate' => date('Y-m-d'),
                 ]);
-
                 $request->request->add(['customer_id' => $customer->id]);
+            }else{
+                $request->request->add(['customer_id' => $customerExist->id]);
             }
-
-        } else {
-
-            $customer = CustomerProfile::create([
-                'name' => $request->shipping_name,
-                'email' => $request->shipping_email,
-                'phone' => $request->shipping_phone,
-                'address' => $request->shipping_address,
-                'birthdate' => date('Y-m-d'),
-            ]);
-
-            $request->request->add(['customer_id' => $customer->id]);
         }
 
         $order = Order::create($request->except('_token'));
-        
+
         $items = [];
 
         if ($request->items) {
             $items = $request->items;
-        } 
-        
+        }
+
         if ($request->has('session')) {
             $cart = Cart::where('session', $request->session)->first();
-            
+
             if (!is_null($cart)) {
                 if (isset($cart->getItems)) {
                     foreach ($cart->getItems as $key => $value) {
@@ -123,29 +116,28 @@ class CheckoutApiController extends Controller
                             ];
                             $itemCart = CartItems::find($value->id);
                             if (!is_null($itemCart)) {
-                               //$itemCart->delete();
+                                $itemCart->delete();
                             }
                         }
                     }
                 }
             }
-            /*
+            
             if (
                 !is_null($cart) &&
                 !isset($cart->getItems)
                 ) {
                 $cart->delete();
-            }*/
-        
+            }
         }
-        
+
         $total_amount = 0;
 
         if ($items) {
             foreach ($items as $key => $value) {
                 $itemVariant = ProductVariant::find($value['productvariant_id']);
                 if (!is_null($itemVariant)) {
-                    $value = array_merge($value,['order_id'=> $order->id]);
+                    $value = array_merge($value, ['order_id' => $order->id]);
                     $orderItem = OrderItem::create($value);
                     if (isset($orderItem->subtotal)) {
                         $total_amount += intval($orderItem->subtotal);
@@ -157,7 +149,7 @@ class CheckoutApiController extends Controller
         $order->update([
             'total_amount' => $total_amount
         ]);
-        
+
         if (isset($order->items)) {
             foreach ($order->items as $key => $value) {
                 if (isset($value->productVariant)) {
@@ -165,7 +157,7 @@ class CheckoutApiController extends Controller
                 }
             }
         }
-    
+
         return response()->json($order);
     }
 }

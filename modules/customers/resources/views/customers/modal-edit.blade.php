@@ -71,7 +71,8 @@
                         });
                     } else {
                         alert('Success! customer update');
-                        window.location.href = "{{ url('admin/list-customer') }}/"+res.data.id;
+                        //window.location.href = "{{ url('admin/list-customer') }}/"+res.data.id;
+                        location.reload();
                     }
                 }
             });

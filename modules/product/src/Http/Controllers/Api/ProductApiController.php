@@ -110,7 +110,10 @@ class ProductApiController extends Controller
             foreach ($product->tags as $key => $value) {
                 $tags[] = $value->name;
             }
-            $related = Product::withAnyTag($tags)->get();
+            $related = Product::withAnyTag($tags)
+                        ->limit(3)
+                        ->get();
+                        
             $product->related = $related;
             $product->related;
         }
@@ -143,10 +146,13 @@ class ProductApiController extends Controller
             $productVariants = ProductVariant::with(['product.category.parentCategory'])->where('id', $id)->first();
 
             if (!empty($productVariants)) {
-
-                $image = url($productVariants->image);
-
-                $data = array('image' => $image, 'stock' => $productVariants->quantity_on_hand, 'product_name' => "{$productVariants->product->name} - {$productVariants->variant} - {$productVariants->sku}");
+                $data = array(
+                    'image' => (isset($productVariants->product->image))? $productVariants->product->image : '#', 
+                    'stock' => $productVariants->quantity_on_hand,
+                    'product_name' => "{$productVariants->product->name} - {$productVariants->variant} - {$productVariants->sku}",
+                    'variant' => $productVariants->variant,
+                    'price'=> $productVariants->price
+                );
 
                 $data = array('status' => true, 'msg' => "Success", "data" => $data);
             } else {
@@ -162,15 +168,19 @@ class ProductApiController extends Controller
      *
      * @return void
      */
-    public function getLastest()
+    public function getLastest(Request $request)
     {
+        $limit = 4;
+        if ($request->has('limit')) {
+            $limit = intval($request->limit);
+        }
         $products = Product::with('variants')
         ->orderBy('created_at','DESC')
         ->orderBy('name','ASC')
         ->with('preOrder')
         ->where('visible',1)
         ->where('status',1)
-        ->limit(3)
+        ->limit($limit)
         ->get();
 
         foreach ($products as $key => $value) {

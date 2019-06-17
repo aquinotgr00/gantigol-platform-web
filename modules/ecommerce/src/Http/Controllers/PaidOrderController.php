@@ -14,7 +14,7 @@ class PaidOrderController extends Controller
     {
         if ($request->ajax()) {
             
-            $orders = Order::where('order_status', 1);
+            $orders = Order::where('order_status','!=', 0);
 
             if ($request->has('invoice')) {
                 $invoice = trim($request->invoice);
@@ -22,7 +22,7 @@ class PaidOrderController extends Controller
                 if (!empty($invoice)) {
                     $orders = Order::where('invoice_id','like', '%'.$invoice.'%')
                         ->orWhere('billing_name','like', '%'.$invoice.'%');
-                    $orders = $orders->where('order_status', 1);
+                    $orders = $orders->where('order_status','!=', 0);
                 }
             }
             return DataTables::of($orders)
@@ -34,11 +34,17 @@ class PaidOrderController extends Controller
                     $status = config('ecommerce.order.status');
                     return array_keys($status)[$query->order_status];
                 })
-                ->addColumn('shipping_tracking_number', function ($query) {
+                /*->addColumn('shipping_tracking_number', function ($query) {
                     $input = '<input type="text" name="shipping_tracking_number[]" class="form-control" value="' . $query->shipping_tracking_number . '"/>';
                     return $input;
+                })*/
+                ->addColumn('invoice_id', function ($query) {
+                    $link = '<a href="'.route('paid-order.show',$query->id).'" >';
+                    $link .= $query->invoice_id;
+                    $link .= '</a>';
+                    return $link;
                 })
-                ->rawColumns(['id', 'shipping_tracking_number'])
+                ->rawColumns(['id', 'shipping_tracking_number','invoice_id'])
                 ->make(true);
         }
 
@@ -51,7 +57,10 @@ class PaidOrderController extends Controller
 
     public function show(int $id)
     {
-        $order = Order::findOrFail($id);
-        return view('ecommerce::orders.show', compact('order'));
+        $order  = Order::findOrFail($id);
+        $status = config('ecommerce.order.status','ecommerce');
+        $desc   = config('ecommerce.order.desc','ecommerce');
+
+        return view('ecommerce::orders.show', compact('order','status','desc'));
     }
 }

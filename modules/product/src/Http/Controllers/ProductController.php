@@ -199,7 +199,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($productVariant->product_id);
 
         if ($request->has('image')) {
-            $trim_img = empty($request->image);
+            $trim_img = trim($request->image);
             if (empty($trim_img)) {
                 $product->update($request->only('description', 'status'));
             } else {
@@ -314,7 +314,7 @@ class ProductController extends Controller
             ->addColumn('image', function ($data) {
                 $image_url = str_replace('public', 'storage', $data->image);
                 $image_url = url($image_url);
-                return '<img src="' . $image_url . '" alt="#">';
+                return '<img src="' . $image_url . '" alt="#" style="width:50px;">';
             })
             ->addColumn('name', function ($data) {
                 $link  = '<a href="' . route('product.show', $data->id) . '" >';

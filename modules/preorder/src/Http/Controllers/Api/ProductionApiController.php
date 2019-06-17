@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Modules\Preorder\Http\Resources\ProductionResource;
 use Modules\Preorder\Mail\WayBill;
-use Modules\Preorder\PreOrder;
 use Modules\Preorder\Production;
 use Modules\Preorder\ProductionBatch;
 use Modules\Preorder\Transaction;
@@ -168,7 +167,11 @@ class ProductionApiController extends Controller
             ) {
                 try {
                     if ($production->tracking_number !== $request->tracking_number[$key]) {
-                        Mail::to($production->getTransaction->email)->send(new WayBill($production));
+                        $send = [
+                            'tracking_number' => $production->tracking_number,
+                            'invoice' => $production->getTransaction->invoice
+                        ];
+                        Mail::to($production->getTransaction->email)->send(new WayBill($send));
                         $production->tracking_number = $tracking_number;
                     }
                 } catch (\Swift_TransportException $e) {

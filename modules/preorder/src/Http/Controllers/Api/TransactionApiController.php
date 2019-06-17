@@ -11,6 +11,7 @@ use Modules\Preorder\SettingReminder;
 use Modules\Preorder\Transaction;
 use Modules\Product\ProductVariant;
 use Modules\Preorder\Traits\OrderTrait;
+use Modules\Customers\CustomerProfile;
 use Validator;
 
 class TransactionApiController extends Controller
@@ -120,9 +121,11 @@ class TransactionApiController extends Controller
             $settingReminder =  SettingReminder::first();
             $repeat = (isset($settingReminder->repeat))? $settingReminder->repeat : 3;
             $this->scheduleReminders($repeat,$transaction);
+            
+            $customerExist = CustomerProfile::where('email', $request->email)->first();
 
-            if (class_exists('\Modules\Customers\CustomerProfile')) {
-                $new_customer = \Modules\Customers\CustomerProfile::create([
+            if (is_null($customerExist)) {
+                CustomerProfile::create([
                     'name' => $transaction->name,
                     'email' => $transaction->email,
                     'phone' => $transaction->phone,
@@ -130,6 +133,7 @@ class TransactionApiController extends Controller
                     'birthdate' => date('Y-m-d'),
                 ]);
             }
+            
         }
 
         $invoice_id     = str_pad($transaction->id, 5, "0", STR_PAD_LEFT);

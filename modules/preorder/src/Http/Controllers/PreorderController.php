@@ -121,11 +121,8 @@ class PreorderController extends Controller
             ) {
                 $new_variant = ProductVariant::create([
                     'sku'=> $request->sku,
-                    'size_code'=> $request->size_code,
                     'product_id'=> $product->id,
                     'price' => $request->price,
-                    'initial_balance' => $request->initial_balance,
-                    'quantity_on_hand' => $request->initial_balance,
                     'variant' => 'ALL SIZE'
                 ]);
             }
@@ -146,9 +143,7 @@ class PreorderController extends Controller
                         'variant'=> $value,
                         'sku'=> $trim_sku,
                         'product_id'=> $product->id,
-                        'price' => $request->list_price[$key],
-                        'initial_balance' => $request->list_initial[$key],
-                        'quantity_on_hand' => $request->list_initial[$key]
+                        'price' => $request->list_price[$key]
                     ]);
 
                 }

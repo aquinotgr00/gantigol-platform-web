@@ -75,7 +75,7 @@
 <script>
 	function updateCategoryImage(selectedMedia) {
         const {id,url} = selectedMedia[0]
-        console.log(id);
+        
         $('#product-category-image-id').val(id)
         $('#product-category-image').attr('src',url)
         $('#btn-delete').addClass('optional')
