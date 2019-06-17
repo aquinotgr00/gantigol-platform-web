@@ -27,7 +27,7 @@
                         if (data == null) {
                             return '-';
                         } else {
-                            return '<img src="{{ asset("storage") }}/' + data + '" style="width:100%;height:100%;" />';
+                            return '<img src="' + data + '" style="width:100%;height:100%;" />';
                         }
                     }
                 },
