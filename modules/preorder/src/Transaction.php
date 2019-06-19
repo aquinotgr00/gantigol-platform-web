@@ -34,6 +34,8 @@ class Transaction extends Model
         'invoice'
     ];
 
+    protected $appends = ['amount_weight'];
+
     /**
      * Show all the reminders based on transaction id.
      *
@@ -122,5 +124,15 @@ class Transaction extends Model
 
         // Return matches
         return isset($matches[1]) ? $matches[1] : [];
+    }
+
+    public function getAmountWeightAttribute()
+    {
+        $amount_weight = 0;
+        foreach ($this->orders as $key => $value) {
+            $sub_weight     = $value->qty * $value->productVariant->product->weight;
+            $amount_weight += $sub_weight;
+        }
+        return $amount_weight;
     }
 }

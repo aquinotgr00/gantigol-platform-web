@@ -3,7 +3,7 @@
 namespace Modules\Ecommerce\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Modules\Customers\CustomerProfile;
 use Modules\Ecommerce\Cart;
@@ -82,52 +82,50 @@ class CheckoutApiController extends Controller
         $cart = Cart::where('session', $request->session)->first();
 
         if (!is_null($cart)) {
-            
+
             if ($cart->getItems->count() > 0) {
-                
-                DB::beginTransaction();
-                //create order
+
                 $order = Order::create($request->except('_token'));
-                
-                $order->scheduleReminders(3,$order);
-                
+
+                $order->scheduleReminders(3, $order);
+
                 $total_amount = 0;
 
                 foreach ($cart->getItems as $key => $value) {
-                    if ($value->checked == 'true') {
-                        
-                        $itemVariant = ProductVariant::find($value->product_id);
-                        
-                        if (!is_null($itemVariant)) {
-                            
-                            
-                            $itemVariant->quantity_on_hand -= intval($value->qty);
 
-                            try {
-                                $itemVariant->save();
-                            } catch (\Illuminate\Database\QueryException $e) {
-                                DB::rollback();
-                                $itemVariant->quantity_on_hand += $quantity;
-                                // 462 : insufficient stock available
-                                abort(462, json_encode([
-                                    "id" => $itemVariant->id,
-                                    "name" => $itemVariant->product->name,
-                                    "variant" => $itemVariant->variant,
-                                    "quantity_on_hand" => $itemVariant->quantity_on_hand,
-                                ]));
-                            }
+                    if ($value->checked == 'true') {
+
+                        DB::beginTransaction();
+
+                        try {
+
+                            $itemVariant = ProductVariant::find($value->product_id);
                             
+                            if ($itemVariant->quantity_on_hand > 0) {
+                                $itemVariant->quantity_on_hand -= intval($value->qty);
+                                $itemVariant->save();
+                            }
+
                             $orderItem = OrderItem::create([
                                 'order_id' => $order->id,
                                 'productvariant_id' => $value->product_id,
                                 'qty' => $value->qty,
                                 'price' => $value->price
                             ]);
+
                             if (isset($orderItem->subtotal)) {
                                 $total_amount += intval($orderItem->subtotal);
                             }
-
+                        } catch (ValidationException $e) {
+                            // Rollback
+                            DB::rollback();
+                            abort(462, json_encode(['data' => 'error transaction', 'status' => 462]));
+                        } catch (\Exception $e) {
+                            DB::rollback();
+                            throw $e;
                         }
+
+                        DB::commit();
 
                         $itemCart = CartItems::find($value->id);
                         if (!is_null($itemCart)) {
@@ -135,8 +133,6 @@ class CheckoutApiController extends Controller
                         }
                     }
                 }
-
-                DB::commit();
 
                 $order->update([
                     'total_amount' => $total_amount
@@ -150,10 +146,10 @@ class CheckoutApiController extends Controller
                     }
                 }
 
-                return response()->json(['data'=> $order ]);
+                return response()->json(['data' => $order]);
             }
         }
-        return response()->json(['data'=>[]]);
+        return response()->json(['data' => []]);
 
         if (
             !is_null($cart) &&

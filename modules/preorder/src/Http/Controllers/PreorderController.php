@@ -35,9 +35,7 @@ class PreorderController extends Controller
                     return $image;
                 })
                 ->addColumn('end_date', function ($row) {
-                    $timestamp = strtotime($row->end_date);
-                    $new_date = date('Y-m-d', $timestamp);
-                    return $new_date;
+                    return date_format($row->created_at, "d-m-Y");
                 })
                 ->addColumn('action', function ($row) {
                     $data = [

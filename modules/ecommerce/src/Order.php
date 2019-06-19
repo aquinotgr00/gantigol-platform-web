@@ -47,7 +47,7 @@ class Order extends Model
         'notes',
         'shipping_tracking_number'
     ];
-    protected $appends = ['invoice_date', 'invoice_status', 'buyer_name', 'guest'];
+    protected $appends = ['invoice_date', 'invoice_status', 'buyer_name', 'guest','amount_weight'];
     
     public function user() {
         return $this->belongsTo('App\User', 'customer_id');
@@ -118,5 +118,15 @@ class Order extends Model
             return $this->belongsTo('\Modules\Shipment\Subdistrict','billing_subdistrict_id','id');
         }
         return null;
+    }
+
+    public function getAmountWeightAttribute()
+    {
+        $amount_weight = 0;
+        foreach ($this->items as $key => $value) {
+            $sub_weight     = $value->qty * $value->productVariant->product->weight;
+            $amount_weight += $sub_weight;
+        }
+        return $amount_weight;
     }
 }

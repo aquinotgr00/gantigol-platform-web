@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Modules\Ecommerce\Order;
 use Modules\Ecommerce\OrderItem;
 use Modules\Product\ProductVariant;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use Validator;
