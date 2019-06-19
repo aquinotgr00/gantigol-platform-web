@@ -101,4 +101,22 @@ class Order extends Model
         }
         return null;
     }
+
+    public function shippingSubdistrict()
+    {
+        
+        if (class_exists('\Modules\Shipment\Subdistrict')) {
+            return $this->belongsTo('\Modules\Shipment\Subdistrict','shipping_subdistrict_id','id');
+        }
+        return null;
+    }
+
+    public function billingSubdistrict()
+    {
+        
+        if (class_exists('\Modules\Shipment\Subdistrict')) {
+            return $this->belongsTo('\Modules\Shipment\Subdistrict','billing_subdistrict_id','id');
+        }
+        return null;
+    }
 }

@@ -19,3 +19,5 @@ Route::get('report/sales', 'ReportApiController@sales')->name('report.sales');
 Route::get('report/customer', 'ReportApiController@customer')->name('report.customer');
 Route::get('report/inventory', 'ReportApiController@inventory')->name('report.inventory');
 Route::get('report/stock', 'ReportApiController@stock')->name('report.stock');
+Route::get('order-regular', 'OrderApiController@index')->name('order-regular.index');
+Route::get('order-regular/{id}', 'OrderApiController@show')->name('order-regular.show');

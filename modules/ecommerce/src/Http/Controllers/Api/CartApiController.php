@@ -43,9 +43,9 @@ class CartApiController extends Controller
 
             $cart = Cart::with('getItems')
                 ->where('session', $request->session)
-                ->get();
-
+                ->first();
             if (isset($cart->getItems)) {
+                
                 foreach ($cart->getItems as $key => $value) {
                     if (isset($value->productVariant)) {
                         $value->productVariant;

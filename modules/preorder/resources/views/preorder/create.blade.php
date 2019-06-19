@@ -47,6 +47,13 @@
                 @endif
             </div>
             <div class="form-group">
+                <label for="weight">Weight (gr)</label>
+                <input type="number" step="any" name="weight" class="form-control{{ $errors->has('weight') ? ' is-invalid' : '' }}" id="weight">
+                @if ($errors->has('weight'))
+                <div class="invalid-feedback">{{ $errors->first('weight') }}</div>
+                @endif
+            </div>
+            <div class="form-group">
                 <label for="exampleFormControlSelect1">Product Category</label>
                 <select class="form-control {{ $errors->has('category_id') ? ' is-invalid' : '' }}" id="exampleFormControlSelect1" name="category_id">
                     <option value="">Select Product Category</option>

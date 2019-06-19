@@ -98,11 +98,12 @@ class ProductApiController extends Controller
     {
         $product = Product::with('variants')
         ->with('preOrder')
+        ->with('tagged')
         ->where('visible',1)
         ->where('status',1)
         ->where('id',$id)
         ->first();
-
+        /*
         if (isset($product->tags)) {
             $product->tags;
 
@@ -116,7 +117,7 @@ class ProductApiController extends Controller
                         
             $product->related = $related;
             $product->related;
-        }
+        }*/
 
         if (isset($product->category)) {
             $product->category;

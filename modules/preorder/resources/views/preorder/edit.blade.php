@@ -31,25 +31,43 @@
             @csrf
             @method('PUT')
             <div class="form-group">
-                <label for="exampleInputCategoryName">Product Title</label>
-                <p>{{ $product->name }}</p>
+                <label for="inputName">Product Title</label>
+                <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" value="{{ $product->name }}" />
+                @if ($errors->has('name'))
+                <div class="invalid-feedback">{{ $errors->first('name') }}</div>
+                @endif
             </div>
             <div class="form-group">
                 <label for="productDescription">Description</label>
                 <textarea type="text" name="description" class="form-control" id="productDescription" rows="3">{{ $product->description }}</textarea>
             </div>
             <div class="form-group">
-                <label>Category</label>
-                <p>
+                <label>Price</label>
+                <input type="number" name="price" class="form-control{{ $errors->has('price') ? ' is-invalid' : '' }}" value="{{ $price_preorder }}" />
+                @if ($errors->has('price'))
+                <div class="invalid-feedback">{{ $errors->first('price') }}</div>
+                @endif
+            </div>
+            <div class="form-group">
+                <label for="weight">Weight (gr)</label>
+                <input type="number" step="any" name="weight" class="form-control{{ $errors->has('weight') ? ' is-invalid' : '' }}" id="weight" value="{{ $product->weight }}" />
+                @if ($errors->has('weight'))
+                <div class="invalid-feedback">{{ $errors->first('weight') }}</div>
+                @endif
+            </div>
+            <div class="form-group">
+                <label for="selectCategory">Product Category</label>
+                <select class="form-control {{ $errors->has('category_id') ? ' is-invalid' : '' }}" id="selectCategory" name="category_id">
+                    <option value="">Select Product Category</option>
                     @if(isset($categories) && ($categories))
                     @foreach ($categories->all() as $category)
-
-                    @include('product::includes.productcategory-row', ['category'=>$category, 'parent'=>'','category_id'=>
-                    $product->category_id ])
-
+                    @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
                     @endforeach
                     @endif
-                </p>
+                </select>
+                @if ($errors->has('category_id'))
+                <div class="invalid-feedback">{{ $errors->first('category_id') }}</div>
+                @endif
             </div>
             <div class="form-group">
                 <label for="inputQuota">Quota</label>
@@ -145,7 +163,7 @@
                 </div>
                 <small><span>Image size must be 1920x600 with maximum file size</span>
                     <span>400 kb</span></small>
-
+                <input type="hidden" id="img-plus" value="{{ asset('vendor/admin/images/image-plus.svg') }}" />
             </div>
         </div>
     </div>
@@ -226,10 +244,10 @@
         });
 
         $('#removeFeaturedImage').click(function(event) {
-            $('#img-placeholder').attr('src', '{{ asset('vendor/admin/images/image-plus.svg') }}')
+            var img_plus_src = $('#img-plus').val();
+            $('#img-placeholder').attr('src', img_plus_src)
             $('#btn-delete').removeClass('optional')
         });
-
     });
 </script>
 @endpush

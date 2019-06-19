@@ -10,80 +10,60 @@
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
+        var delay = (function() {
+            var timer = 0;
+            return function(callback, ms, that) {
+                clearTimeout(timer);
+                timer = setTimeout(callback.bind(that), ms);
+            };
+        })();
+        
         var datatables = $('#dataTable').DataTable({
-            "ajax": {
-                "url": '{{ route("preorder.by-status") }}',
-                "type": 'GET',
-                "data": {
-                    'status': 'publish'
-                }
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route("list-preorder.index") }}',
+                method: 'GET'
             },
-            "order": [[0, "desc"]],
-            "columns": [
-                {
-                    data : 'product.created_at'
+            columns: [{
+                    data: 'product.created_at'
                 },
                 {
-                    "data": "product.image",
-                    "render": function (data, type, row) {
-                        if (data == null) {
-                            return '-';
-                        } else {
-                            return '<img src="' + data + '" style="width:50px;" />';
-                        }
-                    }
+                    data: 'image'
                 },
                 {
-                    "data": "product.name",
-                    "render": function (data, type, row) {
-                        return '<a href="{{ url("admin/preorder-transaction") }}/' + row.id + '">' + data + '</a>';
-                    }
-                },
-                { "data": "end_date" },
-                { "data": "order_received" },
-                {
-                    "data": "product.price",
-                    "render": function (data, type, row) {
-                        return "Rp " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");    
-                    }
+                    data: 'product.name'
                 },
                 {
-                    "data": "id",
-                    "render": function (data, type, row) {
-                        var button = '';
-                        if ($('input[name="edit-preorder"]').length == 1) {
-                            button += '<a href="{{ url("admin/list-preorder/") }}/' + data + '/edit" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>';
-                        }
-                        button += '<a href="{{ url("admin/product/set-visible") }}/'+row.product_id+'"'; 
-                        
-                        if (row.product.visible == 1) {
-                            button += 'class="btn btn-table circle-table show-table" title="Hide On Website"';
-                        }else{
-                            button += 'class="btn btn-table circle-table hide-table" title="Show On Website"';
-                        }
-
-                        button +='data-toggle="tooltip" ';
-                        button +='data-placement="top" >';
-                        button +='</a>';
-                        return button;
-                    }
-                }
-
+                    data: 'end_date'
+                },
+                {
+                    data: 'product.price'
+                },
+                {
+                    data: 'order_received'
+                },
+                {
+                    data: 'action'
+                },
             ],
-            order: [[ 0, "desc" ]],
-            columnDefs : [{
+            order: [
+                [0, "desc"]
+            ],
+            columnDefs: [{
                 "targets": [0],
                 "visible": false,
                 "searchable": false
             }]
         });
-        
-        $('#dataTable_filter').css('display','none');
 
-        $('#search').on('keyup', function () {
-            
-            datatables.search(this.value).draw();
+        $('#dataTable_filter').css('display', 'none');
+
+        $('#search').on('keyup', function() {
+            delay(function() {
+                datatables.search(this.value).draw();
+            }, 1000, this);
         });
     });
 </script>
@@ -115,7 +95,7 @@
     </tool>
 </div>
 <!-- end tools -->
-<hr>
+
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable" width="100%" cellspacing="0">

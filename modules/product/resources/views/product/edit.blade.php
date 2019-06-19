@@ -19,6 +19,10 @@
     .img-thumbnail {
         object-fit: scale-down;
     }
+    #removeFeaturedImage{
+        color: red;
+        font-weight: bold;
+    }
 </style>
 @endpush
 
@@ -32,11 +36,42 @@
             @method('PUT')
             <div class="form-group">
                 <label for="exampleInputCategoryName">Product Title</label>
-                <p>{{ $product->name }}</p>
+                <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" value="{{ $product->name }}" />
+                @if ($errors->has('name'))
+                <div class="invalid-feedback">{{ $errors->first('name') }}</div>
+                @endif
             </div>
             <div class="form-group">
                 <label for="productDescription">Description</label>
                 <textarea type="text" name="description" class="form-control" id="productDescription" rows="3">{{ $product->description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <input type="number" name="price" class="form-control{{ $errors->has('price') ? ' is-invalid' : '' }}" value="{{ $productVariant->price }}" />
+                @if ($errors->has('price'))
+                <div class="invalid-feedback">{{ $errors->first('price') }}</div>
+                @endif
+            </div>
+            <div class="form-group">
+                <label for="weight">Weight (gr)</label>
+                <input type="number" step="any" name="weight" class="form-control{{ $errors->has('weight') ? ' is-invalid' : '' }}" id="weight" value="{{ $product->weight }}" />
+                @if ($errors->has('weight'))
+                <div class="invalid-feedback">{{ $errors->first('weight') }}</div>
+                @endif
+            </div>
+            <div class="form-group">
+                <label for="selectCategory">Product Category</label>
+                <select class="form-control {{ $errors->has('category_id') ? ' is-invalid' : '' }}" id="selectCategory" name="category_id">
+                    <option value="">Select Product Category</option>
+                    @if(isset($categories) && ($categories))
+                    @foreach ($categories->all() as $category)
+                    @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
+                    @endforeach
+                    @endif
+                </select>
+                @if ($errors->has('category_id'))
+                <div class="invalid-feedback">{{ $errors->first('category_id') }}</div>
+                @endif
             </div>
             <div class="row">
                 <div class="col-sm form-group">
@@ -44,28 +79,8 @@
                     <p>{{ $productVariant->sku }}</p>
                 </div>
                 <div class="col-sm form-group">
-                    <label>Price</label>
-                    <p>Rp {{ number_format($productVariant->price) }}</p>
-                </div>
-                <div class="col-sm form-group">
                     <label>Stock</label>
                     <p>{{ number_format($productVariant->quantity_on_hand) }}</p>
-                </div>
-                <div class="col-sm form-group">
-                    <label>Category</label>
-                    <p>
-                        @if(isset($categories) && ($categories))
-                        @foreach ($categories->all() as $category)
-
-                        @include('product::includes.productcategory-row', [
-                        'category'=>$category,
-                        'parent'=>'',
-                        'category_id'=>$product->category_id
-                        ])
-
-                        @endforeach
-                        @endif
-                    </p>
                 </div>
             </div>
             <div class="form-group">
@@ -82,7 +97,7 @@
         </div>
         <div class="col-4 grs">
             <div class="mb-4">
-                <label for="exampleFormControlSelect1">Featured Image</label>
+                <label for="selectCategory">Featured Image</label>
                 <div class="mb-2">
                     <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="selectFeatureImage">
                         @php
@@ -108,7 +123,7 @@
             </div>
 
             <div>
-                <label for="exampleFormControlSelect1">Aditional Image</label>
+                <label for="selectCategory">Aditional Image</label>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="mb-2">
@@ -117,28 +132,30 @@
                             </a>
                         </div>
                     </div>
-                    <div class="addtional-images"></div>
-                    <input type="hidden" name="addtional_images_selected" />
-                    @if(isset($product->images))
-                    @foreach($product->images as $index => $image)
-                    <input type="hidden" name="images[]" value="{{ $image->image }}" id="input-img-{{ $image->id }}" />
-                    <div class="mb-2 hovereffect float-left">
-                        <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" id="img-{{ $image->id }}">
-                        <div class="overlay-additional btn-img">
-                            <span>
-                                <a href="#" class="btn btn-table circle-table edit-table mr-2 btn-edit-img" data-toggle="modal" data-target="#media-library-modal" data-id="{{ $image->id }}" data-multi-select="false" data-on-select="editAddtionalImage" title="Edit this image"></a>
-                            </span>
-                            <span>
-                                <a href="{{ route('product.delete-image',$image->id) }}" class="btn btn-table circle-table delete-table btn-delete-image" data-toggle="tooltip" data-placement="top" title="Remove this image"></a>
-                            </span>
+                    <div class="addtional-images">
+                        @if(isset($product->images))
+                        @foreach($product->images as $index => $image)
+                        <input type="hidden" name="images[]" value="{{ $image->image }}" id="input-img-{{ $image->id }}" />
+                        <div class="mb-2 hovereffect">
+                            <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" id="img-{{ $image->id }}">
+                            <div class="overlay-additional btn-img">
+                                <span>
+                                    <a href="#" class="btn btn-table circle-table edit-table mr-2 btn-edit-img" data-toggle="modal" data-target="#media-library-modal" data-id="{{ $image->id }}" data-multi-select="false" data-on-select="editAddtionalImage" title="Edit this image"></a>
+                                </span>
+                                <span>
+                                    <a href="{{ route('product.delete-image',$image->id) }}" class="btn btn-table circle-table delete-table btn-delete-image" data-toggle="tooltip" data-placement="top" title="Remove this image"></a>
+                                </span>
+                            </div>
                         </div>
+                        @endforeach
+                        @endif
+                        <div class="addtional-images-next"></div>
                     </div>
-                    @endforeach
-                    @endif
+                    <input type="hidden" name="addtional_images_selected" />
                 </div>
                 <small><span>Image size must be 1920x600 with maximum file size</span>
                     <span>400 kb</span></small>
-
+                <input type="hidden" id="img-plus" value="{{ asset('vendor/admin/images/image-plus.svg') }}" />
             </div>
         </div>
     </div>
@@ -185,7 +202,8 @@
         });
 
         $('#removeFeaturedImage').click(function(event) {
-            $('#img-placeholder').attr('src', '{{ asset('vendor/admin/images/image-plus.svg') }}')
+            var img_plus_src = $('#img-plus').val();
+            $('#img-placeholder').attr('src', img_plus_src)
             $('#btn-delete').removeClass('optional')
         });
 
@@ -216,7 +234,7 @@
         $.each(images, function(key, value) {
             html += templateAddtionalImage(value.url);
         });
-        $('.addtional-images').html(html);
+        $('.addtional-images-next').after(html);
     }
 
     function templateAddtionalImage(url) {

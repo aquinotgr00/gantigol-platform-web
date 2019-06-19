@@ -21,7 +21,7 @@
 @endpush
 
 @section('content')
-@pageHeader(['title'=> $order->invoice_id, 'back'=>route('paid-order.index')])
+@pageHeader(['title'=> $order->invoice_id, 'back'=> ($order->order_status != 0)? route('paid-order.index') : route('order-transaction.index') ])
 
 <div class="row">
     <div class="col-12 col-md-4">

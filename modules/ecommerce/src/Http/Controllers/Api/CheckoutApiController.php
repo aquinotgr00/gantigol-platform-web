@@ -13,20 +13,21 @@ use Modules\Ecommerce\OrderItem;
 use Modules\Membership\Member;
 use Modules\Product\ProductVariant;
 use Validator;
+use DB;
 
 class CheckoutApiController extends Controller
 {
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'items' => 'array',
             'shipping_name' => 'required',
             'shipping_phone' => 'required|max:12',
             'shipping_email' => 'required',
             'shipping_address' => 'required',
             'shipping_cost' => 'required',
             'billing_name' => 'required',
-            'shipment_name' => 'required',
+            'shipping_subdistrict_id' => 'required',
+            'session' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -50,114 +51,115 @@ class CheckoutApiController extends Controller
         if ($request->has('user_id')) {
 
             $member = Member::find($request->user_id);
-
             if (!is_null($member)) {
-                $customer_exist = CustomerProfile::where('user_id', $member->id)->first();
-
-                if (!is_null($customer_exist)) {
-
-                    $customer_id = $customer_exist->id;
-                } else {
-
-                    $new_customer = CustomerProfile::create([
+                $customer = CustomerProfile::firstOrCreate(
+                    ['user_id' => $member->id],
+                    [
                         'name' => $member->name,
                         'email' => $member->email,
                         'phone' => $member->phone,
                         'address' => $member->address,
-                        'birthdate' => date('Y-m-d'),
-                    ]);
-
-                    $new_customer->user_id = $member->id;
-                    $new_customer->update();
-
-                    $customer_id = $new_customer->id;
-                }
-
-                $request->request->add(['customer_id' => $customer_id]);
+                        'birthdate' => date('Y-m-d')
+                    ]
+                );
+                $request->request->add(['customer_id' => $customer->id]);
             }
-
         } else {
 
-            $customerExist = CustomerProfile::where('email', $request->shipping_name)->first();
-
-            if (is_null($customerExist)) {
-                $customer = CustomerProfile::create([
+            $customer = CustomerProfile::firstOrCreate(
+                ['email' => $request->shipping_email],
+                [
                     'name' => $request->shipping_name,
                     'email' => $request->shipping_email,
                     'phone' => $request->shipping_phone,
                     'address' => $request->shipping_address,
-                    'birthdate' => date('Y-m-d'),
-                ]);
-                $request->request->add(['customer_id' => $customer->id]);
-            }else{
-                $request->request->add(['customer_id' => $customerExist->id]);
-            }
+                    'birthdate' => date('Y-m-d')
+                ]
+            );
+            $request->request->add(['customer_id' => $customer->id]);
         }
 
-        $order = Order::create($request->except('_token'));
+        $cart = Cart::where('session', $request->session)->first();
 
-        $items = [];
+        if (!is_null($cart)) {
+            
+            if ($cart->getItems->count() > 0) {
+                
+                DB::beginTransaction();
+                //create order
+                $order = Order::create($request->except('_token'));
+                
+                $order->scheduleReminders(3,$order);
+                
+                $total_amount = 0;
 
-        if ($request->items) {
-            $items = $request->items;
-        }
+                foreach ($cart->getItems as $key => $value) {
+                    if ($value->checked == 'true') {
+                        
+                        $itemVariant = ProductVariant::find($value->product_id);
+                        
+                        if (!is_null($itemVariant)) {
+                            
+                            
+                            $itemVariant->quantity_on_hand -= intval($value->qty);
 
-        if ($request->has('session')) {
-            $cart = Cart::where('session', $request->session)->first();
-
-            if (!is_null($cart)) {
-                if (isset($cart->getItems)) {
-                    foreach ($cart->getItems as $key => $value) {
-                        if ($value->checked == 'true') {
-                            $items[] = [
+                            try {
+                                $itemVariant->save();
+                            } catch (\Illuminate\Database\QueryException $e) {
+                                DB::rollback();
+                                $itemVariant->quantity_on_hand += $quantity;
+                                // 462 : insufficient stock available
+                                abort(462, json_encode([
+                                    "id" => $itemVariant->id,
+                                    "name" => $itemVariant->product->name,
+                                    "variant" => $itemVariant->variant,
+                                    "quantity_on_hand" => $itemVariant->quantity_on_hand,
+                                ]));
+                            }
+                            
+                            $orderItem = OrderItem::create([
+                                'order_id' => $order->id,
                                 'productvariant_id' => $value->product_id,
                                 'qty' => $value->qty,
                                 'price' => $value->price
-                            ];
-                            $itemCart = CartItems::find($value->id);
-                            if (!is_null($itemCart)) {
-                                $itemCart->delete();
+                            ]);
+                            if (isset($orderItem->subtotal)) {
+                                $total_amount += intval($orderItem->subtotal);
                             }
+
+                        }
+
+                        $itemCart = CartItems::find($value->id);
+                        if (!is_null($itemCart)) {
+                            $itemCart->delete();
                         }
                     }
                 }
-            }
-            
-            if (
-                !is_null($cart) &&
-                !isset($cart->getItems)
-                ) {
-                $cart->delete();
-            }
-        }
 
-        $total_amount = 0;
+                DB::commit();
 
-        if ($items) {
-            foreach ($items as $key => $value) {
-                $itemVariant = ProductVariant::find($value['productvariant_id']);
-                if (!is_null($itemVariant)) {
-                    $value = array_merge($value, ['order_id' => $order->id]);
-                    $orderItem = OrderItem::create($value);
-                    if (isset($orderItem->subtotal)) {
-                        $total_amount += intval($orderItem->subtotal);
+                $order->update([
+                    'total_amount' => $total_amount
+                ]);
+
+                if (isset($order->items)) {
+                    foreach ($order->items as $key => $value) {
+                        if (isset($value->productVariant)) {
+                            $value->productVariant;
+                        }
                     }
                 }
+
+                return response()->json(['data'=> $order ]);
             }
         }
+        return response()->json(['data'=>[]]);
 
-        $order->update([
-            'total_amount' => $total_amount
-        ]);
-
-        if (isset($order->items)) {
-            foreach ($order->items as $key => $value) {
-                if (isset($value->productVariant)) {
-                    $value->productVariant;
-                }
-            }
+        if (
+            !is_null($cart) &&
+            !isset($cart->getItems)
+        ) {
+            $cart->delete();
         }
-
-        return response()->json($order);
     }
 }

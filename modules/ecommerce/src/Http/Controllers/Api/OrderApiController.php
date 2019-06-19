@@ -8,6 +8,8 @@ use Modules\Ecommerce\Order;
 use Modules\Ecommerce\OrderItem;
 use Modules\Product\ProductVariant;
 use Carbon\Carbon;
+use Validator;
+use DB;
 
 class OrderApiController extends Controller
 {
@@ -18,8 +20,21 @@ class OrderApiController extends Controller
      */
     public function index(Request $request)
     {
-        $excludeOrderStatus = [config('starcross.order.status.UserCancellation')];
-        return Order::with('items.productVariant')->whereNotIn('order_status', $excludeOrderStatus)->where('customer_id', $request->user()->id)->orderBy('created_at', 'desc')->paginate(20);
+        $validator = Validator::make($request->all(), [
+            'customer_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages());
+        }
+        $excludeOrderStatus = [config('ecommerce.order.status.UserCancellation')];
+        $orders = Order::with('items.productVariant')
+            ->whereNotIn('order_status', $excludeOrderStatus)
+            ->where('customer_id', $request->customer_id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+        
+            return response()->json($orders);
     }
 
     /**
@@ -44,10 +59,10 @@ class OrderApiController extends Controller
         // stock deduction
         $items = collect($request->input('items'))->map(function ($item) {
             $quantity = $item['qty'];
-            $price = (int) $item['price'];
+            $price = (int)$item['price'];
             $discount = $item['discount'];
             $discountId = $item['discountId'];
-            $productVariant = ProductVariant::with('product')->find((int) $item['id']);
+            $productVariant = ProductVariant::with('product')->find((int)$item['id']);
             $productVariant->quantity_on_hand -= $quantity;
 
             try {
@@ -86,11 +101,11 @@ class OrderApiController extends Controller
             'invoice_id' => 'INV-' . Carbon::now()->format('Y-m-d-') . str_pad($nOrders, 5, '0', STR_PAD_LEFT),
             'customer_id' => $request->user()->id,
             'prism_checkout' => false,
-            'order_status' => config('starcross.order.status.Pending'),
+            'order_status' => config('ecommerce.order.status.Pending'),
             'member_discount' => 0,
             'member_discount_id' => null,
         ];
-        
+
         //$adminFeePercentage = $request->input('paymentOptionSelected.feePercentage');
         //$adminFeeNominal = $request->input('paymentOptionSelected.feeNominal');
         $header['payment_type'] = null;
@@ -123,7 +138,15 @@ class OrderApiController extends Controller
      */
     public function show($id)
     {
-        return jsend_success(Order::with('items.productVariant')->find($id));
+        $order = Order::with('items.productVariant')->find($id);
+        if (isset($order->shippingSubdistrict)) {
+            $order->shippingSubdistrict;
+        }
+        
+        if (isset($order->billingSubdistrict)) {
+            $order->billingSubdistrict;
+        }
+        return response()->json(['data' => $order]);
     }
 
     /**
