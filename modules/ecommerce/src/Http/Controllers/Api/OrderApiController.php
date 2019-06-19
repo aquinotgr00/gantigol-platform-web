@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Modules\Ecommerce\Order;
 use Modules\Ecommerce\OrderItem;
 use Modules\Product\ProductVariant;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use Validator;
 use DB;
@@ -33,8 +35,8 @@ class OrderApiController extends Controller
             ->where('customer_id', $request->customer_id)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-        
-            return response()->json($orders);
+
+        return response()->json($orders);
     }
 
     /**
@@ -55,38 +57,45 @@ class OrderApiController extends Controller
      */
     public function store(Request $request)
     {
-        DB::beginTransaction();
-        // stock deduction
+
         $items = collect($request->input('items'))->map(function ($item) {
-            $quantity = $item['qty'];
+
             $price = (int)$item['price'];
             $discount = $item['discount'];
             $discountId = $item['discountId'];
-            $productVariant = ProductVariant::with('product')->find((int)$item['id']);
-            $productVariant->quantity_on_hand -= $quantity;
+            $quantity = $item['qty'];
+
+            // Start transaction!
+            // stock deduction
+            DB::beginTransaction();
 
             try {
-                $productVariant->save();
-            } catch (\Illuminate\Database\QueryException $e) {
+                // Validate, then create if valid
+                $productVariant = ProductVariant::with('product')->find((int)$item['id']);
+                if (!is_null($productVariant)) {
+                    $productVariant->quantity_on_hand -= $quantity;
+                    $productVariant->save();
+                }
+
+                $item = new OrderItem();
+                $item->productVariant()->associate($productVariant);
+                $item->price = $price;
+                $item->qty = $quantity;
+                $item->discount = $discount;
+                $item->discountupdate_id = $discountId;
+                return $item;
+                
+            } catch (ValidationException $e) {
+                // Rollback and then redirect
+                // back to form with errors
                 DB::rollback();
-                $productVariant->quantity_on_hand += $quantity;
-                // 462 : insufficient stock available
-                abort(462, json_encode([
-                    "id" => $productVariant->id,
-                    "name" => $productVariant->product->name,
-                    "size" => $productVariant->size_code,
-                    "quantity_on_hand" => $productVariant->quantity_on_hand,
-                ]));
+                abort(462, json_encode(['data' => 'error transaction', 'status' => 462]));
+            } catch (\Exception $e) {
+                DB::rollback();
+                throw $e;
             }
 
-            $item = new OrderItem();
-            $item->productVariant()->associate($productVariant);
-            $item->price = $price;
-            $item->qty = $quantity;
-            $item->discount = $discount;
-            $item->discountupdate_id = $discountId;
-
-            return $item;
+            DB::commit();
         });
 
         $nOrders = Order::whereDate('created_at', Carbon::today())->count();
@@ -125,8 +134,6 @@ class OrderApiController extends Controller
 
         $order->save();
         $order->items()->saveMany($items);
-
-        DB::commit();
         return jsend_success($order);
     }
 
@@ -142,7 +149,7 @@ class OrderApiController extends Controller
         if (isset($order->shippingSubdistrict)) {
             $order->shippingSubdistrict;
         }
-        
+
         if (isset($order->billingSubdistrict)) {
             $order->billingSubdistrict;
         }
