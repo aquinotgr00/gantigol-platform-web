@@ -25,7 +25,6 @@ class CheckoutApiController extends Controller
             'shipping_email' => 'required',
             'shipping_address' => 'required',
             'shipping_cost' => 'required',
-            'billing_name' => 'required',
             'shipping_subdistrict_id' => 'required',
             'session' => 'required',
         ]);
@@ -62,7 +61,12 @@ class CheckoutApiController extends Controller
                         'birthdate' => date('Y-m-d')
                     ]
                 );
+
                 $request->request->add(['customer_id' => $customer->id]);
+                $request->request->add(['billing_name' => $member->name]);
+                $request->request->add(['billing_email' => $member->email]);
+                $request->request->add(['billing_phone' => $member->phone]);
+                $request->request->add(['billing_address' => $member->address]);
             }
         } else {
 
@@ -77,6 +81,10 @@ class CheckoutApiController extends Controller
                 ]
             );
             $request->request->add(['customer_id' => $customer->id]);
+            $request->request->add(['billing_name' => $request->shipping_name]);
+            $request->request->add(['billing_email' => $request->shipping_email]);
+            $request->request->add(['billing_phone' => $request->shipping_phone]);
+            $request->request->add(['billing_address' => $request->shipping_address]);
         }
 
         $cart = Cart::where('session', $request->session)->first();
@@ -99,8 +107,9 @@ class CheckoutApiController extends Controller
 
                         try {
 
+
                             $itemVariant = ProductVariant::find($value->product_id);
-                            
+
                             if ($itemVariant->quantity_on_hand > 0) {
                                 $itemVariant->quantity_on_hand -= intval($value->qty);
                                 $itemVariant->save();
@@ -116,6 +125,8 @@ class CheckoutApiController extends Controller
                             if (isset($orderItem->subtotal)) {
                                 $total_amount += intval($orderItem->subtotal);
                             }
+
+                            DB::commit();
                         } catch (ValidationException $e) {
                             // Rollback
                             DB::rollback();
@@ -125,8 +136,6 @@ class CheckoutApiController extends Controller
                             throw $e;
                         }
 
-                        DB::commit();
-
                         $itemCart = CartItems::find($value->id);
                         if (!is_null($itemCart)) {
                             $itemCart->delete();
@@ -134,9 +143,23 @@ class CheckoutApiController extends Controller
                     }
                 }
 
-                $order->update([
-                    'total_amount' => $total_amount
-                ]);
+                $total_amount += intval($request->shipping_cost);
+                if (
+                    $request->has('discount') &&
+                    $request->discount > 0
+                ) {
+
+                    $total_amount = $total_amount - intval($request->discount);
+                    $order->update([
+                        'total_amount' => $total_amount,
+                        'discount' => $request->discount
+                    ]);
+                } else {
+
+                    $order->update([
+                        'total_amount' => $total_amount
+                    ]);
+                }
 
                 if (isset($order->items)) {
                     foreach ($order->items as $key => $value) {
@@ -145,8 +168,32 @@ class CheckoutApiController extends Controller
                         }
                     }
                 }
+                $names      = preg_split('/\s+/', $order->billing_name);
+                $last_name  = '';
 
-                return response()->json(['data' => $order]);
+                foreach ($names as $key => $value) {
+                    if ($key != 0) {
+                        $last_name .= ' ' . $value;
+                    }
+                }
+
+                $invoice = [
+                    'transaction_details' => [
+                        'order_id' => $order->id,
+                        'gross_amount' => $order->total_amount
+                    ],
+                    'customer_details' => [
+                        'first_name' => $names[0],
+                        'last_name'  => $last_name,
+                        'email' => $order->billing_email,
+                        'phone' => $order->billing_phone,
+                        'billing_address' => $order->billing_address,
+                        'shipping_address' => $order->shipping_address
+                    ],
+                    'item_details' => (isset($order->items)) ? $order->items : []
+
+                ];
+                return response()->json($invoice);
             }
         }
         return response()->json(['data' => []]);

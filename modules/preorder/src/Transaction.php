@@ -31,7 +31,8 @@ class Transaction extends Model
         'quantity',
         'status',
         'customer_id',
-        'invoice'
+        'invoice',
+        'discount'
     ];
 
     protected $appends = ['amount_weight'];
@@ -130,8 +131,11 @@ class Transaction extends Model
     {
         $amount_weight = 0;
         foreach ($this->orders as $key => $value) {
-            $sub_weight     = $value->qty * $value->productVariant->product->weight;
-            $amount_weight += $sub_weight;
+            $sub_weight = 0;
+            if (isset($value->productVariant->product->weight)) {
+                $sub_weight     = $value->qty * $value->productVariant->product->weight;
+                $amount_weight += $sub_weight;
+            }
         }
         return $amount_weight;
     }

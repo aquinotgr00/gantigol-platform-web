@@ -86,7 +86,8 @@ class TransactionApiController extends Controller
             'email' => 'required|email',
             'phone' => 'required', //|regex:/(01)[0-9]{9}/
             'postal_code' => 'required',
-            'subdistrict_id' => 'required'
+            'subdistrict_id' => 'required',
+            'courier_fee' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -142,7 +143,7 @@ class TransactionApiController extends Controller
                 ) {
 
                     $productVariant = ProductVariant::find($item['product_id']);
-                    
+
                     if (!is_null($productVariant)) {
 
                         $price = $productVariant->product->price;
@@ -162,7 +163,6 @@ class TransactionApiController extends Controller
                             'subtotal' => $subtotal
                         ]);
                     }
-
                 } else {
                     return new TransactionResource(['errors' => [
                         'message' => "item doesn't have product_id",
@@ -171,10 +171,25 @@ class TransactionApiController extends Controller
                     break;
                 }
             }
-            $transaction->update([
-                'amount' => $amount,
-                'quantity'=> $quantity
-            ]);
+
+            $amount += intval($request->courier_fee);
+
+            if (
+                $request->has('discount') &&
+                $request->discount > 0
+            ) {
+                $amount -= intval($request->discount);
+                $transaction->update([
+                    'amount' => $amount,
+                    'quantity' => $quantity,
+                    'discount' => $request->discount
+                ]);
+            } else {
+                $transaction->update([
+                    'amount' => $amount,
+                    'quantity' => $quantity
+                ]);
+            }
 
             //create schduler
             $settingReminder    =  SettingReminder::first();

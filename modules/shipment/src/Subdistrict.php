@@ -13,8 +13,15 @@ class Subdistrict extends Model
      */
     protected $fillable = ['id','name','city_id'];
     protected $hidden = ['city_id','created_at','updated_at'];
+    protected $appends = ['courier'];
     
     public function city() {
         return $this->belongsTo('\Modules\Shipment\City');
+    }
+
+    public function getCourierAttribute()
+    {
+        $couriers = config('shipment.adapter.rajaOngkir.supported.starter');
+        return $couriers;
     }
 }

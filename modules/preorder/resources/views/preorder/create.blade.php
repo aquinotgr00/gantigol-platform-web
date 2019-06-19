@@ -133,6 +133,7 @@
 
             <div>
                 <label for="exampleFormControlSelect1">Aditional Image</label>
+                <input type="hidden" name="addtional_images_selected" />
                 <div class="row">
                     <div class="col-md-4">
                         <div class="mb-2">
@@ -141,11 +142,12 @@
                             </a>
                         </div>
                     </div>
-                    <div class="addtional-images"></div>
                 </div>
-                <small><span>Image size must be 1920x600 with maximum file size</span>
-                    <span>400 kb</span></small>
-
+                <small>
+                    <span>Image size must be 1920x600 with maximum file size</span>
+                    <span>400 kb</span>
+                </small>
+                <div class="row addtional-images"></div>
             </div>
         </div>
     </div>
@@ -252,29 +254,51 @@
     function selectAddtionalImage(images) {
         var html = '';
         $.each(images, function(key, value) {
-            html += templateAddtionalImage(value.url);
+            html += templateAddtionalImage(value.url,value.id);
         });
         $('.addtional-images').html(html);
     }
 
-    function templateAddtionalImage(url) {
-        var template = '<input type="hidden" name="images[]" value="' + url + '" />';
-        template += '<div class="mb-2 hovereffect float-left">';
-        template += '<img class="img-fluid img-thumbnail img-additional-size" src="' + url + '" alt="">';
+    function removeImage(id) {
+        $('#img-tmp-' + id).remove();
+    }
+
+    function editTempAddtionalImage(images) {
+        const {
+            id,
+            url
+        } = images[0]
+        var obj_id = $('input[name="addtional_images_selected"]').val();
+        $('#img-tmp-' + obj_id).attr('src', url);
+    }
+
+    function setTempID(id) {
+        $('input[name="addtional_images_selected"]').val(id);
+    }
+
+    function templateAddtionalImage(url, id) {
+        var template = '<div class="col-md-4">';
+        template += '<input type="hidden" name="images[]" value="' + url + '" />';
+        template += '<div class="mb-2 hovereffect">';
+        template += '<img class="img-fluid img-thumbnail img-additional-size" id="img-tmp-' + id + '" src="' + url + '" alt="">';
         template += '<div class="overlay-additional btn-img">';
         template += '<span>';
-        template += '<a href="#" class="btn btn-table circle-table edit-table mr-2"';
-        template += 'data-toggle="tooltip"';
-        template += 'data-placement="top"';
-        template += 'title="" data-original-title="View"></a>';
+        template += '<button type="button" class="btn btn-table circle-table edit-table mr-2"';
+        template += 'data-toggle="modal" data-target="#media-library-modal"';
+        template += 'onclick="setTempID(' + id + ')"';
+        template += 'data-multi-select="false"';
+        template += 'data-on-select="editTempAddtionalImage" title="Edit this image" >';
+        template += '</button>';
         template += '</span>';
-        template += '<span data-toggle=modal role="button" data-target="#ModalMediaLibrary">';
-        template += '<a href="#"';
+        template += '<span>';
+        template += '<button type="button"';
+        template += 'onclick="removeImage(' + id + ')"';
         template += 'class="btn btn-table circle-table delete-table"';
         template += 'data-toggle="tooltip"';
         template += 'data-placement="top"';
-        template += 'title="" data-original-title="Edit"></a>';
+        template += 'title="Delete Image" ></button>';
         template += '</span>';
+        template += '</div>';
         template += '</div>';
         template += '</div>';
         return template;
