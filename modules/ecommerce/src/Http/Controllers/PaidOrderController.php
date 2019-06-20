@@ -23,9 +23,8 @@ class PaidOrderController extends Controller
                 $invoice = trim($request->invoice);
                 
                 if (!empty($invoice)) {
-                    $orders = Order::where('invoice_id','like', '%'.$invoice.'%')
+                    $orders = $orders->where('invoice_id','like', '%'.$invoice.'%')
                         ->orWhere('billing_name','like', '%'.$invoice.'%');
-                    $orders = $orders->where('order_status','!=', 0);
                 }
             }
             return DataTables::of($orders)

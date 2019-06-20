@@ -181,7 +181,9 @@
         });
 
         $('input[name="invoice_id"]').on("keyup keydown", function(e) {
-            dataTable.draw();
+           delay(function(){
+                dataTable.draw();
+                  }, 1000, this);
         });
 
         $('#selectAll').click(function() {

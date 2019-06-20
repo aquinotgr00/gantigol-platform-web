@@ -220,7 +220,6 @@
                   }, 1000, this);
             
         });
-        var allPages = dataTable.cells( ).nodes( );
 
         $('select[name="status"]').change(function(e) {
             dataTable.draw();
