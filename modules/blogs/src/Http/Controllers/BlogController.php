@@ -64,9 +64,9 @@ class BlogController extends Controller
     public function list()
     {
         $blogs = $this->blogs
-                ->orderBy('blogs.id', 'desc')
                 ->leftjoin('blog_category', 'blogs.category_id', '=', 'blog_category.id')
                 ->select('blogs.*', 'blog_category.name')
+                ->orderBy('blogs.created_at', 'desc')
                 ->get();
         return Datatables::of($blogs)
                             ->addColumn('create_date', function ($blogs) {
@@ -96,8 +96,11 @@ class BlogController extends Controller
                                         <a href="'.$data["route"].'" class="btn btn-table circle-table '.$data["button"].'" data-toggle="tooltip" data-placement="top" title="'.$data['title'].'"></a>';
                              })
                                 ->addColumn('highlight', function ($blogs) {
-                                
-                                return '<a href="'.Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]).'" class="btn btn-table btn-default " title="Highlight"><button class="btn btn-default">'.$blogs->highlight.'</button></a>';
+                                     $url=Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]);
+                                    if(empty($blogs->publish_date)){
+                                        $url="#";
+                                    }
+                                return '<a href="'.$url.'" class="btn btn-table btn-default " title="Highlight"><button class="btn btn-default">'.$blogs->highlight.'</button></a>';
                             })
                             ->rawColumns(['highlight', 'action'])
                             ->make(true);

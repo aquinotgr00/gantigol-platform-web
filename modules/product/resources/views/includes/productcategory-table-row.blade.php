@@ -1,7 +1,7 @@
 <tr>
     <td>
-        @if(Storage::exists($category['image']))
-        <img src="{{ Storage::url($category['image']) }}" class="product-category thumbnail">
+        @if(method_exists($category['image'],'getUrl'))
+        <img src="{{ $category['image']->getUrl() }}" style="width:50px;" />
         @endif
     </td>
     <td>{{ $parent }}{{ $category['name'] }}</td>

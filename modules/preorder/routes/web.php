@@ -24,5 +24,7 @@ Route::post('shipping-sticker', 'SettingShippingController@storeSize')->name('sh
 Route::get('all-transaction', 'AllTransactionController@index')->name('all-transaction.index');
 Route::get('all-transaction/{id}', 'AllTransactionController@show')->name('all-transaction.show');
 Route::post('ajax/all-transaction', 'AllTransactionController@ajaxAllTransactions')->name('ajax.all-transaction');
+Route::put('all-transaction/{id}', 'AllTransactionController@update')->name('all-transaction.update');
 
 Route::post('store-shipping-number', 'TransactionController@storeShippingNumber')->name('store-shipping-number');
+

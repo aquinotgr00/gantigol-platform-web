@@ -30,15 +30,15 @@
     </tool>
 </div>
 <!-- end tools -->
-<hr>
+
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable">
         <thead>
             <tr>
-                <th scope="col">Image</th>
-                <th scope="col">Size Chart Name</th>
-                <th scope="col">Action</th>
+                <th>Image</th>
+                <th>Size Chart Name</th>
+                <th>Action</th>
             </tr>
         </thead>
     </table>

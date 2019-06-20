@@ -18,7 +18,7 @@ class Blog extends Model implements Searchable
      * @var array
      */
     
-    protected $fillable = ['title', 'image', 'publish_date', 'category_id','body','created_at','updated_at','deleted_at'];
+    protected $fillable = ['title','source_image','author' ,'image', 'publish_date', 'category_id','body','created_at','updated_at','deleted_at'];
 
     public function getSearchResult(): SearchResult
     {

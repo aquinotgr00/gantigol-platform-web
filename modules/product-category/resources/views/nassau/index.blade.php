@@ -8,7 +8,7 @@
 @section('content')
 
 @indexPage(['title'=>'Product Categories','addNewAction'=>route('product-categories.create')])
-<hr/>
+
 @table
     @slot('headerColumns')
         <tr>

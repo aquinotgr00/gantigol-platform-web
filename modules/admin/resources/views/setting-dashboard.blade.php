@@ -110,7 +110,7 @@
 			@if(isset($couriers))
 			@foreach($couriers as $key => $value)
 			<div class="form-check mb-3">
-				<input type="checkbox" class="form-check-input">
+				<input type="checkbox" class="form-check-input" name="courier[]" value="{{ $key }}">
 				<label class="form-check-label style-privilage">{{ $value }}</label>
 			</div>
 			@endforeach

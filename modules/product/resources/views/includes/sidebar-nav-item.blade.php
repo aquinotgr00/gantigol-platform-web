@@ -6,5 +6,6 @@
         @sidebarNavItem(['routeName'=>'product-variant.index','title'=>'Product Variants'])
         @sidebarNavItem(['routeName'=>'product-size-chart.index','title'=>'Product Size Charts'])
         @sidebarNavItem(['routeName'=>'product.index','title'=>'Products'])
+        @sidebarNavItem(['routeName'=>'adjustment.index','title'=>'Inventory'])
     </ul>
 </li>

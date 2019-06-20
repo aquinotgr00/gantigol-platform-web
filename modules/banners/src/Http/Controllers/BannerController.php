@@ -98,6 +98,7 @@ class BannerController extends Controller
         $list =  $this->banner->whereNull('banners.deleted_at')
         		->leftjoin('banner_category','banner_category.id','=','banners.placement')
         		->select('banners.*','banner_category.name as placement_name')
+                ->orderBy('banners.created_at', 'desc')
         		->get();
         return Datatables::of($list)
                              ->addColumn('action', function ($list) {
@@ -144,7 +145,7 @@ class BannerController extends Controller
         ]);
         $this->banner->where('id',$id)->update($request->except(['_token']));
       
-        return redirect()->route('banner.edit',$id);
+        return redirect()->route('banner.index');
     }
     /**
      * update a data created resource in storage.

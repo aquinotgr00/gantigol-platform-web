@@ -9,10 +9,10 @@ use DB;
 class Order extends Model
 {
     use OrderTrait;
-    
+
     protected $fillable = [
-        'invoice_id', 
-        'customer_id', 
+        'invoice_id',
+        'customer_id',
         'billing_name',
         'billing_email',
         'billing_phone',
@@ -23,7 +23,7 @@ class Order extends Model
         'billing_province',
         'billing_zip_code',
         'billing_country',
-        'shipping_name', 
+        'shipping_name',
         'shipping_email',
         'shipping_phone',
         'shipping_address',
@@ -44,42 +44,50 @@ class Order extends Model
         'payment_confirmation_link',
         'prism_checkout',
         'order_status',
-        'notes'
+        'notes',
+        'shipping_tracking_number',
+        'discount'
     ];
-    protected $appends = ['invoice_date', 'invoice_status', 'buyer_name', 'guest'];
-    
-    public function user() {
+    protected $appends = ['invoice_date', 'invoice_status', 'buyer_name', 'guest', 'amount_weight'];
+
+    public function user()
+    {
         return $this->belongsTo('App\User', 'customer_id');
     }
-    
-    public function items() {
+
+    public function items()
+    {
         return $this->hasMany('\Modules\Ecommerce\OrderItem');
     }
 
-    public function getInvoiceDateAttribute() {
+    public function getInvoiceDateAttribute()
+    {
         return $this->created_at->format('d-m-Y H:i');
     }
-    
-    public function getInvoiceStatusAttribute() {
+
+    public function getInvoiceStatusAttribute()
+    {
         return array_keys(config('ecommerce.order.status'))[$this->order_status];
     }
 
-    public function getGuestAttribute() {
+    public function getGuestAttribute()
+    {
         $isGuest = $this->user()->first();
-        if ($isGuest === null){
+        if ($isGuest === null) {
             return true;
         }
         return false;
     }
 
-    public function getBuyerNameAttribute() {
+    public function getBuyerNameAttribute()
+    {
         $isGuest = $this->user()->first();
-        if ($isGuest === null){
+        if ($isGuest === null) {
             return $this->billing_name;
         }
         return $isGuest->name;
     }
-    
+
     public static function getTableName()
     {
         return with(new static)->getTable();
@@ -91,5 +99,44 @@ class Order extends Model
         $statement = DB::select("SHOW TABLE STATUS LIKE '$table_name'");
         $nextId = $statement[0]->Auto_increment;
         return $nextId;
+    }
+
+    public function customer()
+    {
+        if (class_exists('\Modules\Customers\CustomerProfile')) {
+            return $this->belongsTo('\Modules\Customers\CustomerProfile', 'customer_id', 'id');
+        }
+        return null;
+    }
+
+    public function shippingSubdistrict()
+    {
+
+        if (class_exists('\Modules\Shipment\Subdistrict')) {
+            return $this->belongsTo('\Modules\Shipment\Subdistrict', 'shipping_subdistrict_id', 'id');
+        }
+        return null;
+    }
+
+    public function billingSubdistrict()
+    {
+
+        if (class_exists('\Modules\Shipment\Subdistrict')) {
+            return $this->belongsTo('\Modules\Shipment\Subdistrict', 'billing_subdistrict_id', 'id');
+        }
+        return null;
+    }
+
+    public function getAmountWeightAttribute()
+    {
+        $amount_weight = 0;
+        foreach ($this->items as $key => $value) {
+            $sub_weight = 0;
+            if (isset($value->productVariant->product->weight)) {
+                $sub_weight     = $value->qty * $value->productVariant->product->weight;
+            }
+            $amount_weight += $sub_weight;
+        }
+        return $amount_weight;
     }
 }

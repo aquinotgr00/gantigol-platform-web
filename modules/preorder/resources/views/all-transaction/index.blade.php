@@ -2,7 +2,7 @@
 
 @push('styles')
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet" />
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet">
@@ -37,6 +37,7 @@
             <input type="text" name="invoice" class="form-control" id="searchInvoice">
         </div>
     </div>
+    <!--
     <div class="col-md-1">
         <div class="form-group">
             <label for="exampleFormControlSelect1">Show</label>
@@ -54,8 +55,8 @@
                 data-original-title="Reset">
             </button>
         </div>
-
     </div>
+-->
     <div class="col">
         <div class="form-group">
             <div>
@@ -108,7 +109,7 @@
 <script src="{{ asset('vendor/admin/js/datatables/buttons.print.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/buttons.colVis.min.js') }}"></script>
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('[data-toggle="tooltip"]').tooltip()
         $('#datetimepicker1').datepicker();
 
@@ -119,48 +120,60 @@
             ajax: {
                 url: '{{ route("ajax.all-transaction") }}',
                 method: 'POST',
-                data : function(d){
+                data: function(d) {
                     d._token = "{{ csrf_token() }}",
-                    d.status = $('select[name="status"]').val(),
-                    d.invoice = $('input[name="invoice"]').val()
+                        d.status = $('select[name="status"]').val(),
+                        d.invoice = $('input[name="invoice"]').val()
                 }
             },
-            order: [[0, "desc"]],
-            columns: [
-                { data: 'id', orderable: false },
-                { data: 'created_at' },
-                { data: 'invoice' },
-                { data: 'name' },
-                { 
+            order: [
+                [0, "desc"]
+            ],
+            columns: [{
+                    data: 'id',
+                    orderable: false
+                },
+                {
+                    data: 'created_at'
+                },
+                {
+                    data: 'invoice'
+                },
+                {
+                    data: 'name'
+                },
+                {
                     data: 'courier_name',
-                    render: function (data, type, row) {
-                        return data+' '+row.courier_type;
+                    render: function(data, type, row) {
+                        return data + ' ' + row.courier_type;
                     }
                 },
-                { data: 'status' }
+                {
+                    data: 'status'
+                }
             ],
             dom: 'Bfrtip',
             buttons: ['excel', 'pdf', 'print']
         });
 
-        $('select[name="status"]').on("change", function (e) {
+        $('select[name="status"]').on("change", function(e) {
             dataTable.draw();
         });
 
-        $('input[name="invoice"]').on("keyup keydown", function (e) {
+        $('input[name="invoice"]').on("keyup keydown", function(e) {
             dataTable.draw();
         });
 
-        $('#selectAll').click(function(){
+        $('#selectAll').click(function() {
             $('input[name="id[]"]').prop('checked', this.checked);
         });
-        
+
         $('.dt-buttons').css('display', 'none');
 
         $.each($('.btn-line'), function(key, value) {
-            $(value).click(function(){
+            $(value).click(function() {
                 var selector = $(value).data('trigger');
-                $('.'+selector).click();
+                $('.' + selector).click();
             });
         });
     });
