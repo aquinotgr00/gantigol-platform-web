@@ -37,24 +37,33 @@
                 <p>Rp {{ number_format($productVariant->price) }}</p>
             </div>
             <div class="col-sm form-group">
+                <label>Weight</label>
+                <p>{{ $product->weight }} gr</p>
+            </div>
+            <div class="col-sm form-group">
                 <label>Stock</label>
                 <p>{{ number_format($productVariant->quantity_on_hand) }}</p>
             </div>
-            <div class="col-sm form-group">
-                <label>Category</label>
-                <p>
-                    @if(isset($categories) && ($categories))
-                    @foreach ($categories->all() as $category)
 
-                    @include('product::includes.productcategory-row', [
-                    'category'=>$category,
-                    'parent'=>'',
-                    'category_id'=> (isset($product->category->id))? $product->category->id : null
-                    ])
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Category</label>
+                    <p>
+                        @if(isset($categories) && ($categories))
+                        @foreach ($categories->all() as $category)
 
-                    @endforeach
-                    @endif
-                </p>
+                        @include('product::includes.productcategory-row', [
+                        'category'=>$category,
+                        'parent'=>'',
+                        'category_id'=> (isset($product->category->id))? $product->category->id : null
+                        ])
+
+                        @endforeach
+                        @endif
+                    </p>
+                </div>
             </div>
         </div>
         <div class="mt-3">

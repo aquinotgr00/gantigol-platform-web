@@ -4,20 +4,8 @@
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 <style>
-    .card-heading-content {
-        margin-top: 8px;
-    }
-
-    .card-heading-content>.clearfix .float-left>h4 {
-        font-family: Source Sans Pro;
-        font-style: normal;
-        font-weight: 600;
-        font-size: 14px;
-        line-height: 14px;
-    }
-
-    .card-transaction {
-        height: 406px;
+    #dataTable_paginate{
+        display: none;
     }
 </style>
 @endpush
@@ -33,22 +21,11 @@
 @endpush
 
 @section('content')
-
-@if(isset($transaction->customer))
-
-@php
-
-$customer = $transaction->customer;
-
-@endphp
-
-@include('customers::customers.modal-edit',['customer' => $customer])
-
-@endif
+@pageHeader(['title'=> $order->invoice_id, 'back'=> ($order->order_status != 0)? route('paid-order.index') : route('order-transaction.index') ])
 
 <div class="row">
     <div class="col-12 col-md-4">
-        <div class="card card-default card-transaction">
+        <div class="card card-default">
             <div class="card-body">
                 <div class="card-heading-content">
                     <div class="clearfix">
@@ -56,9 +33,9 @@ $customer = $transaction->customer;
                             <h4>Customer Info</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#EditCustomerInfo" data-toggle=modal>
+                           <!--  <a href="#EditCustomerInfo" data-toggle=modal >
                                 <i class="fas fa-pencil-alt"></i>
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                     <hr>
@@ -67,31 +44,46 @@ $customer = $transaction->customer;
                 <div>
                     <div class="form-group">
                         <label>Name</label>
-                        <p>{{ $customer->name }}</p>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->name }}</p>
+                        @endif
                     </div>
                     <div class="form-group">
                         <label>Address</label>
-                        <p>{{ $customer->address }}</p>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->address }}</p>
+                        @endif
                     </div>
-
+                    <div class="form-group">
+                        <label>Subdistrict</label>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->subdisctrict }}</p>
+                        @endif
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <p>{{ $customer->zip_code }}</p>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->zip_code }}</p>
+                        @endif
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
-                        <p>{{ $customer->phone }}</p>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->phone }}</p>
+                        @endif
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <p>{{ $customer->email }}</p>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->email }}</p>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-12 col-md-4">
-        <div class="card card-default card-transaction">
+        <div class="card card-default">
             <div class="card-body">
                 <div class="card-heading-content">
                     <div class="clearfix">
@@ -99,7 +91,7 @@ $customer = $transaction->customer;
                             <h4>Shipping Info</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#editShipping" data-toggle=modal>
+                            <a href="#editShipping" data-toggle=modal >
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                         </div>
@@ -110,31 +102,42 @@ $customer = $transaction->customer;
                 <div>
                     <div class="form-group">
                         <label>Name</label>
-                        <p>{{ $transaction->name }}</p>
+                        <p>{{ $order->shipping_name }}</p>
                     </div>
                     <div class="form-group">
                         <label>Address</label>
-                        <p>{{ $transaction->address }}</p>
+                        <p>{{ $order->shipping_address }}</p>
                     </div>
-
+                    <div class="form-group">
+                        <label>Subsdistrict</label>
+                        <p>{{ $order->shipping_subdistrict }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <p>{{ $order->shipping_city }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        <p>{{ $order->shipping_province }}</p>
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <p>{{ $transaction->postal_code }}</p>
+                        <p>{{ $order->shipping_zip_code }}</p>
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
-                        <p>{{ $transaction->phone }}</p>
+                        <p>{{ $order->shipping_phone }}</p>
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
-                        <p>{{ $transaction->email }}</p>
+                        <label>Phone</label>
+                        <p>{{ $order->shipping_email }}</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-12 col-md-4">
-        <div class="card card-default card-transaction">
+        <div class="card card-default">
             <div class="card-body">
                 <div class="card-heading-content">
                     <div class="clearfix">
@@ -142,14 +145,12 @@ $customer = $transaction->customer;
                             <h4>Shipping Details</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#editStatus" data-toggle=modal>
+                            <a href="#editStatus"  data-toggle=modal >
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
-                            <!--
-                            <a href="#">
+                            <!--<a href="#">
                                 <i class="fas fa-shipping-fast"></i>
-                            </a>
--->
+                            </a>-->
                         </div>
                     </div>
                     <hr>
@@ -158,21 +159,20 @@ $customer = $transaction->customer;
                 <div>
                     <div class="form-group">
                         <label>Order Status</label>
-                        <p>{{ ucwords($transaction->status) }}</p>
+                        @php
+                        $status_id      = $order->order_status;
+                        $selected       = (isset(array_keys($status)[$status_id]))? array_keys($status)[$status_id] : '';
+                        $selected_desc  = (isset($desc[$status_id]))? $desc[$status_id] : '';
+                        @endphp
+                        <p>
+                            {{ $selected }}
+                            ( {{ $selected_desc }} )
+                        </p>
                     </div>
 
                     <div class="form-group">
                         <label>Tracking Number</label>
-                        @if(isset($transaction->getProduction->id))
-                        <p>{{ $transaction->getProduction->tracking_number }}</p>
-                        @else
-                        <p> - </p>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label>Notes</label>
-                        <p>{{ $transaction->note }}</p>
-                        
+                        <p>{{ $order->shipping_tracking_number }}</p>
                     </div>
                 </div>
             </div>
@@ -192,15 +192,20 @@ $customer = $transaction->customer;
                     <th>Price</th>
                     <th>Subtotal</th>
                 </thead>
+                @if(isset($order->items))
                 <tbody>
-                    @foreach($orders as $key => $value)
+                    @foreach($order->items as $key => $value)
                     <tr>
                         <td>{{ $key+1 }}</td>
                         <td>
-                            {{ strtoupper($value->model) }}
+                            @if(isset($value->productVariant->product))
+                            {{ $value->productVariant->product->name }}
+                            @endif
                         </td>
                         <td>
-                            {{ strtoupper($value->size) }}
+                            @if(isset($value->productVariant))
+                            {{ $value->productVariant->variant }}
+                            @endif
                         </td>
                         <td>
                             {{ $value->qty }}
@@ -214,13 +219,28 @@ $customer = $transaction->customer;
                     </tr>
                     @endforeach
                 </tbody>
+                @endif
             </table>
+            <div class="row">
+                <div class="col text-left">
+                    <h4>Total</h4>
+                </div>
+                <div class="col text-right">
+                    <h4>{{ number_format($order->total_amount) }}</h4>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+@php
 
-@include('preorder::partials.modal-edit-shipping')
-@include('preorder::partials.modal-edit-status')
+$customer = $order->customer;
+
+@endphp
+
+@include('customers::customers.modal-edit',$customer)
+@include('ecommerce::partials.modal-edit-shipping')
+@include('ecommerce::partials.modal-edit-status')
 
 @endsection

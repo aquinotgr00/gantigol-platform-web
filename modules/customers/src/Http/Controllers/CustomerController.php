@@ -35,12 +35,10 @@ class CustomerController extends Controller
             'title' => ucwords($customer->name),
             'back' => route('list-customer.index')
         ];
-
-        if (request()->ajax()) {        
+        
+        if ($request->ajax()) {        
             if (class_exists('\Modules\Ecommerce\Order')) {
-                $orders = \Modules\Ecommerce\Order::where('customer_id',$customer->id)
-                ->with('items')
-                ->get();
+                $orders = \Modules\Ecommerce\Order::where('customer_id',$customer->id)->get();
                 return DataTables::of($orders)
                 ->addColumn('status', function($query){
                     return array_keys(config('ecommerce.order.status'))[$query->order_status];

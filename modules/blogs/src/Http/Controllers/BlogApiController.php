@@ -40,6 +40,7 @@ class BlogApiController extends Controller
         $post = $this->blogs
         ->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
         ->whereNotNull('blogs.publish_date')
+        ->where('blogs.show','show')
         ->select('blogs.*', 'blog_category.name as category_name')
         ->with('tagged')
         ->find($id);
@@ -58,7 +59,7 @@ class BlogApiController extends Controller
      */
     public function getManyPostWithTag(Request $request, $limit = 20)
     {
-        $post = $this->blogs->whereNotNull('blogs.publish_date')->withAnyTag($request->tag)->limit($limit)->orderBy('created_at', 'desc')->get();
+        $post = $this->blogs->where('blogs.show','show')->whereNotNull('blogs.publish_date')->withAnyTag($request->tag)->orderBy('created_at', 'desc')->paginate($limit);
         return json_encode($post);
     }
 
@@ -69,15 +70,18 @@ class BlogApiController extends Controller
      */
     public function getManyPostWithCategories(Request $request, $name, $limit = 3)
     {
-        $data['post'] = $this->blogs->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
-        ->where('blog_category.name', $name)
+        $data['post'] = $this->blogs
+        ->where('blogs.show','show')
         ->whereNotNull('blogs.publish_date')
+        ->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
+        ->where('blog_category.name', $name)
         ->orderBy('blogs.created_at', 'desc')
         ->select('blogs.*','blog_category.name')
         ->paginate($limit);
         
         $data['highlight']= $this->blogs->where('highlight','yes')
         ->whereNotNull('publish_date')
+        ->where('blogs.show','show')
         ->leftjoin('blog_category', 'blog_category.id', '=', 'blogs.category_id')
         ->where('blog_category.name', $name)
         ->select('blogs.*','blog_category.name')

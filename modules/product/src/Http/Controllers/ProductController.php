@@ -59,6 +59,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|unique:products',
             'price' => 'required|numeric',
+            'weight' => 'required|numeric',
             'category_id' => 'required|numeric',
             'image' => 'required',
         ]);
@@ -68,11 +69,11 @@ class ProductController extends Controller
                 'name',
                 'description',
                 'price',
-                'activity_id',
                 'category_id',
                 'status',
                 'keywords',
-                'image'
+                'image',
+                'weight'
             )
         );
 
@@ -192,20 +193,39 @@ class ProductController extends Controller
     public function update(Request $request, int $id)
     {
         $request->validate([
-            'description' => 'required'
+            'description' => 'required',
+            'name' => 'required',
+            'price' => 'required',
+            'weight' => 'required',
         ]);
         $productVariant = ProductVariant::findOrFail($id);
 
         $product = Product::findOrFail($productVariant->product_id);
-
+        
+        $data['description'] = $request->description;
+        $data['status']     = $request->status;
+        $data['price']      = intval($request->price);
+        $data['name']       = $request->name;
+        $data['weight']     = $request->weight;
+        
         if ($request->has('image')) {
-            $trim_img = empty($request->image);
-            if (empty($trim_img)) {
-                $product->update($request->only('description', 'status'));
-            } else {
-                $product->update($request->only('description', 'status', 'image'));
+            $trim_img = trim($request->image);
+            if (!empty($trim_img)) {
+                $data['image'] = $trim_img;
             }
         }
+
+        if ($request->has('category_id')) {
+            if ($request->category_id > 0) {
+                $data['category_id'] = $request->category_id;
+            }
+        }
+        
+        $product->update($data);
+        
+        $productVariant->update([
+            'price' => $data['price']
+        ]);
 
         //activity log
         foreach ($product->variants as $index => $variant) {
@@ -232,7 +252,7 @@ class ProductController extends Controller
                 }
             }
             foreach ($request->images as $key => $value) {
-                $newProductImage = ProductImage::create([
+                ProductImage::create([
                     'product_id' => $product->id,
                     'image' => $value
                 ]);
@@ -314,7 +334,7 @@ class ProductController extends Controller
             ->addColumn('image', function ($data) {
                 $image_url = str_replace('public', 'storage', $data->image);
                 $image_url = url($image_url);
-                return '<img src="' . $image_url . '" alt="#">';
+                return '<img src="' . $image_url . '" alt="#" style="width:50px;">';
             })
             ->addColumn('name', function ($data) {
                 $link  = '<a href="' . route('product.show', $data->id) . '" >';

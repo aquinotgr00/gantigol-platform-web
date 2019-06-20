@@ -312,7 +312,7 @@
                 $.ajax({
                     type: "GET",
                     dataType: "json",
-                    url: "{{ url('api-product/variant') }}/"+id,
+                    url: "{{ url('api-product/variant') }}",
                     data: "id=" + id,
                     success: function (data) {
                         if (data.status == true) {

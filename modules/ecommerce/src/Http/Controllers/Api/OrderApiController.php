@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Modules\Ecommerce\Order;
 use Modules\Ecommerce\OrderItem;
 use Modules\Product\ProductVariant;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use Validator;
+use DB;
 
 class OrderApiController extends Controller
 {
@@ -18,8 +21,21 @@ class OrderApiController extends Controller
      */
     public function index(Request $request)
     {
-        $excludeOrderStatus = [config('starcross.order.status.UserCancellation')];
-        return Order::with('items.productVariant')->whereNotIn('order_status', $excludeOrderStatus)->where('customer_id', $request->user()->id)->orderBy('created_at', 'desc')->paginate(20);
+        $validator = Validator::make($request->all(), [
+            'customer_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages());
+        }
+        $excludeOrderStatus = [config('ecommerce.order.status.UserCancellation')];
+        $orders = Order::with('items.productVariant')
+            ->whereNotIn('order_status', $excludeOrderStatus)
+            ->where('customer_id', $request->customer_id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return response()->json($orders);
     }
 
     /**
@@ -40,38 +56,45 @@ class OrderApiController extends Controller
      */
     public function store(Request $request)
     {
-        DB::beginTransaction();
-        // stock deduction
+
         $items = collect($request->input('items'))->map(function ($item) {
-            $quantity = $item['qty'];
-            $price = (int) $item['price'];
+
+            $price = (int)$item['price'];
             $discount = $item['discount'];
             $discountId = $item['discountId'];
-            $productVariant = ProductVariant::with('product')->find((int) $item['id']);
-            $productVariant->quantity_on_hand -= $quantity;
+            $quantity = $item['qty'];
+
+            // Start transaction!
+            // stock deduction
+            DB::beginTransaction();
 
             try {
-                $productVariant->save();
-            } catch (\Illuminate\Database\QueryException $e) {
+                // Validate, then create if valid
+                $productVariant = ProductVariant::with('product')->find((int)$item['id']);
+                if (!is_null($productVariant)) {
+                    $productVariant->quantity_on_hand -= $quantity;
+                    $productVariant->save();
+                }
+
+                $item = new OrderItem();
+                $item->productVariant()->associate($productVariant);
+                $item->price = $price;
+                $item->qty = $quantity;
+                $item->discount = $discount;
+                $item->discountupdate_id = $discountId;
+                return $item;
+                
+            } catch (ValidationException $e) {
+                // Rollback and then redirect
+                // back to form with errors
                 DB::rollback();
-                $productVariant->quantity_on_hand += $quantity;
-                // 462 : insufficient stock available
-                abort(462, json_encode([
-                    "id" => $productVariant->id,
-                    "name" => $productVariant->product->name,
-                    "size" => $productVariant->size_code,
-                    "quantity_on_hand" => $productVariant->quantity_on_hand,
-                ]));
+                abort(462, json_encode(['data' => 'error transaction', 'status' => 462]));
+            } catch (\Exception $e) {
+                DB::rollback();
+                throw $e;
             }
 
-            $item = new OrderItem();
-            $item->productVariant()->associate($productVariant);
-            $item->price = $price;
-            $item->qty = $quantity;
-            $item->discount = $discount;
-            $item->discountupdate_id = $discountId;
-
-            return $item;
+            DB::commit();
         });
 
         $nOrders = Order::whereDate('created_at', Carbon::today())->count();
@@ -86,11 +109,11 @@ class OrderApiController extends Controller
             'invoice_id' => 'INV-' . Carbon::now()->format('Y-m-d-') . str_pad($nOrders, 5, '0', STR_PAD_LEFT),
             'customer_id' => $request->user()->id,
             'prism_checkout' => false,
-            'order_status' => config('starcross.order.status.Pending'),
+            'order_status' => config('ecommerce.order.status.Pending'),
             'member_discount' => 0,
             'member_discount_id' => null,
         ];
-        
+
         //$adminFeePercentage = $request->input('paymentOptionSelected.feePercentage');
         //$adminFeeNominal = $request->input('paymentOptionSelected.feeNominal');
         $header['payment_type'] = null;
@@ -110,8 +133,6 @@ class OrderApiController extends Controller
 
         $order->save();
         $order->items()->saveMany($items);
-
-        DB::commit();
         return jsend_success($order);
     }
 
@@ -123,7 +144,15 @@ class OrderApiController extends Controller
      */
     public function show($id)
     {
-        return jsend_success(Order::with('items.productVariant')->find($id));
+        $order = Order::with('items.productVariant')->find($id);
+        if (isset($order->shippingSubdistrict)) {
+            $order->shippingSubdistrict;
+        }
+
+        if (isset($order->billingSubdistrict)) {
+            $order->billingSubdistrict;
+        }
+        return response()->json(['data' => $order]);
     }
 
     /**

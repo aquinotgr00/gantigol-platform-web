@@ -25,10 +25,11 @@ class CartApiController extends Controller
     {
         $cart = Cart::find($id);
         if (!is_null($cart)) {
-            $cart->items;
-            foreach ($cart->items as $key => $value) {
-                if (isset($value->productVariant)) {
-                    $value->productVariant;
+            if (isset($cart->getItems)) {
+                foreach ($cart->getItems as $key => $value) {
+                    if (isset($value->productVariant)) {
+                        $value->productVariant;
+                    }
                 }
             }
         } else {
@@ -42,10 +43,10 @@ class CartApiController extends Controller
 
             $cart = Cart::with('getItems')
                 ->where('session', $request->session)
-                ->get();
-
-            if (isset($cart->items)) {
-                foreach ($cart->items as $key => $value) {
+                ->first();
+            if (isset($cart->getItems)) {
+                
+                foreach ($cart->getItems as $key => $value) {
                     if (isset($value->productVariant)) {
                         $value->productVariant;
                     }
@@ -69,11 +70,11 @@ class CartApiController extends Controller
             'user_id' => 'numeric',
         ]);
 
-        $user_id = 0;
-
         if ($validator->fails()) {
             return new CartResource($validator->messages());
         }
+
+        $user_id = NULL;
 
         if ($request->has('user_id')) {
             $member = Member::find($request->user_id);
@@ -82,23 +83,18 @@ class CartApiController extends Controller
             }
         }
 
-        $cart = new Cart;
+        $cart = Cart::firstOrCreate(
+            ['session' => $request->session],
+            [
+                'session' => $request->session,
+                'user_id' => $user_id 
+            ]
+        );
 
-        if ($user_id == 0) {
-            $existCart = Cart::where('session', $request->session)->first();
-        } else {
-            $existCart = Cart::where('session', $request->session)
-                ->where('user_id', $user_id)
-                ->first();
-
-            $cart->user_id = $user_id;
-        }
-
-        if (is_null($existCart)) {
-            $cart->session = $request->session;
-            $cart->save();
-        } else {
-            $cart = $existCart;
+        if ($user_id > 0) {
+            $cart->update([
+                'user_id' => $user_id
+            ]);
         }
 
         foreach ($request->items as $key => $value) {
@@ -143,8 +139,8 @@ class CartApiController extends Controller
         $total              = 0;
         $amount_items       = 0;
 
-        if (isset($cart->items)) {
-            foreach ($cart->items as $key => $value) {
+        if (isset($cart->getItems)) {
+            foreach ($cart->getItems as $key => $value) {
                 $amount_items += intval($value->qty);
                 $total += intval($value->subtotal);
             }
@@ -152,12 +148,16 @@ class CartApiController extends Controller
                 'total' => $total,
                 'amount_items' => $amount_items
             ]);
-            $cart->items;
-            foreach ($cart->items as $key => $value) {
+            $cart->getItems;
+            foreach ($cart->getItems as $key => $value) {
                 if (isset($value->productVariant)) {
                     $value->productVariant;
                 }
             }
+        }
+
+        if (isset($cart->user)) {
+            $cart->user;
         }
 
         return new CartResource($cart);
@@ -183,8 +183,8 @@ class CartApiController extends Controller
         $cart = Cart::find($id);
         if (!is_null($cart)) {
             $cart->update($request->all());
-            if ($cart->items->count() > 0) {
-                foreach ($cart->items as $key => $value) {
+            if ($cart->getItems->count() > 0) {
+                foreach ($cart->getItems as $key => $value) {
                     if (isset($request->items[$key])) {
                         $value->update($request->items[$key]);
                     }
@@ -194,9 +194,9 @@ class CartApiController extends Controller
         $total          = 0;
         $amount_items   = 0;
 
-        if (isset($cart->items)) {
+        if (isset($cart->getItems)) {
 
-            foreach ($cart->items as $key => $value) {
+            foreach ($cart->getItems as $key => $value) {
                 $amount_items += intval($value->qty);
                 $total += intval($value->subtotal);
             }
@@ -205,8 +205,8 @@ class CartApiController extends Controller
                 'total' => $total,
                 'amount_items' => $amount_items
             ]);
-            $cart->items;
-            foreach ($cart->items as $key => $value) {
+            $cart->getItems;
+            foreach ($cart->getItems as $key => $value) {
                 if (isset($value->productVariant)) {
                     $value->productVariant;
                 }
@@ -224,9 +224,7 @@ class CartApiController extends Controller
     public function updateItem(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
-            'product_id' => 'required',
-            'price' => 'required',
-            'subtotal' => 'required',
+            'product_id' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -242,7 +240,7 @@ class CartApiController extends Controller
             $cart           = Cart::find($cartItem->cart_id);
             $total          = 0;
             $amount_items   = 0;
-            foreach ($cart->items as $key => $value) {
+            foreach ($cart->getItems as $key => $value) {
                 $amount_items += intval($value->qty);
                 $total += intval($value->subtotal);
             }
@@ -252,9 +250,9 @@ class CartApiController extends Controller
                 'amount_items' => $amount_items
             ]);
 
-            if (isset($cart->items)) {
-                $cart->items;
-                foreach ($cart->items as $key => $value) {
+            if (isset($cart->getItems)) {
+                $cart->getItems;
+                foreach ($cart->getItems as $key => $value) {
                     if (isset($value->productVariant)) {
                         $value->productVariant;
                     }
@@ -298,7 +296,7 @@ class CartApiController extends Controller
             $cart   = Cart::find($cartItem->cart_id);
             $total  = 0;
             $amount_items   = 0;
-            foreach ($cart->items as $key => $value) {
+            foreach ($cart->getItems as $key => $value) {
                 $amount_items += intval($value->qty);
                 $total += intval($value->subtotal);
             }
@@ -308,9 +306,9 @@ class CartApiController extends Controller
                 'amount_items' => $amount_items
             ]);
 
-            if (isset($cart->items)) {
-                $cart->items;
-                foreach ($cart->items as $key => $value) {
+            if (isset($cart->getItems)) {
+                $cart->getItems;
+                foreach ($cart->getItems as $key => $value) {
                     if (isset($value->productVariant)) {
                         $value->productVariant;
                     }
@@ -331,8 +329,8 @@ class CartApiController extends Controller
     {
         $cart = Cart::find($id);
         $newCart = Cart::find($id);
-        if (isset($cart->items)) {
-            $items = $cart->items->where('wishlist', 'true');
+        if (isset($cart->getItems)) {
+            $items = $cart->getItems->where('wishlist', 'true');
             foreach ($items as $key => $value) {
                 if (isset($value->productVariant)) {
                     $value->productVariant;
@@ -358,11 +356,11 @@ class CartApiController extends Controller
     {
         $cart       = Cart::find($id);
         $newCart    = Cart::find($id);
-        
+
         $obj = new \stdClass;
-        
-        if (isset($cart->items)) {
-            $items = $cart->items->where('checked', 'true');
+
+        if (isset($cart->getItems)) {
+            $items = $cart->getItems->where('checked', 'true');
             foreach ($items as $key => $value) {
                 if (isset($value->productVariant)) {
                     $value->productVariant;
@@ -398,9 +396,9 @@ class CartApiController extends Controller
         $cart->update([
             'user_id' => $request->user_id,
         ]);
-        if (isset($cart->items)) {
-            $cart->items;
-            foreach ($cart->items as $key => $value) {
+        if (isset($cart->getItems)) {
+            $cart->getItems;
+            foreach ($cart->getItems as $key => $value) {
                 if (isset($value->productVariant)) {
                     $value->productVariant;
                 }
@@ -429,11 +427,11 @@ class CartApiController extends Controller
             $productVariant = ProductVariant::findOrFail($id);
             $cart           = Cart::where('session', $request->session)->first();
             if (!is_null($cart)) {
-                $cartItems = $cart->items->where('product_id', $productVariant->id);
+                $cartItems = $cart->getItems->where('product_id', $productVariant->id);
                 foreach ($cartItems as $key => $value) {
                     $value->delete();
                 }
-                $cart->items;
+                $cart->getItems;
             }
             return response()->json($cart);
         } catch (ModelNotFoundException $exception) {

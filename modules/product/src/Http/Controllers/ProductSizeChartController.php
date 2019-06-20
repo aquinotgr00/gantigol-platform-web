@@ -94,7 +94,7 @@ class ProductSizeChartController extends Controller
                 return '<a href="'.route('product-size-chart.show',$data->id).'">' . $data->name . '</a>';
             })
             ->addColumn('image', function ($data) {
-                return '<img src="' . $data->image . '" alt="'.$data->name.' image">';
+                return '<img src="' . $data->image . '" alt="'.$data->name.' image" style="width:80px;">';
             })
             ->addColumn('action', function ($data) {
                 $button = '<a href="' . route('product-size-chart.edit', $data->id) . '" class="btn btn-table circle-table edit-table"';

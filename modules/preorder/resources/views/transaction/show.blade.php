@@ -3,6 +3,11 @@
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<style>
+    .card-transaction{
+        height: 406px;
+    }
+</style>
 @endpush
 
 @push('scripts')
@@ -20,7 +25,7 @@
 
 <div class="row">
     <div class="col-12 col-md-4">
-        <div class="card card-default">
+        <div class="card card-default card-transaction">
             <div class="card-body">
                 <div class="card-heading-content">
                     <div class="clearfix">
@@ -63,7 +68,7 @@
         </div>
     </div>
     <div class="col-12 col-md-4">
-        <div class="card card-default">
+        <div class="card card-default card-transaction">
             <div class="card-body">
                 <div class="card-heading-content">
                     <div class="clearfix">
@@ -102,7 +107,7 @@
         </div>
     </div>
     <div class="col-12 col-md-4">
-        <div class="card card-default">
+        <div class="card card-default card-transaction">
             <div class="card-body">
                 <div class="card-heading-content">
                     <div class="clearfix">
