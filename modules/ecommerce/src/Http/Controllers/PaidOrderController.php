@@ -15,14 +15,16 @@ class PaidOrderController extends Controller
         if ($request->ajax()) {
             
             $orders = Order::where('order_status','!=', 0);
-
+            if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            }
             if ($request->has('invoice')) {
                 $invoice = trim($request->invoice);
                 
                 if (!empty($invoice)) {
-                    $orders = Order::where('invoice_id','like', '%'.$invoice.'%')
+                    $orders = $orders->where('invoice_id','like', '%'.$invoice.'%')
                         ->orWhere('billing_name','like', '%'.$invoice.'%');
-                    $orders = $orders->where('order_status','!=', 0);
                 }
             }
             return DataTables::of($orders)
