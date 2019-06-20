@@ -3,17 +3,25 @@
 @push('styles')
 <style>
     .is-invalid-img {
-        border:2px solid #dc3545 !important;
+        border: 2px solid #dc3545 !important;
     }
-    .is-valid-image-feedback{
+
+    .is-valid-image-feedback {
         font-size: 80%;
         color: #dc3545;
     }
+
     .add-img-featured {
         padding: 10px;
     }
+
     .img-thumbnail {
         object-fit: scale-down;
+    }
+
+    #removeFeaturedImage {
+        color: red;
+        font-weight: bold;
     }
 </style>
 @endpush
@@ -21,8 +29,7 @@
 @section('content')
 <!-- start form -->
 <div class="row pl-3">
-    <form class="col-md-6 col-lg7 pl-0" action="{{ route('product-size-chart.update',$productSize->id) }}"
-        method="post" enctype='multipart/form-data'>
+    <form class="col-md-6 col-lg7 pl-0" action="{{ route('product-size-chart.update',$productSize->id) }}" method="post" enctype='multipart/form-data'>
         @csrf
         @method('PUT')
         <div class="form-group">
@@ -60,16 +67,16 @@
         <div class="form-group">
             <label for="exampleFormControlSelect1">Featusred Image</label>
             <br>
-            
+
             @mediaPicker(['singleSelect'=>true, 'onSelect'=>'selectSizeChartImage'])
-            <img src="{{ $productSize->image }}" id="img-placeholder" 
-            class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}"
-            />
+            <img src="{{ $productSize->image }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}" />
             @if ($errors->has('image'))
             <p class="is-valid-image-feedback">{{ $errors->first('image') }}</p>
             @endif
             @endmediaPicker
             <small>
+                <input type="hidden" id="img-plus" value="{{ asset('vendor/admin/images/image-plus.svg') }}" />
+                <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
                 <span>Image size must be 1920x600 with maximum file size</span>
                 <span>400 kb</span>
             </small>
@@ -91,5 +98,13 @@
         $('input[name="image_id"]').val(id);
         $('input[name="image"]').val(url);
     }
+    $(function() {
+
+        $('#removeFeaturedImage').click(function(event) {
+            var img_plus_src = $('#img-plus').val();
+            $('#img-placeholder').attr('src', img_plus_src)
+            $('#btn-delete').removeClass('optional')
+        });
+    });
 </script>
 @endpush

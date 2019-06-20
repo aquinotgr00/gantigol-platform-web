@@ -43,9 +43,9 @@ class CartApiController extends Controller
 
             $cart = Cart::with('getItems')
                 ->where('session', $request->session)
-                ->get();
-
+                ->first();
             if (isset($cart->getItems)) {
+                
                 foreach ($cart->getItems as $key => $value) {
                     if (isset($value->productVariant)) {
                         $value->productVariant;
@@ -70,11 +70,11 @@ class CartApiController extends Controller
             'user_id' => 'numeric',
         ]);
 
-        $user_id = 0;
-
         if ($validator->fails()) {
             return new CartResource($validator->messages());
         }
+
+        $user_id = NULL;
 
         if ($request->has('user_id')) {
             $member = Member::find($request->user_id);
@@ -83,23 +83,18 @@ class CartApiController extends Controller
             }
         }
 
-        $cart = new Cart;
+        $cart = Cart::firstOrCreate(
+            ['session' => $request->session],
+            [
+                'session' => $request->session,
+                'user_id' => $user_id 
+            ]
+        );
 
-        if ($user_id == 0) {
-            $existCart = Cart::where('session', $request->session)->first();
-        } else {
-            $existCart = Cart::where('session', $request->session)
-                ->where('user_id', $user_id)
-                ->first();
-
-            $cart->user_id = $user_id;
-        }
-
-        if (is_null($existCart)) {
-            $cart->session = $request->session;
-            $cart->save();
-        } else {
-            $cart = $existCart;
+        if ($user_id > 0) {
+            $cart->update([
+                'user_id' => $user_id
+            ]);
         }
 
         foreach ($request->items as $key => $value) {
@@ -159,6 +154,10 @@ class CartApiController extends Controller
                     $value->productVariant;
                 }
             }
+        }
+
+        if (isset($cart->user)) {
+            $cart->user;
         }
 
         return new CartResource($cart);

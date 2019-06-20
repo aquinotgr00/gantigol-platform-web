@@ -43,6 +43,6 @@ class MediaGalleryViewComposer
         }
         
         $media = $media->latest()->paginate(16);
-        $view->with('media', $media)->with('mediaCategories', MediaCategories::all());
+        $view->with('media', $media);
     }
 }

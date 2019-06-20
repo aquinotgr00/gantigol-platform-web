@@ -69,9 +69,7 @@ class MediaController extends Controller
             return [ 'gallery'=>view('medias::media-gallery-ajax',compact('media'))->render(), 'links'=>view('medias::media-gallery-pagination-ajax',compact('media'))->render() ];
         }
         
-        $mediaCategories = MediaCategories::all();
-        
-        return view('medias::media-library', compact('mediaCategories'));
+        return view('medias::media-library');
     }
     
     /**

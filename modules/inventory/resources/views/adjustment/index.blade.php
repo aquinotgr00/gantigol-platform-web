@@ -2,6 +2,7 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -47,44 +48,49 @@
 @endif
 
 <div class="table-responsive">
-    <div id="dataTable_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+    <table class="table table-bordered" id="dataTable" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+        <thead>
+            <tr role="row">
+                <th class="col-sm-3">Product Name</th>
+                <th class="col-sm-2">Method</th>
+                <th class="col-sm-1">Stock</th>
+                <th class="col-sm-1">Users</th>
+                <th class="col-sm-3">Note</th>
+                <th class="col-sm-2">Date</th>
+            </tr>
+        </thead>
 
-        <div class="row">
-
-            <table class="table table-bordered" id="dataTable" role="grid" aria-describedby="dataTable_info"
-                style="width: 100%;">
-                <thead>
-                    <tr role="row">
-                        <th class="col-sm-3">Product Name</th>
-                        <th class="col-sm-2">Method</th>
-                        <th class="col-sm-1">Stock</th>
-                        <th class="col-sm-1">Users</th>
-                        <th class="col-sm-3">Note</th>
-                        <th class="col-sm-2">Date</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach ($getAdjusment as $i => $row)
-                    <tr>
-                        <td>{{ $row->productVariant->product->name }} - {{ $row->productVariant->variant }} -
-                            {{ $row->productVariant->sku }}</td>
-                        <td>{{ array_keys(config('inventory.adjustment.type','inventory'))[$row->type] }}</td>
-                        <td>{{ $row->method.' '.$row->qty }}</td>
-                        <td>{{ (is_null($row->users))? '' : $row->users->name }}</td>
-                        <td>{{ $row->note }}</td>
-                        <td>{{ date("d/m/Y H.i A", strtotime($row->created_at)) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-        </div>
-    </div>
+        <tbody>
+            @foreach ($getAdjusment as $i => $row)
+            <tr>
+                <td>{{ $row->productVariant->product->name }} - {{ $row->productVariant->variant }} -
+                    {{ $row->productVariant->sku }}</td>
+                <td>{{ array_keys(config('inventory.adjustment.type','inventory'))[$row->type] }}</td>
+                <td>{{ $row->method.' '.$row->qty }}</td>
+                <td>{{ (is_null($row->users))? '' : $row->users->name }}</td>
+                <td>{{ $row->note }}</td>
+                <td>{{ date("d/m/Y H.i A", strtotime($row->created_at)) }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
 
 @endsection
 
 @push('scripts')
-<script></script>
+<script>
+    $(function() {
+
+        var datatables = $('#dataTable').DataTable();
+
+        $('#dataTable_filter').css('display', 'none');
+
+        $('.search-box').on('keyup', function() {
+
+            datatables.search(this.value).draw();
+        });
+
+    });
+</script>
 @endpush

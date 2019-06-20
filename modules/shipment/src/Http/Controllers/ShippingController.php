@@ -14,6 +14,7 @@ use Validator;
 class ShippingController extends Controller
 {
     use OrderTrait;
+    
     /**
      *
      * @var mixed $shipping
@@ -86,6 +87,8 @@ class ShippingController extends Controller
             $request->request->add(['destination' => $request->d]);
             $request->request->add(['weight' => $request->w]);
             $request->request->add(['courier' => $request->c]);
+            $request->request->add(['originType' => 'subdistrict']);
+            $request->request->add(['destinationType' => 'subdistrict']);
             
             $req = $this->client->request('POST', 'cost', [
                 'headers' => [
@@ -96,7 +99,9 @@ class ShippingController extends Controller
                     'origin',
                     'destination',
                     'weight',
-                    'courier'
+                    'courier',
+                    'originType',
+                    'destinationType'
                 )
             ]);
             
@@ -185,14 +190,5 @@ class ShippingController extends Controller
             return response()->json($validator->messages(), 403);
         }
 
-        $destinationSubdistrictId = $request->query('d');
-        $totalWeight = $request->query('w');
-        
-        if($destinationSubdistrictId) {
-            if($totalWeight>0) {
-                $courier_services = $this->getShipmentOptions($destinationSubdistrictId, $totalWeight, $request->is('api*'));
-                return jsend_success($courier_services);
-            }
-        }
     }
 }

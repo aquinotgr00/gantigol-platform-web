@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Blade;
+use Modules\Medias\MediaCategories;
 
 class MediaServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,7 @@ class MediaServiceProvider extends ServiceProvider
         $this->loadMigrationsAndFactories($factory);
         $this->loadBreadcrumbs();
         $this->loadViewComposers();
+        $this->loadViewShares();
         $this->loadBladeAliases();
         $this->publishPublicAssets();
     }
@@ -112,6 +114,17 @@ class MediaServiceProvider extends ServiceProvider
         }
     }
     
+    
+    /**
+     * Register View Composers
+     * https://laravel.com/docs/5.7/views#view-composers
+     * @return void
+     */
+    private function loadViewShares()
+    {
+        View::share('mediaCategories', MediaCategories::all());
+    }
+    
     /**
      * Register View Composers
      * https://laravel.com/docs/5.7/views#view-composers
@@ -120,7 +133,6 @@ class MediaServiceProvider extends ServiceProvider
     private function loadViewComposers()
     {
         View::composer('medias::media-gallery', 'Modules\Medias\Http\ViewComposers\MediaGalleryViewComposer');
-        View::composer('medias::media-category', 'Modules\Medias\Http\ViewComposers\MediaCategoryViewComposer');
     }
     
     /**

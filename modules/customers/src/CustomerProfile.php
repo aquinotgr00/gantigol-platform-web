@@ -8,8 +8,8 @@ class CustomerProfile extends Model
 {
     
     protected $fillable = [
-        "name",
-        "email",
+        'name',
+        'email',
         'phone',
         'gender',
         'address',
@@ -19,7 +19,8 @@ class CustomerProfile extends Model
         'member_discount_id',
         'last_login',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'user_id'
     ];
     
     protected $dates = ['birthdate'];

@@ -14,11 +14,13 @@ class SettingController extends Controller
             'title' => 'Settings'
         ];
         $couriers           = config('shipment.couriers');
+        $shipment_adapters  = config('shipment.adapter.rajaOngkir.supported');
         $settingReminder    = SettingReminder::first();
         return view('admin::setting-dashboard', compact(
             'data',
             'couriers',
-            'settingReminder'
+            'settingReminder',
+            'shipment_adapters'
         ));
     }
 

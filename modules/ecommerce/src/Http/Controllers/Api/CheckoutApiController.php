@@ -3,30 +3,31 @@
 namespace Modules\Ecommerce\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+
 use Modules\Customers\CustomerProfile;
 use Modules\Ecommerce\Cart;
-use Modules\Ecommerce\CartItems;
 use Modules\Ecommerce\Order;
-use Modules\Ecommerce\OrderItem;
 use Modules\Membership\Member;
-use Modules\Product\ProductVariant;
+use Modules\Ecommerce\Traits\OrderTrait;
 use Validator;
+use DB;
 
 class CheckoutApiController extends Controller
 {
+    use OrderTrait;
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'items' => 'array',
             'shipping_name' => 'required',
             'shipping_phone' => 'required|max:12',
             'shipping_email' => 'required',
             'shipping_address' => 'required',
             'shipping_cost' => 'required',
-            'billing_name' => 'required',
-            'shipment_name' => 'required',
+            'shipping_subdistrict_id' => 'required',
+            'session' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -50,114 +51,140 @@ class CheckoutApiController extends Controller
         if ($request->has('user_id')) {
 
             $member = Member::find($request->user_id);
-
             if (!is_null($member)) {
-                $customer_exist = CustomerProfile::where('user_id', $member->id)->first();
-
-                if (!is_null($customer_exist)) {
-
-                    $customer_id = $customer_exist->id;
-                } else {
-
-                    $new_customer = CustomerProfile::create([
+                $customer = CustomerProfile::firstOrCreate(
+                    ['user_id' => $member->id],
+                    [
                         'name' => $member->name,
                         'email' => $member->email,
                         'phone' => $member->phone,
                         'address' => $member->address,
-                        'birthdate' => date('Y-m-d'),
-                    ]);
+                        'birthdate' => date('Y-m-d')
+                    ]
+                );
 
-                    $new_customer->user_id = $member->id;
-                    $new_customer->update();
-
-                    $customer_id = $new_customer->id;
-                }
-
-                $request->request->add(['customer_id' => $customer_id]);
+                $request->request->add(['customer_id' => $customer->id]);
+                $request->request->add(['billing_name' => $member->name]);
+                $request->request->add(['billing_email' => $member->email]);
+                $request->request->add(['billing_phone' => $member->phone]);
+                $request->request->add(['billing_address' => $member->address]);
             }
-
         } else {
 
-            $customerExist = CustomerProfile::where('email', $request->shipping_name)->first();
-
-            if (is_null($customerExist)) {
-                $customer = CustomerProfile::create([
+            $customer = CustomerProfile::firstOrCreate(
+                ['email' => $request->shipping_email],
+                [
                     'name' => $request->shipping_name,
                     'email' => $request->shipping_email,
                     'phone' => $request->shipping_phone,
                     'address' => $request->shipping_address,
-                    'birthdate' => date('Y-m-d'),
-                ]);
-                $request->request->add(['customer_id' => $customer->id]);
-            }else{
-                $request->request->add(['customer_id' => $customerExist->id]);
-            }
+                    'birthdate' => date('Y-m-d')
+                ]
+            );
+            $request->request->add(['customer_id' => $customer->id]);
+            $request->request->add(['billing_name' => $request->shipping_name]);
+            $request->request->add(['billing_email' => $request->shipping_email]);
+            $request->request->add(['billing_phone' => $request->shipping_phone]);
+            $request->request->add(['billing_address' => $request->shipping_address]);
         }
 
-        $order = Order::create($request->except('_token'));
+        $cart = Cart::where('session', $request->session)->first();
 
-        $items = [];
+        if (!is_null($cart)) {
 
-        if ($request->items) {
-            $items = $request->items;
-        }
+            if ($cart->getItems->count() > 0) {
 
-        if ($request->has('session')) {
-            $cart = Cart::where('session', $request->session)->first();
+                $total_amount   = 0;
+                $items          = [];
+                $collection     = [];
+                //loop cart items
+                foreach ($cart->getItems as $key => $value) {
+                    if ($value->checked == 'true') {
+                        $collection[] = [
+                            'id' => $value->product_id,
+                            'qty' => $value->qty,
+                            'price' => $value->price
+                        ];
+                        $subtotal       = intval($value->qty) * intval($value->price);
+                        $total_amount += intval($subtotal);
+                        $value->delete();
+                    }
+                }
 
-            if (!is_null($cart)) {
-                if (isset($cart->getItems)) {
-                    foreach ($cart->getItems as $key => $value) {
-                        if ($value->checked == 'true') {
-                            $items[] = [
-                                'productvariant_id' => $value->product_id,
-                                'qty' => $value->qty,
-                                'price' => $value->price
-                            ];
-                            $itemCart = CartItems::find($value->id);
-                            if (!is_null($itemCart)) {
-                                $itemCart->delete();
-                            }
+                $items = $this->transformOrderItems($collection);
+
+                $total_amount += intval($request->shipping_cost);
+                
+                if (
+                    $request->has('discount') &&
+                    $request->discount > 0
+                ) {
+
+                    $total_amount   = $total_amount - intval($request->discount);
+                    $request->request->add(['discount' => $request->discount]);
+                }
+
+                $request->request->add(['total_amount' => $total_amount]);
+
+                DB::beginTransaction();
+
+                try {
+                    
+                    $order = Order::create($request->except('_token'));
+                    
+                    $order->items()->saveMany($items);
+                    DB::commit();
+
+                    //send scdhule reminder
+                    $order->scheduleReminders(3, $order);
+
+                } catch (QueryException $e) {
+                    DB::rollback();
+                }
+
+                if (isset($order->items)) {
+                    foreach ($order->items as $key => $value) {
+                        if (isset($value->productVariant)) {
+                            $value->productVariant;
                         }
                     }
                 }
-            }
-            
-            if (
-                !is_null($cart) &&
-                !isset($cart->getItems)
-                ) {
-                $cart->delete();
-            }
-        }
 
-        $total_amount = 0;
+                $names      = preg_split('/\s+/', $order->billing_name);
+                $last_name  = '';
 
-        if ($items) {
-            foreach ($items as $key => $value) {
-                $itemVariant = ProductVariant::find($value['productvariant_id']);
-                if (!is_null($itemVariant)) {
-                    $value = array_merge($value, ['order_id' => $order->id]);
-                    $orderItem = OrderItem::create($value);
-                    if (isset($orderItem->subtotal)) {
-                        $total_amount += intval($orderItem->subtotal);
+                foreach ($names as $key => $value) {
+                    if ($key != 0) {
+                        $last_name .= ' ' . $value;
                     }
                 }
+
+                $invoice = [
+                    'transaction_details' => [
+                        'order_id' => $order->id,
+                        'gross_amount' => $order->total_amount
+                    ],
+                    'customer_details' => [
+                        'first_name' => $names[0],
+                        'last_name'  => $last_name,
+                        'email' => $order->billing_email,
+                        'phone' => $order->billing_phone,
+                        'billing_address' => $order->billing_address,
+                        'shipping_address' => $order->shipping_address
+                    ],
+                    'item_details' => (isset($order->items)) ? $order->items : []
+
+                ];
+                return response()->json($invoice);
             }
         }
+        return response()->json(['data' => []]);
 
-        $order->update([
-            'total_amount' => $total_amount
-        ]);
-
-        if (isset($order->items)) {
-            foreach ($order->items as $key => $value) {
-                if (isset($value->productVariant)) {
-                    $value->productVariant;
-                }
-            }
+        if (
+            !is_null($cart) &&
+            !isset($cart->getItems)
+        ) {
+            $cart->delete();
         }
-
-        return response()->json($order);
     }
 }
