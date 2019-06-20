@@ -12,6 +12,7 @@ use Modules\Preorder\Transaction;
 use Modules\Product\ProductVariant;
 use Modules\Preorder\Traits\OrderTrait;
 use Modules\Customers\CustomerProfile;
+use Modules\Membership\Member;
 use Validator;
 
 class TransactionApiController extends Controller
@@ -110,24 +111,44 @@ class TransactionApiController extends Controller
             !is_null($transaction) &&
             isset($transaction->id)
         ) {
+            $customer_id = NULL;
+            if ($request->has('user_id')) {
 
-            $customer = CustomerProfile::firstOrCreate(
-                ['email' => $request->email],
-                [
-                    'name' => $transaction->name,
-                    'email' => $transaction->email,
-                    'phone' => $transaction->phone,
-                    'address' => $transaction->address,
-                    'birthdate' => date('Y-m-d'),
-                ]
-            );
+                $member = Member::find($request->user_id);
+                if (!is_null($member)) {
+                    $customer = CustomerProfile::firstOrCreate(
+                        ['user_id' => $member->id],
+                        [
+                            'name' => $member->name,
+                            'email' => $member->email,
+                            'phone' => $member->phone,
+                            'address' => $member->address,
+                            'birthdate' => date('Y-m-d')
+                        ]
+                    );
+                    $customer_id = $customer->id;
+                }
+
+            } else {
+                $customer = CustomerProfile::firstOrCreate(
+                    ['email' => $request->email],
+                    [
+                        'name' => $transaction->name,
+                        'email' => $transaction->email,
+                        'phone' => $transaction->phone,
+                        'address' => $transaction->address,
+                        'birthdate' => date('Y-m-d'),
+                    ]
+                );
+                $customer_id = $customer->id;
+            }
 
             $invoice_id     = str_pad($transaction->id, 5, "0", STR_PAD_LEFT);
             $invoice_parts  = array('INV', date('Y-m-d'), $invoice_id);
             $invoice        = implode('-', $invoice_parts);
             $transaction->update([
                 'invoice' => $invoice,
-                'customer_id' => $customer->id
+                'customer_id' => $customer_id
             ]);
         }
 
@@ -205,7 +226,32 @@ class TransactionApiController extends Controller
         if (isset($transaction->getSubdistrict)) {
             $transaction->getSubdistrict;
         }
-        return new TransactionResource($transaction);
+
+        $names      = preg_split('/\s+/', $transaction->name);
+        $last_name  = '';
+
+        foreach ($names as $key => $value) {
+            if ($key != 0) {
+                $last_name .= ' ' . $value;
+            }
+        }
+        $invoice = [
+            'transaction_details' => [
+                'order_id' => $transaction->id,
+                'gross_amount' => $transaction->amount
+            ],
+            'customer_details' => [
+                'first_name' => $names[0],
+                'last_name'  => $last_name,
+                'email' => $transaction->email,
+                'phone' => $transaction->phone,
+                'billing_address' => $transaction->address,
+                'shipping_address' => $transaction->address
+            ],
+            'item_details' => (isset($transaction->orders)) ? $transaction->orders : []
+        ];
+
+        return new TransactionResource($invoice);
     }
     /**
      * @param \Modules\Preorder\Transaction  $transaction

@@ -3,6 +3,8 @@ namespace Modules\Preorder\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+
 use Modules\Preorder\PreOrder;
 use Modules\Product\Product;
 use Modules\Product\ProductVariant;
@@ -25,7 +27,11 @@ class PreorderController extends Controller
                 ->get();
             return DataTables::of($preorders)
                 ->addColumn('product.name', function ($row) {
-                    $link = '<a href="'.route('list-preorder.show',$row->id).'">';
+                    if (Gate::allows('view-transaction',$row)) {
+                        $link = '<a href="'.route('pending.transaction',$row->id).'">';
+                    }else{
+                        $link = '<a href="'.route('list-preorder.show',$row->id).'">';
+                    }
                     $link .= $row->product->name;
                     $link .='</a>';
                     return $link;
