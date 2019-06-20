@@ -22,3 +22,7 @@
 	color: initial;
 	background-color: initial;
 }
+
+.media-file p {
+	word-break: break-all;
+}
