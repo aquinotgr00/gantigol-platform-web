@@ -61,6 +61,18 @@
                         @endif
                     </div>
                     <div class="form-group">
+                        <label>City</label>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->city }}</p>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->province }}</p>
+                        @endif
+                    </div>
+                    <div class="form-group">
                         <label>Zip Code</label>
                         @if(isset($order->customer))
                         <p>{{ $order->customer->zip_code }}</p>
@@ -129,7 +141,7 @@
                         <p>{{ $order->shipping_phone }}</p>
                     </div>
                     <div class="form-group">
-                        <label>Phone</label>
+                        <label>Email</label>
                         <p>{{ $order->shipping_email }}</p>
                     </div>
                 </div>

@@ -12,7 +12,7 @@
 <div class="row mb-3">
     <div class="col-md-3">
         <div class="form-group">
-            <label for="searchInvoice">Date</label>
+            <label for="searchInvoice">Order Date</label>
             <input type="text" name="startdate" class="form-control" id="startDateFilter">
         </div>
     </div>
