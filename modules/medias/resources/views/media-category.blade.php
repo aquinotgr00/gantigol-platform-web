@@ -1,7 +1,8 @@
 <div class="col-md-4 col-lg grs">
     <div class="form-group mt-5">
-        <label for="exampleInputCategoryName">Media Name</label>
-        <p></p>
+        <label>Media Name</label>
+        <p id="media-name-placeholder">Click any media to change its category</p>
+        <p id="media-name"></p>
     </div>
     <div class="form-group">
         <label for="media-category">Media Category</label>
@@ -20,7 +21,7 @@
         </div>
     </div>
     <div>
-        <button type="button" class="btn" id="button-add-media-category" disabled>Apply</button>
+        <button type="button" class="btn" id="button-apply-media-category" disabled>Apply</button>
     </div>
 </div>
 

@@ -4,6 +4,10 @@
 	align-items: center;
 }
 
+.media-list .img-thumbnail {
+	height: 13rem;
+}
+
 .media-list .media-file.selected img {
 	outline: none;
 	border-color: #9ecaed;
