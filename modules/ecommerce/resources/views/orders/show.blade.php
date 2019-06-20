@@ -33,9 +33,9 @@
                             <h4>Customer Info</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#EditCustomerInfo" data-toggle=modal >
+                           <!--  <a href="#EditCustomerInfo" data-toggle=modal >
                                 <i class="fas fa-pencil-alt"></i>
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                     <hr>
@@ -54,7 +54,12 @@
                         <p>{{ $order->customer->address }}</p>
                         @endif
                     </div>
-
+                    <div class="form-group">
+                        <label>Subdistrict</label>
+                        @if(isset($order->customer))
+                        <p>{{ $order->customer->subdisctrict }}</p>
+                        @endif
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
                         @if(isset($order->customer))
@@ -103,7 +108,18 @@
                         <label>Address</label>
                         <p>{{ $order->shipping_address }}</p>
                     </div>
-
+                    <div class="form-group">
+                        <label>Subsdistrict</label>
+                        <p>{{ $order->shipping_subdistrict }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <p>{{ $order->shipping_city }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        <p>{{ $order->shipping_province }}</p>
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
                         <p>{{ $order->shipping_zip_code }}</p>
@@ -111,6 +127,10 @@
                     <div class="form-group">
                         <label>Phone</label>
                         <p>{{ $order->shipping_phone }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <p>{{ $order->shipping_email }}</p>
                     </div>
                 </div>
             </div>

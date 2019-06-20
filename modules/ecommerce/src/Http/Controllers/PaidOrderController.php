@@ -15,7 +15,10 @@ class PaidOrderController extends Controller
         if ($request->ajax()) {
             
             $orders = Order::where('order_status','!=', 0);
-
+            if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            }
             if ($request->has('invoice')) {
                 $invoice = trim($request->invoice);
                 

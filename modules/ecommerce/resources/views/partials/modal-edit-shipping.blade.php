@@ -19,10 +19,25 @@
                         <input type="text" name="shipping_name" value="{{ $order->shipping_name }}" class="form-control" />
                     </div>
                     <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" name="shipping_email" value="{{ $order->shipping_email }}" class="form-control" />
+                    </div>
+                    <div class="form-group">
                         <label>Address</label>
                         <textarea name="shipping_address" class="form-control">{{ $order->shipping_address }}</textarea>
                     </div>
-
+                    <div class="form-group">
+                        <label>Subdistrict</label>
+                        <input type="text" name="shipping_subdistrict" value="{{ $order->shipping_subdistrict }}" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" name="shipping_city" value="{{ $order->shipping_city }}" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        <input type="text" name="shipping_province" value="{{ $order->shipping_province }}" class="form-control" />
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
                         <input type="number" name="shipping_zip_code" value="{{ $order->shipping_zip_code }}" class="form-control"/>

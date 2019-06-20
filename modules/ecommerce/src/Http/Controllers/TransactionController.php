@@ -10,10 +10,16 @@ use Illuminate\Support\Facades\Mail;
 use Modules\Preorder\Mail\WayBill;
 
 class TransactionController extends Controller
-{
+{   
     public function index(Request $request)
-    {
-        $orders = Order::all();
+    {   
+        $orders = (new Order)->newQuery();
+        if ($request->has(['startdate', 'enddate'])) {
+            //
+            $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+        }
+        $orders->get();
+        
         if ($request->has('status')) {
             $status = config('ecommerce.order.status');
             if (isset($status[$request->status])) {
@@ -33,7 +39,7 @@ class TransactionController extends Controller
         if ($request->ajax()) {
             return DataTables::of($orders)
                 ->addColumn('id', function ($query) {
-                    $checkbox = '<input type="checkbox" name="id[]" value="' . $query->id . '" />';
+                    $checkbox = '<input type="checkbox" name="id[]" class="rowCheck" value="' . $query->id . '" />';
                     return $checkbox;
                 })
                 ->addColumn('order_status', function ($query) {
@@ -57,7 +63,7 @@ class TransactionController extends Controller
     }
 
     public function update(Request $request, int $id)
-    {
+    {   
         $request->validate([
             'shipping_name',
             'shipping_phone',
@@ -69,18 +75,19 @@ class TransactionController extends Controller
             $request->has('shipping_tracking_number')  &&
             $order->shipping_tracking_number == $request->shipping_tracking_number
         ) {
-
-            try {
-                $send = [
-                    'tracking_number' => $order->shipping_tracking_number,
-                    'invoice' => $order->invoice_id
-                ];
-                Mail::to($order->shipping_email)->send(new WayBill($send));
-                $order->update([
-                    'order_status' => 3
-                ]);
-            } catch (\Swift_TransportException $e) {
-                $response = $e->getMessage();
+            if(!empty($request->shipping_tracking_number)){
+                try {
+                    $send = [
+                        'tracking_number' => $order->shipping_tracking_number,
+                        'invoice' => $order->invoice_id
+                    ];
+                    Mail::to($order->shipping_email)->send(new WayBill($send));
+                    $order->update([
+                        'order_status' => 3
+                    ]);
+                } catch (\Swift_TransportException $e) {
+                    $response = $e->getMessage();
+                }
             }
         }
         return back();
