@@ -62,11 +62,14 @@ class MediaController extends Controller
             }
 
             if($request->has('c')) {
-                $media = $media->where('category', $request->query('c'));
+                $media = $media->where('category', urldecode($request->query('c')));
             }
 
             $media = $media->latest()->paginate(16);
-            return [ 'gallery'=>view('medias::media-gallery-ajax',compact('media'))->render(), 'links'=>view('medias::media-gallery-pagination-ajax',compact('media'))->render() ];
+            return [
+                'gallery'=>view('medias::media-gallery-ajax',compact('media'))->render(),
+                'links'=>view('medias::media-gallery-pagination-ajax',compact('media'))->render()
+            ];
         }
         
         return view('medias::media-library');

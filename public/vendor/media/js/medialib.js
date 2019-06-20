@@ -54,7 +54,6 @@ function handleGalleryResponse(data) {
 	const {gallery, links} = data
 	$('.media-list').html(gallery)
 	$('#all-media .pgntn').html(links)
-	$('#filter-media-by-category').text(category)
 }
 
 const selectAndClose = function() {
