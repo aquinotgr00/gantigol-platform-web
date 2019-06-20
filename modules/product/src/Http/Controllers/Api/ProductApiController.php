@@ -40,7 +40,11 @@ class ProductApiController extends Controller
         }
 
         if ($request->has('tags')) {
-            
+            $limit = 4;
+            if ($request->has('limit')) {
+                $limit = intval($request->limit);
+            }
+
             $tags = explode(',',$request->tags);
 
             $products = Product::withAnyTag($tags)
@@ -48,6 +52,7 @@ class ProductApiController extends Controller
             ->with('preOrder')
             ->where('visible',1)
             ->where('status',1)
+            ->limit($limit)
             ->get();
         }
 

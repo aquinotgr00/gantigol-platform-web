@@ -13,7 +13,8 @@
     .img-thumbnail {
         object-fit: scale-down;
     }
-    #removeFeaturedImage{
+
+    #removeFeaturedImage {
         color: red;
         font-weight: bold;
     }
@@ -47,7 +48,13 @@
                 @if(isset($categories))
                 <option value="">Choose one</option>
                 @foreach($categories as $key => $kat)
-                @include('product::includes.productcategory-option', ['category'=>$kat, 'parent'=>''])
+                
+                @include('product::includes.productcategory-option-parent', [
+                    'category'=> $kat,
+                    'parent'=> '',
+                    'selected'=> $category
+                ])
+
                 @endforeach
                 @endif
             </select>
