@@ -3,20 +3,21 @@
 namespace Modules\Ecommerce\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+
 use Modules\Customers\CustomerProfile;
 use Modules\Ecommerce\Cart;
-use Modules\Ecommerce\CartItems;
 use Modules\Ecommerce\Order;
-use Modules\Ecommerce\OrderItem;
 use Modules\Membership\Member;
-use Modules\Product\ProductVariant;
+use Modules\Ecommerce\Traits\OrderTrait;
 use Validator;
 use DB;
 
 class CheckoutApiController extends Controller
 {
+    use OrderTrait;
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -93,72 +94,52 @@ class CheckoutApiController extends Controller
 
             if ($cart->getItems->count() > 0) {
 
-                $order = Order::create($request->except('_token'));
-
-                $order->scheduleReminders(3, $order);
-
-                $total_amount = 0;
-
+                $total_amount   = 0;
+                $items          = [];
+                $collection     = [];
+                //loop cart items
                 foreach ($cart->getItems as $key => $value) {
-
                     if ($value->checked == 'true') {
-
-                        DB::beginTransaction();
-
-                        try {
-
-
-                            $itemVariant = ProductVariant::find($value->product_id);
-
-                            if ($itemVariant->quantity_on_hand > 0) {
-                                $itemVariant->quantity_on_hand -= intval($value->qty);
-                                $itemVariant->save();
-                            }
-
-                            $orderItem = OrderItem::create([
-                                'order_id' => $order->id,
-                                'productvariant_id' => $value->product_id,
-                                'qty' => $value->qty,
-                                'price' => $value->price
-                            ]);
-
-                            if (isset($orderItem->subtotal)) {
-                                $total_amount += intval($orderItem->subtotal);
-                            }
-
-                            DB::commit();
-                        } catch (ValidationException $e) {
-                            // Rollback
-                            DB::rollback();
-                            abort(462, json_encode(['data' => 'error transaction', 'status' => 462]));
-                        } catch (\Exception $e) {
-                            DB::rollback();
-                            throw $e;
-                        }
-
-                        $itemCart = CartItems::find($value->id);
-                        if (!is_null($itemCart)) {
-                            $itemCart->delete();
-                        }
+                        $collection[] = [
+                            'id' => $value->product_id,
+                            'qty' => $value->qty,
+                            'price' => $value->price
+                        ];
+                        $subtotal       = intval($value->qty) * intval($value->price);
+                        $total_amount += intval($subtotal);
+                        $value->delete();
                     }
                 }
 
+                $items = $this->transformOrderItems($collection);
+
                 $total_amount += intval($request->shipping_cost);
+                
                 if (
                     $request->has('discount') &&
                     $request->discount > 0
                 ) {
 
-                    $total_amount = $total_amount - intval($request->discount);
-                    $order->update([
-                        'total_amount' => $total_amount,
-                        'discount' => $request->discount
-                    ]);
-                } else {
+                    $total_amount   = $total_amount - intval($request->discount);
+                    $request->request->add(['discount' => $request->discount]);
+                }
 
-                    $order->update([
-                        'total_amount' => $total_amount
-                    ]);
+                $request->request->add(['total_amount' => $total_amount]);
+
+                DB::beginTransaction();
+
+                try {
+                    
+                    $order = Order::create($request->except('_token'));
+                    
+                    $order->items()->saveMany($items);
+                    DB::commit();
+
+                    //send scdhule reminder
+                    $order->scheduleReminders(3, $order);
+
+                } catch (QueryException $e) {
+                    DB::rollback();
                 }
 
                 if (isset($order->items)) {
@@ -168,6 +149,7 @@ class CheckoutApiController extends Controller
                         }
                     }
                 }
+
                 $names      = preg_split('/\s+/', $order->billing_name);
                 $last_name  = '';
 
