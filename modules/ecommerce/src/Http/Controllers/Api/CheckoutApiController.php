@@ -136,7 +136,7 @@ class CheckoutApiController extends Controller
                     DB::commit();
 
                     //send scdhule reminder
-                    $order->scheduleReminders(3, $order);
+                    //$order->scheduleReminders(3, $order);
 
                 } catch (QueryException $e) {
                     DB::rollback();
