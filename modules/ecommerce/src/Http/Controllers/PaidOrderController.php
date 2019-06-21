@@ -15,10 +15,10 @@ class PaidOrderController extends Controller
     {
         if ($request->ajax()) {
             
-            $orders = Order::where('order_status','!=', 0);
+            $orders = Order::whereIn('order_status',[1,3,5]);
             if ($request->has(['startdate', 'enddate'])) {
                 //
-                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+                $orders =$orders->whereBetween('orders.created_at', [$request->startdate, $request->enddate]);
             }
             if ($request->has('invoice')) {
                 $invoice = trim($request->invoice);
@@ -27,6 +27,12 @@ class PaidOrderController extends Controller
                     $orders = $orders->where('invoice_id','like', '%'.$invoice.'%')
                         ->orWhere('billing_name','like', '%'.$invoice.'%');
                 }
+            }
+            if($request->has('attributesize')){
+                $orders->leftjoin('order_items','orders.id','=','order_id')
+                                ->leftjoin('product_variants','product_variants.id','productvariant_id')
+                                ->where('product_variants.variant',$request->attributesize)
+                                ->select('orders.*','order_items.productvariant_id','product_variants.variant');
             }
             return DataTables::of($orders)
                 ->addColumn('id', function ($query) {
@@ -121,8 +127,39 @@ class PaidOrderController extends Controller
                             });
             }
     }
+
+    public function indexChartVariants(Request $request)
+    {   
+            $orders = OrderItem::leftjoin('orders','orders.id','=','order_id')
+                                ->leftjoin('product_variants','product_variants.id','productvariant_id')
+                                ->where('product_variants.variant',$request->attribute)
+                                ->whereIn('order_status',[1,3,5]);
+                                
+            if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('orders.created_at', [$request->startdate, $request->enddate]);
+            }
+                $orders->select('orders.created_at','order_items.id');
+            if($request->filter == 'year'){
+                return  $orders->get()->groupBy(function($item)
+                            {
+                              return $item->created_at->format('M');
+                            })->map(function ($date) {
+                                return $date->count('order_items.id');
+                            });
+            }else{
+                return $orders->get()->groupBy(function($item)
+                            {
+                              return $item->created_at->format('d-M');
+                            })->map(function ($date) {
+                                return $date->count('order_items.id');
+                            });
+            }
+    }
+
     public function indexCard(Request $request){
-        $orders = Order::where('order_status','!=', 0);
+        $arrayStatus = [1,3,5];
+        $orders = Order::whereIn('order_status', $arrayStatus);
         $a = $this->revenueNow($orders,$request);
         $b = $this->revenuelast($orders,$request);
         $revenue = $a-$b;
@@ -147,6 +184,37 @@ class PaidOrderController extends Controller
                 $orders =$orders->whereBetween('created_at', [$request->laststartdate, $request->lastenddate]);
             }
            return $orders->sum('total_amount');
+    }
+    public function indexCardSales(Request $request){
+        $arrayStatus = [1,3,5];
+        if($request->has('status')){
+            $arrayStatus = $request->status;
+        }
+        $orders = Order::whereIn('order_status', $arrayStatus);
+        $a = $this->revenueSalesNow($orders,$request);
+        $b = $this->revenueSalesLast($orders,$request);
+        $revenue = $a-$b;
+        $data= [
+                'percentage'=>($b == 0 ? 100 : ($revenue/$b)*100),
+                'sales'=>$a
+            ];
+        return $data;
+    }
+
+    private function revenueSalesNow($orders,$request){
+         if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            }
+           return $orders->count('id');
+    }
+
+    private function revenueSalesLast($orders,$request){
+         if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->laststartdate, $request->lastenddate]);
+            }
+           return $orders->count('id');
     }
     public function countProduct(Request $request){
         $item = OrderItem::leftjoin('orders','order_id','=','orders.id');
