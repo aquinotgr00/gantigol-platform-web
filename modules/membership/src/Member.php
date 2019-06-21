@@ -78,4 +78,11 @@ class Member extends Authenticatable
         return $this->where('id', $id)
                     ->update(['verification'=>'verified']);
     }
+    
+    public function customer()
+    {
+        if (class_exists('\Modules\Customers\CustomerProfile')) {
+            return $this->hasOne('\Modules\Customers\CustomerProfile', 'user_id');
+        }
+    }
 }

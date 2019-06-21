@@ -1,13 +1,9 @@
 @extends('admin::layout-nassau')
 
-@push('styles')
-
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
-
-@endpush
+@useDatatables
 
 @section('content')
+@pageHeader(['title'=>ucwords($member->name),'back'=>route('list-membership.index')])
 <!-- start info -->
 <div class="row">
     <div class="col-4">
@@ -42,6 +38,10 @@
         </div>
     </div>
 
+    @php
+        $orders = $member->customer->orders()->paginate(5);
+        //$orders = [];
+    @endphp
     <div class="col-sm grs">
         <div>
             <label>Order History</label>
@@ -51,6 +51,7 @@
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Orders
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" class="filter-order" data-filter="" data-text="All" href="#">All</a>
             @foreach(array_keys(config('ecommerce.order.status')) as $i => $order_filter)
             @if($i != 6)
             <a class="dropdown-item" class="filter-order" data-filter={{$i}} data-text="{{$order_filter}}" href="#">
@@ -89,22 +90,29 @@
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @foreach($orders as $order)
+                        <tr>
+                            <td>
+                                {{ $order->created_at->format('d-m-Y') }}
+                                <br>
+                                <small>{{ $order->created_at->format('H:i:s') }}</small>
+                            </td>
+                            <td>{{ $order->invoice_id }}</td>
+                            <td>{{ array_flip(config('ecommerce.order.status'))[$order->order_status] }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
         </div>
-
-
     </div>
-
 </div>
 <!-- end info -->
 
 @endsection
 
 @push('scripts')
-
-<script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script>
     
 
