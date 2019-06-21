@@ -196,7 +196,7 @@ class TransactionController extends Controller
                         'status' => 'shipped'
                     ]);
 
-                    Mail::to($production->getTransaction->email)->send(new WayBill($production));
+                    Mail::to($production->getTransaction->email)->send(new WayBill($transaction));
                 } catch (\Swift_TransportException $e) {
                     $response = $e->getMessage();
 

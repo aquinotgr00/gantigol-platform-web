@@ -77,7 +77,7 @@
 										<tbody>
 											<tr>
 												<td style="padding-top: 24px;">
-													<img align="center" src="http://fe-staging-gantigol-public.blm.solutions/images\gantigol\logo.svg" style="width: 20%;">
+													<img align="center" src="http://fe-staging-gantigol-public.blm.solutions/images/gantigol/logo.svg" style="width: 20%;">
 												</td>
 											</tr>
 

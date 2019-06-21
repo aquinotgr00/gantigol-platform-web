@@ -38,6 +38,6 @@ class WayBill extends Mailable
     {
         return $this->subject('Nomor Resi #' . $this->transaction->invoice)
             ->view('preorder::emails.waybill')
-            ->with($this->transaction);
+            ->with(['transaction' => $this->transaction]);
     }
 }
