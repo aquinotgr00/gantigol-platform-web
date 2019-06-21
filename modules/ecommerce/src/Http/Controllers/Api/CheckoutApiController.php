@@ -28,6 +28,7 @@ class CheckoutApiController extends Controller
             'shipping_cost' => 'required',
             'shipping_subdistrict_id' => 'required',
             'session' => 'required',
+            'shipment_name' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -114,7 +115,7 @@ class CheckoutApiController extends Controller
                 $items = $this->transformOrderItems($collection);
 
                 $total_amount += intval($request->shipping_cost);
-                
+
                 if (
                     $request->has('discount') &&
                     $request->discount > 0
@@ -129,9 +130,9 @@ class CheckoutApiController extends Controller
                 DB::beginTransaction();
 
                 try {
-                    
+
                     $order = Order::create($request->except('_token'));
-                    
+
                     $order->items()->saveMany($items);
                     DB::commit();
 
@@ -159,6 +160,39 @@ class CheckoutApiController extends Controller
                     }
                 }
 
+                $item_details = [];
+
+                foreach ($order->items as $key => $value) {
+
+                    $item_details[] = [
+                        'id' => $value->id,
+                        'name' => $value->productVariant->name,
+                        'quantity' => $value->qty,
+                        'price' => $value->price,
+                        'subtotal' => $value->subtotal
+                    ];
+                }
+
+                $addtional = [
+                    [
+                        'id' => $request->shipment_name.'1',
+                        'name' => $request->shipment_name,
+                        'quantity' => 1,
+                        'price' => $order->shipping_cost,
+                        'subtotal' => $order->shipping_cost
+                    ],
+                    [
+                        'id' => $order->discount.'1',
+                        'name' => 'Discount',
+                        'quantity' => 1,
+                        'price' => (is_null($order->discount))? 0 : intval(-$order->discount),
+                        'subtotal' => (is_null($order->discount))? 0 : intval(-$order->discount)
+                    ]
+                ];
+
+                $item_details = array_merge($item_details, $addtional);
+
+
                 $invoice = [
                     'transaction_details' => [
                         'order_id' => $order->id,
@@ -172,8 +206,7 @@ class CheckoutApiController extends Controller
                         'billing_address' => $order->billing_address,
                         'shipping_address' => $order->shipping_address
                     ],
-                    'item_details' => (isset($order->items)) ? $order->items : []
-
+                    'item_details' => $item_details
                 ];
                 return response()->json($invoice);
             }

@@ -77,7 +77,7 @@ class TransactionController extends Controller
             'production_json' => $production_json,
             'production_batch' => $production_batch,
             'data' => [
-                'title' => ucwords('Batch '.$production_batch->batch_name),
+                'title' => ucwords('Batch ' . $production_batch->batch_name),
                 'back' => route('pending.transaction', $production_batch->pre_order_id)
             ]
         ];
@@ -106,13 +106,13 @@ class TransactionController extends Controller
             'production_json' => $production_json,
             'production_batch' => $production_batch,
             'data' => [
-                'title' => ucwords('batch '.$production_batch->batch_name),
+                'title' => ucwords('batch ' . $production_batch->batch_name),
                 'back' => route('shipping.transaction', $production_batch->id)
             ],
             'status' => [
                 'pending' => 'Pending',
                 'proceed' => 'On Progress',
-                'ready_to_ship' =>'Ready To Ship',
+                'ready_to_ship' => 'Ready To Ship',
                 'shipped' => 'Shipped'
             ]
         ];
@@ -131,17 +131,20 @@ class TransactionController extends Controller
             'preorder' => 'required|exists:pre_orders,id'
         ]);
         $transaction   = Transaction::findOrFail($id);
-        $orders    = $transaction->orders;
-        $preOrder  = PreOrder::find($request->preorder);
+        $status        = Transaction::getPossibleEnumValues('status');
+        $orders        = $transaction->orders;
+        $preOrder       = PreOrder::find($request->preorder);
         $data   = [
             'transaction' => $transaction,
             'product' => $preOrder->product,
             'orders' => $orders,
             'data' => [
                 'title' => $transaction->invoice,
-                'back' => route('pending.transaction',$preOrder->id)
-            ]
+                'back' => route('pending.transaction', $preOrder->id)
+            ],
+            'status' => $status
         ];
+
         return view('preorder::transaction.show')->with($data);
     }
 
@@ -159,9 +162,9 @@ class TransactionController extends Controller
             'production' => $production
         ];
         return PDF::setOptions(['defaultFont' => 'sans-serif'])
-        ->setPaper('a4', 'landscape')
-        ->loadView('preorder::shipping.sticker', $data)
-        ->stream('shipping-sticker.pdf');
+            ->setPaper('a4', 'landscape')
+            ->loadView('preorder::shipping.sticker', $data)
+            ->stream('shipping-sticker.pdf');
     }
 
     public function storeShippingNumber(Request $request)
@@ -177,32 +180,31 @@ class TransactionController extends Controller
             $tracking_number    = trim($request->tracking_number[$key]);
             if (
                 !is_null($production) &&
-                !empty($tracking_number) 
+                !empty($tracking_number)
             ) {
-                
+
                 $transaction = Transaction::find($production->transaction_id);
                 if (!is_null($transaction)) {
                     $transaction->update([
                         'status' => 'shipped'
                     ]);
                 }
-                
+
                 try {
                     $production->update([
                         'tracking_number' => $tracking_number,
                         'status' => 'shipped'
                     ]);
-                    
+
                     Mail::to($production->getTransaction->email)->send(new WayBill($production));
-                    
                 } catch (\Swift_TransportException $e) {
                     $response = $e->getMessage();
-                    
+
                     break;
                 }
             }
         }
-        
+
         return back();
     }
 }

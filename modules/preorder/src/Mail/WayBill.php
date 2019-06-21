@@ -11,22 +11,22 @@ class WayBill extends Mailable
 {
     use Queueable, SerializesModels;
     /**
-     * [$send description]
+     * [$transaction description]
      *
      * @var object
      */
-    protected $send;
+    protected $transaction;
 
     /**
      * [__construct description]
      *
-     * @param object $send
+     * @param object $transaction
      *
      * @return  void
      */
-    public function __construct($send)
+    public function __construct($transaction)
     {
-        $this->send = $send;
+        $this->transaction = $transaction;
     }
 
     /**
@@ -36,7 +36,8 @@ class WayBill extends Mailable
      */
     public function build()
     {
-        return $this->subject('Shipping Number #'.$this->send['invoice'])
-        ->markdown('preorder::emails.waybill')->with($this->send);
+        return $this->subject('Nomor Resi #' . $this->transaction->invoice)
+            ->view('preorder::emails.waybill')
+            ->with($this->transaction);
     }
 }

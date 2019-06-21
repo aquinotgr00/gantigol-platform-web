@@ -88,7 +88,8 @@ class TransactionApiController extends Controller
             'phone' => 'required', //|regex:/(01)[0-9]{9}/
             'postal_code' => 'required',
             'subdistrict_id' => 'required',
-            'courier_fee' => 'required'
+            'courier_fee' => 'required',
+            'courier_name' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -235,6 +236,39 @@ class TransactionApiController extends Controller
                 $last_name .= ' ' . $value;
             }
         }
+
+        $item_details = [];
+
+        foreach ($transaction->orders as $key => $value) {
+            
+            $item_details[] = [
+                'id' => $value->id,
+                'name' => $value->productVariant->name,
+                'quantity' => $value->qty,
+                'price' => $value->price,
+                'subtotal' => $value->subtotal
+            ];
+
+        }
+        $addtional = [
+            [
+                'id' => $request->courier_name.'1',
+                'name' => $request->courier_name,
+                'quantity' => 1,
+                'price' => $transaction->courier_fee,
+                'subtotal' => $transaction->courier_fee
+            ],
+            [
+                'id' => $transaction->discount.'1',
+                'name' => 'Discount',
+                'quantity' => 1,
+                'price' => (is_null($transaction->discount))? 0 : intval(-$transaction->discount),
+                'subtotal' => (is_null($transaction->discount))? 0 : intval(-$transaction->discount)
+            ]
+        ];
+
+        $item_details = array_merge($item_details, $addtional);
+
         $invoice = [
             'transaction_details' => [
                 'order_id' => $transaction->id,
@@ -248,7 +282,7 @@ class TransactionApiController extends Controller
                 'billing_address' => $transaction->address,
                 'shipping_address' => $transaction->address
             ],
-            'item_details' => (isset($transaction->orders)) ? $transaction->orders : []
+            'item_details' => $item_details
         ];
 
         return new TransactionResource($invoice);
