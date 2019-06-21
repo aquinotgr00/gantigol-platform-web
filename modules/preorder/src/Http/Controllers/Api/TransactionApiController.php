@@ -88,7 +88,7 @@ class TransactionApiController extends Controller
             'phone' => 'required', //|regex:/(01)[0-9]{9}/
             'postal_code' => 'required',
             'subdistrict_id' => 'required',
-            'courier_fee' => 'required',
+            'courier_fee' => 'required|numeric',
             'courier_name' => 'required'
         ]);
 

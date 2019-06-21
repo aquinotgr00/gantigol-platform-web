@@ -43,7 +43,7 @@ class QuotaFulfilled implements ShouldBroadcast
     {
         $this->product = $preOrder->product->name;
         $this->message = "{$preOrder->product->name} quota is fulfilled.";
-        $this->url = route('preorder.show', $preOrder->id);
+        $this->url = route('pending.transaction', $preOrder->id);
     }
 
     /**

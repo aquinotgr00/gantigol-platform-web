@@ -108,6 +108,17 @@ class CheckoutApiController extends Controller
                         ];
                         $subtotal       = intval($value->qty) * intval($value->price);
                         $total_amount += intval($subtotal);
+                        
+                        $qty_reduced = intval($value->productVariant->quantity_on_hand) - intval($value->qty);
+                        
+                        if ($qty_reduced <= 0 ) {
+                            
+                            return response()->json([
+                                'data' => 'Out of stock ',
+                                'status' => 462
+                            ]);
+                        }
+
                         $value->delete();
                     }
                 }
