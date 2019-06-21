@@ -111,7 +111,7 @@ class CheckoutApiController extends Controller
                         
                         $qty_reduced = intval($value->productVariant->quantity_on_hand) - intval($value->qty);
                         
-                        if ($qty_reduced <= 0 ) {
+                        if ($qty_reduced < 0 ) {
                             
                             return response()->json([
                                 'data' => 'Out of stock ',
