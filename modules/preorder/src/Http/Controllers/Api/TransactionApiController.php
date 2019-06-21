@@ -96,6 +96,14 @@ class TransactionApiController extends Controller
             return new TransactionResource($validator->messages());
         }
 
+        $settingReminder    =  SettingReminder::first();
+        $repeat             = (isset($settingReminder->repeat)) ? intval($settingReminder->repeat) : 3;
+        $interval           = (isset($settingReminder->interval)) ? intval($settingReminder->interval) : 8;
+        $hour               = $repeat * $interval;
+        $start              = date('Y-m-d');
+
+        $payment_duedate    = date('Y-m-d h:is', strtotime('+' . $hour . ' hour', strtotime($start)));
+
         $transaction = Transaction::create(
             array_merge(
                 $request->except(['items']),
@@ -103,7 +111,8 @@ class TransactionApiController extends Controller
                     'quantity' => 0,
                     'amount' => 0,
                     'pre_order_id' => $request->pre_order_id,
-                    'customer_id' => 0
+                    'customer_id' => 0,
+                    'payment_duedate' => $payment_duedate
                 ]
             )
         );
@@ -129,7 +138,6 @@ class TransactionApiController extends Controller
                     );
                     $customer_id = $customer->id;
                 }
-
             } else {
                 $customer = CustomerProfile::firstOrCreate(
                     ['email' => $request->email],
@@ -214,10 +222,8 @@ class TransactionApiController extends Controller
             }
 
             //create schduler
-            $settingReminder    =  SettingReminder::first();
-            $repeat             = (isset($settingReminder->repeat)) ? $settingReminder->repeat : 3;
 
-            $this->scheduleReminders($repeat, $transaction);
+            //$this->scheduleReminders($repeat, $transaction);
         }
         $transaction->orders;
         foreach ($transaction->orders as $key => $value) {
@@ -240,7 +246,7 @@ class TransactionApiController extends Controller
         $item_details = [];
 
         foreach ($transaction->orders as $key => $value) {
-            
+
             $item_details[] = [
                 'id' => $value->id,
                 'name' => $value->productVariant->name,
@@ -248,22 +254,21 @@ class TransactionApiController extends Controller
                 'price' => $value->price,
                 'subtotal' => $value->subtotal
             ];
-
         }
         $addtional = [
             [
-                'id' => $request->courier_name.'1',
+                'id' => $request->courier_name . '1',
                 'name' => $request->courier_name,
                 'quantity' => 1,
                 'price' => $transaction->courier_fee,
                 'subtotal' => $transaction->courier_fee
             ],
             [
-                'id' => $transaction->discount.'1',
+                'id' => $transaction->discount . '1',
                 'name' => 'Discount',
                 'quantity' => 1,
-                'price' => (is_null($transaction->discount))? 0 : intval(-$transaction->discount),
-                'subtotal' => (is_null($transaction->discount))? 0 : intval(-$transaction->discount)
+                'price' => (is_null($transaction->discount)) ? 0 : intval(-$transaction->discount),
+                'subtotal' => (is_null($transaction->discount)) ? 0 : intval(-$transaction->discount)
             ]
         ];
 
@@ -271,7 +276,7 @@ class TransactionApiController extends Controller
 
         $invoice = [
             'transaction_details' => [
-                'order_id' => $transaction->id,
+                'order_id' => $transaction->invoice,
                 'gross_amount' => $transaction->amount
             ],
             'customer_details' => [

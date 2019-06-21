@@ -195,7 +195,7 @@ class CheckoutApiController extends Controller
 
                 $invoice = [
                     'transaction_details' => [
-                        'order_id' => $order->id,
+                        'order_id' => $order->invoice_id,
                         'gross_amount' => $order->total_amount
                     ],
                     'customer_details' => [

@@ -27,4 +27,3 @@ Route::get('ajax/all-transaction', 'AllTransactionController@ajaxAllTransactions
 Route::put('all-transaction/{id}', 'AllTransactionController@update')->name('all-transaction.update');
 
 Route::post('store-shipping-number', 'TransactionController@storeShippingNumber')->name('store-shipping-number');
-
