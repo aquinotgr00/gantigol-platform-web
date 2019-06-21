@@ -109,4 +109,31 @@ class AllTransactionController extends Controller
 
         return back();
     }
+      public function indexCard(Request $request){
+        $orders = Transaction::whereIn('status', ['paid','completed']);
+        $a = $this->revenueNow($orders,$request);
+        $b = $this->revenuelast($orders,$request);
+        $revenue = $a-$b;
+        $data= [
+                'percentage'=>($b == 0 ? 100 : ($revenue/$b)*100),
+                'sales'=>$a
+            ];
+        return $data;
+    }
+
+    private function revenueNow($orders,$request){
+         if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            }
+           return $orders->sum('amount');
+    }
+
+    private function revenueLast($orders,$request){
+         if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->laststartdate, $request->lastenddate]);
+            }
+           return $orders->sum('amount');
+    }
 }
