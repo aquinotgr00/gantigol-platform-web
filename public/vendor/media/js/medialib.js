@@ -114,7 +114,11 @@ $(function() {
 		$(this).toggleClass('selected')
 		if(!mediaLibraryIsModal) {
 			$('#media-name-placeholder').toggle(!$(this).hasClass('selected'))
-			$('#media-name').text($(this).hasClass('selected')?$(this).data('mediaName'):'')
+			$('#media-name').text($(this).hasClass('selected')?$(this).data('imageName'):'')
+			$('#media-id').val($(this).hasClass('selected')?$(this).data('imageId'):'')
+			$('#button-assign-media-category')
+					.toggleClass('btn-success',$('.media-file.selected').length!==0)
+					.prop('disabled',$('.media-file.selected').length===0)
 		}
 		
 	})
@@ -159,6 +163,16 @@ $(function() {
 		})
 		
 	})
+	
+	/*
+	$('#form-assign-category').submit(function(event) {
+		event.preventDefault()
+		$.post($(this).attr('action'),$(this).serialize())
+		.done(function(response) {
+			
+		})
+	})
+	*/
 	
 	$('div[aria-labelledby=filter-media-by-category]').on('click','a.dropdown-item', function(event) {
 		if(mediaLibraryIsModal) {

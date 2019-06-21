@@ -1,28 +1,32 @@
 <div class="col-md-4 col-lg grs">
-    <div class="form-group mt-5">
-        <label>Media Name</label>
-        <p id="media-name-placeholder">Click any media to change its category</p>
-        <p id="media-name"></p>
-    </div>
-    <div class="form-group">
-        <label for="media-category">Media Category</label>
-        <div class="form-row">
-            <div class="col-10">
-                <select class="form-control" id="media-category">
-                    <option>Uncategorized</option>
-                    @foreach ($mediaCategories as $category)
-                    <option value="{{$category->id}}">{{ $category->title }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col">
-                @addNewButton(['action'=>'#new-media-category-modal','toggleModal'=>true])
+    <form action="{{ route('media.assignMediaCategory') }}" method="post" id="form-assign-category">
+        @csrf
+        <input type="hidden" id="media-id" name="id">
+        <div class="form-group mt-5">
+            <label>Media Name</label>
+            <p id="media-name-placeholder">Click any media to change its category</p>
+            <p id="media-name"></p>
+        </div>
+        <div class="form-group">
+            <label for="media-category">Media Category</label>
+            <div class="form-row">
+                <div class="col-10">
+                    <select class="form-control" id="media-category" name="category">
+                        <option value="">Uncategorized</option>
+                        @foreach ($mediaCategories as $category)
+                        <option value="{{ $category->title }}">{{ $category->title }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col">
+                    @addNewButton(['action'=>'#new-media-category-modal','toggleModal'=>true])
+                </div>
             </div>
         </div>
-    </div>
-    <div>
-        <button type="button" class="btn" id="button-apply-media-category" disabled>Apply</button>
-    </div>
+        <div>
+            <button type="submit" class="btn" id="button-assign-media-category" disabled>Apply</button>
+        </div>
+    </form>
 </div>
 
 @section('modals')
