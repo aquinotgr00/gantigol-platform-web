@@ -43,8 +43,16 @@ class CustomerProfile extends Model
     
     public function subdistrict()
     {
-        if (class_exist('\Modules\Shipment\Subdistrict')) {
+        if (class_exists('\Modules\Shipment\Subdistrict')) {
             return $this->belongsTo('\Modules\Shipment\Subdistrict');
+        }
+        return null;
+    }
+    
+    public function orders()
+    {
+        if (class_exists('\Modules\Ecommerce\Order')) {
+            return $this->hasMany('\Modules\Ecommerce\Order', 'customer_id');
         }
         return null;
     }

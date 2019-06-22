@@ -1,11 +1,6 @@
 @extends('admin::layout-nassau')
 
-@push('styles')
-
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
-
-@endpush
+@useDatatables()
 
 @section('content')
 <!-- start info -->
@@ -17,8 +12,7 @@
             </div>
             <div class="col-md mt-2">
                 <span data-toggle=modal role="button" data-target="#EditCustomerInfo">
-                    <button class="btn btn-edit-frm pull-right" data-toggle="tooltip" data-placement="top" title=""
-                        data-original-title="Edit Customer Info"></button>
+                    <button class="btn btn-edit-frm float-right" data-toggle="tooltip" data-placement="top" data-original-title="Edit Customer Info"></button>
                 </span>
             </div>
         </div>
@@ -44,7 +38,10 @@
             <p>{{ $customer->email }}</p>
         </div>
     </div>
-
+    
+    @php
+        $orders = $customer->orders()->paginate(5);
+    @endphp
     <div class="col-sm grs">
         <div>
             <label>Order History</label>
@@ -93,23 +90,30 @@
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @foreach($orders as $order)
+                        <tr>
+                            <td>
+                                {{ $order->created_at->format('d-m-Y') }}
+                                <br>
+                                <small>{{ $order->created_at->format('H:i:s') }}</small>
+                            </td>
+                            <td>{{ $order->invoice_id }}</td>
+                            <td>{{ array_flip(config('ecommerce.order.status'))[$order->order_status] }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
         </div>
-
-
     </div>
-
 </div>
 <!-- end info -->
 
-@include('customers::customers.modal-edit',$customer);
+@include('customers::customers.modal-edit',$customer)
 @endsection
 
 @push('scripts')
-
-<script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script>
     $(document).ready(function () {
 

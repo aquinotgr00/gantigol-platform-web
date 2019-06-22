@@ -46,7 +46,7 @@
     </div>
 </div>
 <!-- Modal Edit Customer Info -->
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+@push('scripts')
 <script>
     $(document).ready(function () {
         $('#form-edit-customer').submit(function (event) {
@@ -79,3 +79,4 @@
         });
     });
 </script>
+@endpush

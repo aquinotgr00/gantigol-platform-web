@@ -3,10 +3,10 @@
         @if(isset($data['back']))
         <div class="row pl-3">
             <a href="{{ $data['back'] }}" class="btn btn-table circle-table back-head" title="back"></a>
-            <h1>{{ (isset($data['title']))? $data['title'] : 'Summary' }}</h1>
+            <h1>{{ $data['title']??'Summary' }}</h1>
         </div>
         @else
-        <h1>{{ (isset($data['title']))? $data['title'] : 'Summary' }}</h1>
+        <h1>{{ $data['title']??'Summary' }}</h1>
         @endif
         <div class="dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"

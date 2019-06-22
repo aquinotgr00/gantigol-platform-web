@@ -28,15 +28,15 @@ class CustomerController extends Controller
         return view('customers::customers.create',compact('data'));
     }
 
-    public function show(Request $request,int $id)
+    public function show(CustomerProfile $list_customer)
     {
-        $customer   = CustomerProfile::findOrFail($id);
+        $customer   = $list_customer;
         $data       = [
             'title' => ucwords($customer->name),
             'back' => route('list-customer.index')
         ];
         
-        if ($request->ajax()) {        
+        if (request()->ajax()) {
             if (class_exists('\Modules\Ecommerce\Order')) {
                 $orders = \Modules\Ecommerce\Order::where('customer_id',$customer->id)->get();
                 return DataTables::of($orders)
@@ -45,7 +45,6 @@ class CustomerController extends Controller
                 })
                 ->make(true);
             }
-            
         }
 
         return view('customers::customers.show', compact('customer', 'data'));
