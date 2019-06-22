@@ -75,6 +75,7 @@
             "Modules\\Promo\\": "modules/promo/src",
             "Modules\\Inventory\\": "modules/inventory/src",
             "Modules\\Shipment\\": "modules/shipment/src",
+            "Modules\\Report\\": "modules/report/src",
             "App\\": "app/"
         },
         "classmap": [
@@ -90,6 +91,7 @@
             "Modules\\Blogs\\Tests\\": "modules/blogs/tests",
             "Modules\\Banners\\Tests\\": "modules/banners/tests",
             "Modules\\Promo\\Tests\\": "modules/promo/tests",
+            "Modules\\Report\\Tests\\": "modules/report/tests",
             "Tests\\": "tests/"
         }
     },

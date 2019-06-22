@@ -47,7 +47,11 @@
                 @include('promo::includes.sidebar-nav-item')
             @endcan
         @endif
-        
+        @if(class_exists('\Modules\Report\Report'))
+            @can('order-management')
+                @include('report::includes.sidebar-nav-item')
+            @endcan
+        @endif
 
     </ul>
 </nav>

@@ -69,7 +69,7 @@
                         @endif
                         <small>
                            <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
-                            <span>Image size must be 1920x600 with maximum file size</span>
+                            <span>Image size must be 1920x1080 with maximum file size</span>
                             <span>400 kb</span>
                         </small>
                     </div>

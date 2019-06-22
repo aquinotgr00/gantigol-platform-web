@@ -54,8 +54,7 @@ small span{
     z-index: 100;
     padding: 0;
     background: #F4F5FA;
-	padding: 23px 0 0 27px;
-	overflow-y : scroll;
+    padding: 23px 0 0 27px;
 }
 .sidebar hr{
 	margin-right: 27px;
@@ -184,7 +183,8 @@ select.form-control:not([size]):not([multiple]) {
 .search-box{
 	font-size: 12px;
     font-weight: 600;
-    border-radius: 27px
+	border-radius: 27px;
+	margin-bottom: 10px;
 }
 .btn{
 	border-radius: 28.5px;
@@ -820,6 +820,7 @@ footer p{
 .text-red{
 	color:red;
 }
+
 
 
 
