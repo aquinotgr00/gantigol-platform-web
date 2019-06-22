@@ -13,35 +13,32 @@
     <div class="col-4">
         <div class="row">
             <div class="col-md">
-                <label>Customer Info</label>
+                <label>Member Info</label>
             </div>
             <div class="col-md mt-2">
-                <span data-toggle=modal role="button" data-target="#EditCustomerInfo">
-                    <button class="btn btn-edit-frm pull-right" data-toggle="tooltip" data-placement="top" title=""
-                        data-original-title="Edit Customer Info"></button>
-                </span>
+                
             </div>
         </div>
         <hr class="mt-0">
         <div class="form-group">
             <label>Name</label>
-            <p>{{ ucwords($customer->name) }}</p>
+            <p>{{ ucwords($member->name) }}</p>
         </div>
         <div class="form-group">
             <label>Address</label>
-            <p>{{ ucfirst($customer->address) }}</p>
+            <p>{{ ucfirst($member->address) }}</p>
         </div>
         <div class="form-group">
             <label>Zip Code</label>
-            <p>{{ $customer->zip_code }}</p>
+            <p>{{ $member->zip_code }}</p>
         </div>
         <div class="form-group">
             <label>Phone Number </label>
-            <p>{{ $customer->phone }}</p>
+            <p>{{ $member->phone }}</p>
         </div>
         <div class="form-group">
             <label>Email</label>
-            <p>{{ $customer->email }}</p>
+            <p>{{ $member->email }}</p>
         </div>
     </div>
 
@@ -54,7 +51,6 @@
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Orders
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" class="filter-order" data-filter="" data-text="All" href="#">All</a>
             @foreach(array_keys(config('ecommerce.order.status')) as $i => $order_filter)
             @if($i != 6)
             <a class="dropdown-item" class="filter-order" data-filter={{$i}} data-text="{{$order_filter}}" href="#">
@@ -103,7 +99,6 @@
 </div>
 <!-- end info -->
 
-@include('customers::customers.modal-edit',$customer);
 @endsection
 
 @push('scripts')
@@ -111,36 +106,7 @@
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script>
-    $(document).ready(function () {
-
-        var dataTable = $('#dataTable').DataTable({
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: {
-                url: '{{ route("list-customer.show",$customer->id) }}',
-                method: 'GET',
-                data: function (d) {
-                    d._token = "{{ csrf_token() }}",
-                    d.status = $('input[name="status"]').val()
-                }
-            },
-            order: [[0, "desc"]],
-            columns: [
-                { data: 'id', orderable: false },
-                { data: 'created_at' },
-                { data: 'invoice_id' },
-                { data: 'billing_name' },
-                { data: 'shipping_name' },
-                { data: 'order_status' }
-            ]
-        });
-
-        $('.dropdown-menu a').on("click", function (e) {
-            $('input[name="activity"]').val($(this).text());
-            dataTable.draw();
-        });
-    });
+    
 
 </script>
 @endpush

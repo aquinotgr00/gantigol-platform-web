@@ -56,7 +56,15 @@
     }
 
     $(function () {
+        function titleCase(str) {
+            str = str.toLowerCase().split(' ');
+            let final = [];
+            for (let word of str) {
+                final.push(word.charAt(0).toUpperCase() + word.slice(1));
+            }
+            return final.join(' ')
 
+        }
         var datatables = $('#dataTable').DataTable({
             processing: true,
             serverSide: true,
@@ -68,7 +76,12 @@
                 }
             },
             columns: [
-                { data: 'name' },
+                {
+                    data: 'name',
+                    render: function (data, type, row) {
+                        return '<a href="{{ route("members.show",["member"=>1]) }}">' + titleCase(data) + '</a>';
+                    }
+                },
                 { data: 'email' },
                 { data: 'phone' },
                 { data: 'city' },

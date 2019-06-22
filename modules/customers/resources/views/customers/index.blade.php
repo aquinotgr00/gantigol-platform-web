@@ -37,7 +37,6 @@
                 },
                 { "data": "email" },
                 { "data": "phone" },
-                { "data": "created_at" },
                 { "data": "updated_at" }
             ]
         });
@@ -79,7 +78,6 @@
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Phone Number</th>
-                <th scope="col">Registered</th>
                 <th scope="col">Last Order</th>
             </tr>
         </thead>

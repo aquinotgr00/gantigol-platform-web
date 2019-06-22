@@ -1,11 +1,16 @@
 <!-- Nav Item - Product -->
-<li>
-    <a href="#productSubmenu" data-toggle="collapse" aria-expanded="true">Product Management</a>
-    <ul class="collapse list-unstyled" id="productSubmenu">
-        @sidebarNavItem(['routeName'=>'product-categories.index','title'=>'Product Categories'])
-        @sidebarNavItem(['routeName'=>'product-variant.index','title'=>'Product Variants'])
-        @sidebarNavItem(['routeName'=>'product-size-chart.index','title'=>'Product Size Charts'])
-        @sidebarNavItem(['routeName'=>'product.index','title'=>'Products'])
-        @sidebarNavItem(['routeName'=>'adjustment.index','title'=>'Inventory'])
-    </ul>
-</li>
+@sidebarSubmenuNav([
+    'submenu'=>'product',
+    'title'=>'Product Management',
+    'submenuItems'=>[
+        ['routeName'=>'product-categories.index','title'=>'Product Categories'],
+        ['routeName'=>'product-variant.index','title'=>'Product Variants'],
+        ['routeName'=>'product-size-chart.index','title'=>'Product Size Charts'],
+        ['routeName'=>'product.index','title'=>'Products'],
+        ['routeName'=>'adjustment.index','title'=>'Inventory']
+    ],
+    'expandables'=>[
+        'product-categories.create',
+        'product-variant.create'
+    ]
+])
