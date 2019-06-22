@@ -17,6 +17,11 @@ class MembershipController extends Controller
         ];
         return view('membership::membership.index',compact('data'));
     }
+    
+    public function show(Member $member)
+    {
+        return view('membership::membership.show', compact('member'));
+    }
 
     public function ajaxAllMembership(Request $request)
     {

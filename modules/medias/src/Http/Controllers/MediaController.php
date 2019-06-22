@@ -150,9 +150,13 @@ class MediaController extends Controller
     {
         $assign = $this->mediaContent->find($request->id);
         $assign->category = $request->category;
+        $assign->save();
+        return back();
+        /*
         if ($assign->save()) {
             return response()->json(['message'=>'Success assign category to image.'], 200);
         }
         return response()->json(['message'=>'Failed assign category to image.'], 401);
+        */
     }
 }

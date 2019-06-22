@@ -59,42 +59,18 @@
                 {
                     "data": "get_transaction.orders",
                     "render": function(data, type, row) {
-                        var qty_s = 0;
-                        var qty_m = 0;
-                        var qty_l = 0;
-                        var qty_xl = 0;
-                        var qty_n = 0;
-                        var output = "";
-                        $.each(data, function(key, val) {
-                            var size_code = val.product_variant.size_code;
-
-                            if (size_code.length > 0) {
-                                size_code = size_code.toLowerCase();
-                            }
-
-                            switch (size_code) {
-                                case 's':
-                                    qty_s += parseInt(val.qty);
-                                    break;
-                                case 'm':
-                                    qty_m += parseInt(val.qty);
-                                    break;
-                                case 'l':
-                                    qty_l += parseInt(val.qty);
-                                    break;
-                                case 'xl':
-                                    qty_xl += parseInt(val.qty);
-                                    break;
-                                default:
-                                    qty_n += val.qty;
+                        var amount = 0;
+                        var variant = "";
+                        var variants = [];
+                        $.each(data, function(index, value) {
+                            switch (value.product_variant.variant) {
+                                case value.product_variant.variant:
+                                    amount += parseInt(value.qty);
                                     break;
                             }
+                            variants[value.product_variant.variant] = amount;
                         });
-                        output += "S : " + qty_s + "<br/>";
-                        output += "M : " + qty_m + "<br/>";
-                        output += "L : " + qty_l + "<br/>";
-                        output += "XL : " + qty_xl + "<br/>";
-                        return output;
+                        return variant;
                     }
                 },
                 {
@@ -176,9 +152,9 @@
         $('.dt-buttons').css('display', 'none');
 
         $.each($('.btn-line'), function(key, value) {
-            $(value).click(function(){
+            $(value).click(function() {
                 var selector = $(value).data('trigger');
-                $('.'+selector).click();
+                $('.' + selector).click();
             });
         });
 

@@ -158,4 +158,14 @@ class ProductCategoryController extends Controller
         }
         return response()->json($list);
     }
+
+    public function apiCategoriesWithChild()
+    {
+        $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
+        $list       = [];
+        foreach ($categories as $key => $category) {
+            $list[$category->name] = $category->subcategories;
+        }
+        return response()->json($list);
+    }
 }

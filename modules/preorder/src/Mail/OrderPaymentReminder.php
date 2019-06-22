@@ -31,7 +31,7 @@ class OrderPaymentReminder extends Mailable
      * @param object $transaction
      * @return mixed
      */
-    public function __construct(int $times,Transaction $transaction)
+    public function __construct(int $times, Transaction $transaction)
     {
         $this->times        = $times;
         $this->transaction  = $transaction;
@@ -44,10 +44,11 @@ class OrderPaymentReminder extends Mailable
      */
     public function build()
     {
-        
-        return $this->subject('Payment Reminder #'.$this->times)
-        ->markdown('preorder::emails.orders.payment-reminder')->with([
-            'transaction' => $this->transaction
-        ]);
+
+        return $this->subject('Payment Reminder #' . $this->transaction->invoice)
+            ->view('preorder::emails.orders.payment-reminder')->with([
+                'title' => 'Payment Reminder #' . $this->transaction->invoice,
+                'transaction' => $this->transaction
+            ]);
     }
 }

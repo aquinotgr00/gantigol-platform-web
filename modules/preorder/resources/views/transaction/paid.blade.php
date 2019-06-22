@@ -23,7 +23,7 @@
                     "render": function(data, type, row) {
                         var variant_qty = "";
                         $.each(data, function(key, val) {
-                            variant_qty += val.size.toUpperCase() + " : ";
+                            variant_qty += val.product_variant.variant + " : ";
                             variant_qty += val.qty + "<br/>";
                         });
                         return variant_qty;

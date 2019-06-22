@@ -1,4 +1,4 @@
-@extends('preorder::emails.layouts.gantigol')
+@extends('ecommerce::emails.layouts.gantigol')
 
 @section('content')
 <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
@@ -24,8 +24,8 @@
         </tr>
         <tr>
             <td colspan="2" style="padding-top: 0px; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; color: #000000; font-family: 'Postmates Std', 'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 20px; font-smoothing: always; font-style: normal; font-weight: 600; letter-spacing: -0.5px; line-height: 52px; mso-line-height-rule: exactly; text-decoration: none;">
-                MOHON SEGERA SELESAIKAN PEMBAYARAN ANDA
-                <p style="font-size:20px;margin-top:0px ; font-weight: 400; line-height: 1.3">Checkout berhasil pada {{ date_format($transaction->created_at, "j F Y h:m") }}</p>
+                PEMBAYARAN SUKSES
+                <p style="font-size:20px;margin-top:0px ; font-weight: 400; line-height: 1.3">Pembayaran berhasil dilakukan pada {{ date_format($transaction->created_at, "j F Y h:m") }}</p>
             </td>
         </tr>
         <tr>
@@ -54,18 +54,8 @@
                 <p></p>
                 <h3 style="font-size:14px;font-weight:bold;margin:0px">INVOICE: {{ $transaction->invoice }}</h3>
                 <p style="font-size:14px;margin-top:0px;font-weight:bold">Total pembayaran : Rp. {{ number_format($transaction->amount) }}</p>
-                @php
-                $payment_duedate = date('Y-m-d');
-                if(!is_null($transaction->payment_duedate)){
-                    $payment_duedate = date_format(date_create($transaction->payment_duedate), "j F Y h:m");
-                }
-                @endphp
-                <p style="font-size:14px;margin-top:0px;font-weight:bold">Batas waktu pembayaran : {{ $payment_duedate }}</p>
+                
                 <table class="row" style="border-collapse: collapse; border-spacing: 0; display: table; padding: 0; position: relative; text-align: left; vertical-align: top; width: 100%;">
-                    <tbody>
-
-
-                    </tbody>
                     <tbody>
                         <tr style="padding:0;text-align:left;vertical-align:top">
                         </tr>

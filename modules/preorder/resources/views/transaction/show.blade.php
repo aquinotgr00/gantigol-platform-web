@@ -4,7 +4,19 @@
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 <style>
-    .card-transaction{
+    .card-heading-content {
+        margin-top: 8px;
+    }
+
+    .card-heading-content>.clearfix .float-left>h4 {
+        font-family: Source Sans Pro;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 14px;
+    }
+
+    .card-transaction {
         height: 406px;
     }
 </style>
@@ -13,15 +25,26 @@
 @push('scripts')
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#dataTable').DataTable();
     });
 </script>
 @endpush
 
 @section('content')
+
+@if(isset($transaction->customer))
+
+@php
+
+$customer = $transaction->customer;
+
+@endphp
+
+@include('customers::customers.modal-edit',['customer' => $customer])
+
+@endif
 
 <div class="row">
     <div class="col-12 col-md-4">
@@ -33,7 +56,50 @@
                             <h4>Customer Info</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#">
+                            <a href="#EditCustomerInfo" data-toggle=modal>
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <p>{{ $customer->name }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <p>{{ $customer->address }}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Zip Code</label>
+                        <p>{{ $customer->zip_code }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <p>{{ $customer->phone }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <p>{{ $customer->email }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card card-default card-transaction">
+            <div class="card-body">
+                <div class="card-heading-content">
+                    <div class="clearfix">
+                        <div class="float-left">
+                            <h4>Shipping Info</h4>
+                        </div>
+                        <div class="float-right">
+                            <a href="#editShipping" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                         </div>
@@ -73,54 +139,17 @@
                 <div class="card-heading-content">
                     <div class="clearfix">
                         <div class="float-left">
-                            <h4>Shipping Info</h4>
-                        </div>
-                        <div class="float-right">
-                            <a href="#">
-                                <i class="fas fa-pencil-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <hr>
-                </div>
-
-                <div>
-                    <div class="form-group">
-                        <label>Name</label>
-                        <p>{{ $transaction->name }}</p>
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <p>{{ $transaction->address }}</p>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Zip Code</label>
-                        <p>{{ $transaction->postal_code }}</p>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone</label>
-                        <p>{{ $transaction->phone }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-4">
-        <div class="card card-default card-transaction">
-            <div class="card-body">
-                <div class="card-heading-content">
-                    <div class="clearfix">
-                        <div class="float-left">
                             <h4>Shipping Details</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#">
+                            <a href="#editStatus" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
+                            <!--
                             <a href="#">
                                 <i class="fas fa-shipping-fast"></i>
                             </a>
+-->
                         </div>
                     </div>
                     <hr>
@@ -140,14 +169,19 @@
                         <p> - </p>
                         @endif
                     </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <p>{{ $transaction->note }}</p>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="row" style="margin-top:10px;">
+
+<div class="row" style="margin-top: 10px;">
     <div class="col">
-        
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable">
                 <thead>
@@ -163,14 +197,10 @@
                     <tr>
                         <td>{{ $key+1 }}</td>
                         <td>
-                            @if(isset($value->productVariant->id))
-                                {{ $value->productVariant->product->name }}
-                            @endif
+                            {{ strtoupper($value->model) }}
                         </td>
                         <td>
-                            @if(isset($value->productVariant->size_code))
-                                {{ $value->productVariant->size_code }}
-                            @endif
+                            {{ strtoupper($value->size) }}
                         </td>
                         <td>
                             {{ $value->qty }}
@@ -188,5 +218,9 @@
         </div>
     </div>
 </div>
+
+
+@include('preorder::partials.modal-edit-shipping')
+@include('preorder::partials.modal-edit-status')
 
 @endsection

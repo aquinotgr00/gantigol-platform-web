@@ -167,11 +167,8 @@ class ProductionApiController extends Controller
             ) {
                 try {
                     if ($production->tracking_number !== $request->tracking_number[$key]) {
-                        $send = [
-                            'tracking_number' => $production->tracking_number,
-                            'invoice' => $production->getTransaction->invoice
-                        ];
-                        Mail::to($production->getTransaction->email)->send(new WayBill($send));
+                        
+                        Mail::to($production->getTransaction->email)->send(new WayBill($transaction));
                         $production->tracking_number = $tracking_number;
                     }
                 } catch (\Swift_TransportException $e) {

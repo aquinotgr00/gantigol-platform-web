@@ -7,14 +7,19 @@
         @sidebarNavItem(['routeName'=>'media.library','title'=>'Media Library'])
         <!-- Nav Item - Users -->
         @can('view-users')
-        <li>
-            <a href="#userSubmenu" data-toggle="collapse" aria-expanded="false">User Management</a>
-            <ul class="collapse list-unstyled" id="userSubmenu">
-                @sidebarNavItem(['routeName'=>'list-customer.index','title'=>'Customers'])
-                @sidebarNavItem(['routeName'=>'list-membership.index','title'=>'Memberships'])
-                @sidebarNavItem(['routeName'=>'users.index','title'=>'Administrator'])
-            </ul>
-        </li>
+        @sidebarSubmenuNav([
+            'submenu'=>'user',
+            'title'=>'User Management',
+            'submenuItems'=>[
+                ['routeName'=>'list-customer.index','title'=>'Customers'],
+                ['routeName'=>'list-membership.index','title'=>'Memberships'],
+                ['routeName'=>'users.index','title'=>'Administrator']
+            ],
+            'expandables'=>[
+                'users.create',
+                'users.edit',
+            ]
+        ])
         @endcan
 
         @if(class_exists('\Modules\Product\Product'))

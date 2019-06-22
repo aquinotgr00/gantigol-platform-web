@@ -1,13 +1,14 @@
 @push('scripts')
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var datatables = $('#batchDataTable').DataTable({
             "ajax": "{{ route('batch-by-preorder',$preOrder->id) }}",
-            "columns": [
-                { "data": "start_production_date" },
-                { 
+            "columns": [{
+                    "data": "start_production_date"
+                },
+                {
                     "data": "batch_name",
-                    "render": function(data, type,row){
+                    "render": function(data, type, row) {
                         if ($('input[name="view_batch"]')) {
                             var button = "";
                             button += "<a href='{{ url('admin/shipping-transaction') }}/" + row.id + "'>";
@@ -15,55 +16,38 @@
                             button += "</a>";
                             return button;
                         }
-                    } 
+                    }
                 },
-                { "data": "batch_qty" },
+                {
+                    "data": "batch_qty"
+                },
                 {
                     "data": "get_productions",
-                    "render": function (data, type, row) {
+                    "render": function(data, type, row) {
 
-                        var x = 0;
-                        var qty_s = 0;
-                        var qty_m = 0;
-                        var qty_l = 0;
-                        var qty_xl = 0;
+                        var variant = "";
+                        var variants = [];
+                        var obj = [];
+                        $.each(data, function(key, val) {
+                            var amount = 0;
+                            $.each(val.get_transaction.orders, function(index, data) {
 
-                        $.each(data, function (key, val) {
-                            $.each(val.get_transaction.orders, function (index, data) {
-                                
-                                var size_code = data.product_variant.size_code;
-                                if (size_code.length > 0) {
-                                    size_code = size_code.toLowerCase();
-                                }
-                                switch (size_code) {
-                                    case 's':
-                                        qty_s += parseInt(data.qty);
-                                        break;
-                                    case 'm':
-                                        qty_m += parseInt(data.qty);
-                                        break;
-                                    case 'l':
-                                        qty_l += parseInt(data.qty);
-                                        break;
-                                    case 'xl':
-                                        qty_xl += parseInt(data.qty);
+                                switch (data.product_variant.variant) {
+                                    case data.product_variant.variant:
+                                        amount += parseInt(data.qty);
                                         break;
                                 }
+                                variants[data.product_variant.variant] = amount;
                             });
                         });
-                        var variant = "";
-                        variant += "S: " + qty_s + "<br/>";
-                        variant += "M: " + qty_m + "<br/>";
-                        variant += "L: " + qty_l + "<br/>";
-                        variant += "XL: " + qty_xl + "<br/>";
-                        return variant;
+                        return variants;
                     }
                 },
                 {
                     "data": "get_productions",
-                    "render": function (data, type, row) {
+                    "render": function(data, type, row) {
                         var amount = 0;
-                        $.each(data, function (key, val) {
+                        $.each(data, function(key, val) {
 
                             if (val.status == 'ready_to_ship') {
                                 amount++;
@@ -74,8 +58,8 @@
                 },
                 {
                     "data": "id",
-                    "render": function (data, type, row) {
-                        var button = '<a href="{{ url("admin/shipping-sticker") }}/'+ data +'" class="btn btn-table circle-table print-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print"></a>';
+                    "render": function(data, type, row) {
+                        var button = '<a href="{{ url("admin/shipping-sticker") }}/' + data + '" class="btn btn-table circle-table print-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print"></a>';
                         return button;
                     }
                 }
