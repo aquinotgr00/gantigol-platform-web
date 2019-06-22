@@ -28,7 +28,7 @@ class CartApiController extends Controller
             if (isset($cart->getItems)) {
                 foreach ($cart->getItems as $key => $value) {
                     if (isset($value->productVariant)) {
-                        $value->productVariant;
+                        $value->productVariant->product->preOrder;
                     }
                 }
             }
@@ -48,7 +48,7 @@ class CartApiController extends Controller
                 
                 foreach ($cart->getItems as $key => $value) {
                     if (isset($value->productVariant)) {
-                        $value->productVariant;
+                        $value->productVariant->product->preOrder;
                     }
                 }
             }
