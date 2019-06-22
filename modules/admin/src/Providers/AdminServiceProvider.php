@@ -33,7 +33,7 @@ class AdminServiceProvider extends ServiceProvider
         'addNewButton',
         'pageHeader',
         'sidebarNavItem',
-        'useDatatables'
+        'useDatatables',
         'sidebarSubmenuNav'
     ];
     
