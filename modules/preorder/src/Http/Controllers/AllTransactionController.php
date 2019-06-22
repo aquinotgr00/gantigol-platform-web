@@ -11,12 +11,55 @@ use Validator;
 
 class AllTransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $orders = (new Transaction)->newQuery();
+        if ($request->has(['startdate', 'enddate'])) {
+            //
+            $orders = $orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+        }
+        $orders->get();
+
+        if ($request->has('status')) {
+
+            $status = trim($request->status);
+            if (
+                !empty($status) &&
+                in_array($status, ['pending', 'paid', 'shipped', 'rejected', 'returned', 'completed'])
+            ) {
+
+                $orders = Transaction::where('status', $status);
+            }
+        }
+
+        if ($request->has('invoice')) {
+
+            $invoice = trim($request->invoice);
+
+            if (!empty($invoice)) {
+                $orders = Transaction::where('invoice', 'like', '%' . $invoice . '%')
+                    ->orWhere('name', 'like', '%' . $invoice . '%');
+            }
+        }
+        if ($request->ajax()) {
+            return DataTables::of($orders)
+                ->addColumn('id', function ($query) {
+                    $checkbox = '<input type="checkbox" name="id[]" class="rowCheck" value="' . $query->id . '" />';
+                    return $checkbox;
+                })
+                ->addColumn('invoice', function ($query) {
+                    $link = '<a href="' . route('all-transaction.show', $query->id) . '" >';
+                    $link .= $query->invoice;
+                    $link .= '</a>';
+                    return $link;
+                })
+                ->rawColumns(['id', 'invoice'])
+                ->make(true);
+        }
         $data = [
             'title' => 'Transaction'
         ];
-        return view('preorder::all-transaction.index', compact('data'));
+        return view('preorder::all-transaction.index', compact('orders', 'data'));
     }
 
     public function show(int $id)
@@ -37,47 +80,12 @@ class AllTransactionController extends Controller
     }
 
     public function ajaxAllTransactions(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'status' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            $transaction = Transaction::with('getProduction');
-        } else {
-            $transaction = Transaction::with('getProduction')
-                ->where('status', $request->status);
-        }
-
-        return Datatables::of($transaction)
-            ->addColumn('id', function ($data) {
-                $checkbox = '<input type="checkbox" name="id[]" value="' . $data->id . '"/>';
-                return $checkbox;
-            })
-            ->addColumn('invoice', function ($data) {
-                $link  = '<a href="' . route('all-transaction.show', $data->id) . '">';
-                $link .= $data->invoice;
-                $link .= '</a>';
-                return $link;
-            })
-            ->filter(function ($query) use ($request) {
-                if ($request->has('invoice')) {
-                    $query->where('transactions.invoice', 'like', "%{$request->get('invoice')}%")
-                        ->orWhere('transactions.name', 'like', "%{$request->get('invoice')}%");
-                }
-
-                if ($request->has('date')) {
-                    $query->where('getProduction.created_at', 'like', "%{$request->get('date')}%");
-                }
-            })
-            ->rawColumns(['id', 'invoice'])
-            ->make(true);
-    }
+    { }
 
     public function update(Request $request, int $id)
     {
         if ($request->has('tracking_number')) {
-            
+
             $request->validate([
                 'status' => 'in:pending,paid,shipped,rejected,returned,completed',
             ]);
@@ -89,7 +97,7 @@ class AllTransactionController extends Controller
                 ]);
             }
         } else {
-            
+
             $request->validate([
                 'name' => 'required',
                 'email' => 'required',

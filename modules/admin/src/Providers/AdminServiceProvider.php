@@ -34,6 +34,7 @@ class AdminServiceProvider extends ServiceProvider
         'pageHeader',
         'sidebarNavItem',
         'useDatatables'
+        'sidebarSubmenuNav'
     ];
     
     private $bladeComponents = ['modal','toast','indexPage','table'];
