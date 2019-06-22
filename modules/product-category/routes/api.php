@@ -1,2 +1,2 @@
 <?php
-Route::get('categories', 'ProductCategoryController@apiProductCategories')->name('api.product-categories');        
+Route::get('categories', 'ProductCategoryController@apiCategoriesWithChild')->name('api.product-categories');        

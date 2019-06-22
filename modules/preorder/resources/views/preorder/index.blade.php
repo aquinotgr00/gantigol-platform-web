@@ -18,7 +18,7 @@
                 timer = setTimeout(callback.bind(that), ms);
             };
         })();
-        
+
         var datatables = $('#dataTable').DataTable({
             processing: true,
             serverSide: true,
@@ -39,10 +39,10 @@
                     data: 'end_date'
                 },
                 {
-                    data: 'product.price'
+                    data: 'order_received'
                 },
                 {
-                    data: 'order_received'
+                    data: 'product.price'
                 },
                 {
                     data: 'action'

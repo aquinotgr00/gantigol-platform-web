@@ -21,14 +21,19 @@ class AllTransactionController extends Controller
         $orders->get();
 
         if ($request->has('status')) {
-            $status = config('ecommerce.order.status');
-            if (isset($status[$request->status])) {
-                $status_id = $status[$request->status];
-                $orders = Transaction::where('status', $status_id);
+
+            $status = trim($request->status);
+            if (
+                !empty($status) &&
+                in_array($status, ['pending', 'paid', 'shipped', 'rejected', 'returned', 'completed'])
+            ) {
+
+                $orders = Transaction::where('status', $status);
             }
         }
 
         if ($request->has('invoice')) {
+
             $invoice = trim($request->invoice);
 
             if (!empty($invoice)) {
@@ -54,7 +59,7 @@ class AllTransactionController extends Controller
         $data = [
             'title' => 'Transaction'
         ];
-        return view('preorder::all-transaction.index', compact('orders','data'));
+        return view('preorder::all-transaction.index', compact('orders', 'data'));
     }
 
     public function show(int $id)

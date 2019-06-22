@@ -46,7 +46,11 @@
                 @if(isset($categories))
                 <option value="">Choose one</option>
                 @foreach($categories as $key => $category)
-                @include('product::includes.productcategory-option', ['category'=>$category, 'parent'=>''])
+                @include('product::includes.productcategory-option', [
+                'category' => $category,
+                'parent' => '',
+                'selected' => (isset($productSize->category))? $productSize->category : NULL
+                ])
                 @endforeach
                 @endif
             </select>

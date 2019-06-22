@@ -323,6 +323,7 @@ class ProductController extends Controller
     {
         $product = DB::table('product_variants')
             ->join('products', 'products.id', '=', 'product_variants.product_id')
+            ->join('pre_orders', 'pre_orders.product_id', '!=', 'product_variants.product_id')
             ->select(
                 'product_variants.*',
                 'products.name',
