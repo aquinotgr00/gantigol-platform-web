@@ -1,6 +1,5 @@
 <!-- Modal Edit Customer Info-->
-<div class="modal fade" id="EditCustomerInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
+<div class="modal fade" id="EditCustomerInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -22,12 +21,26 @@
                     </div>
                     <div class="form-group">
                         <label>Address</label>
-                        <textarea type="text" class="form-control" name="address"
-                            rows="3">{{ $customer->address }}</textarea>
+                        <textarea type="text" class="form-control" name="address" rows="3">{{ $customer->address }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Subdistrict</label>
+                        <br />
+                        <select type="text" class="form-control col-12" name="subdistrict_id" style="width:466px;">
+                            <option value="">Choose One</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <p id="city"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        <p id="province"></p>
                     </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <input type="text" class="form-control" name="zip_code" value="{{ $customer->zip_code }}" />
+                        <p id="zip_code"></p>
                     </div>
                     <div class="form-group">
                         <label>Phone Number</label>
@@ -48,8 +61,8 @@
 <!-- Modal Edit Customer Info -->
 @push('scripts')
 <script>
-    $(document).ready(function () {
-        $('#form-edit-customer').submit(function (event) {
+    $(document).ready(function() {
+        $('#form-edit-customer').submit(function(event) {
             event.preventDefault();
             var formData = new FormData(this);
             $.ajax({
@@ -58,9 +71,9 @@
                 data: formData,
                 contentType: false,
                 processData: false,
-                success: function (res) {
+                success: function(res) {
                     if (typeof res.data.id === 'undefined') {
-                        $.each(res.data, function (key, val) {
+                        $.each(res.data, function(key, val) {
                             if (key == 'address') {
                                 $('textarea[name="' + key + '"]').css('border', '1px solid #dc3545');
                                 $('textarea[name="' + key + '"]').after('<small class="text-danger">' + val[0] + '<small>');

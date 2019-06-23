@@ -20,7 +20,7 @@
                             <option value="">Choose one</option>
                             @if(isset($status))
                             @foreach($status as $key => $value)
-                            <option value="{{ $value }}">{{ ucwords($value) }}</option>
+                            <option value="{{ $value }}" {{ ($transaction->status == $value)? 'selected' : '' }}>{{ ucwords($value) }}</option>
                             @endforeach
                             @endif
                         </select>

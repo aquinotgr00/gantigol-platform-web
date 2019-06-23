@@ -11,6 +11,7 @@ use Modules\Ecommerce\Cart;
 use Modules\Ecommerce\Order;
 use Modules\Membership\Member;
 use Modules\Ecommerce\Traits\OrderTrait;
+use Modules\Shipment\Subdistrict;
 use Validator;
 use DB;
 
@@ -49,6 +50,18 @@ class CheckoutApiController extends Controller
             $request->request->add(['customer_id' => $request->customer_id]);
         }
 
+        $subdistrict = Subdistrict::find($request->shipping_subdistrict_id)->with('city.province')->first();
+
+        if (!is_null($subdistrict)) {
+
+            $request->request->add([
+                'shipping_subdistrict' => $subdistrict->name,
+                'shipping_city' => $subdistrict->city->name,
+                'shipping_province' => $subdistrict->city->province->name,
+                'shipping_zip_code' => $subdistrict->city->postal_code,
+            ]);
+        }
+
         if ($request->has('user_id')) {
 
             $member = Member::find($request->user_id);
@@ -60,7 +73,8 @@ class CheckoutApiController extends Controller
                         'email' => $member->email,
                         'phone' => $member->phone,
                         'address' => $member->address,
-                        'birthdate' => date('Y-m-d')
+                        'birthdate' => date('Y-m-d'),
+                        'zip_code' => $request->postal_code
                     ]
                 );
 
@@ -89,6 +103,15 @@ class CheckoutApiController extends Controller
             $request->request->add(['billing_address' => $request->shipping_address]);
         }
 
+        if (
+            is_null($customer->subdistrict_id) ||
+            $customer->subdistrict_id < 0
+        ) {
+            $customer->update([
+                'subdistrict_id' => $request->shipping_subdistrict_id
+            ]);
+        }
+
         $cart = Cart::where('session', $request->session)->first();
 
         if (!is_null($cart)) {
@@ -108,11 +131,11 @@ class CheckoutApiController extends Controller
                         ];
                         $subtotal       = intval($value->qty) * intval($value->price);
                         $total_amount += intval($subtotal);
-                        
+
                         $qty_reduced = intval($value->productVariant->quantity_on_hand) - intval($value->qty);
-                        
-                        if ($qty_reduced < 0 ) {
-                            
+
+                        if ($qty_reduced < 0) {
+
                             return response()->json([
                                 'data' => 'Out of stock ',
                                 'status' => 462
@@ -186,18 +209,18 @@ class CheckoutApiController extends Controller
 
                 $addtional = [
                     [
-                        'id' => $request->shipment_name.'1',
+                        'id' => $request->shipment_name . '1',
                         'name' => $request->shipment_name,
                         'quantity' => 1,
                         'price' => $order->shipping_cost,
                         'subtotal' => $order->shipping_cost
                     ],
                     [
-                        'id' => $order->discount.'1',
+                        'id' => $order->discount . '1',
                         'name' => 'Discount',
                         'quantity' => 1,
-                        'price' => (is_null($order->discount))? 0 : intval(-$order->discount),
-                        'subtotal' => (is_null($order->discount))? 0 : intval(-$order->discount)
+                        'price' => (is_null($order->discount)) ? 0 : intval(-$order->discount),
+                        'subtotal' => (is_null($order->discount)) ? 0 : intval(-$order->discount)
                     ]
                 ];
 

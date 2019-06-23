@@ -20,7 +20,7 @@
                             <option value="">Choose one</option>
                             @if(isset($status))
                             @foreach($status as $key => $value)
-                            <option value="{{ $value }}">{{ $key }}</option>
+                            <option value="{{ $value }}" {{ ($order->order_status == $value)? 'selected' : '' }}>{{ $key }}</option>
                             @endforeach
                             @endif 
                         </select>

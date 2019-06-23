@@ -169,7 +169,9 @@ class ShippingController extends Controller
         
         $term = $request->query('q');
         if($term) {
-            $subdistricts->where('name','like','%'.$term.'%');
+            $subdistricts
+            ->where('name','like','%'.$term.'%')
+            ->select('subdistricts.*','subdistricts.name as text');
         }
         return $subdistricts->paginate(10);
     }
