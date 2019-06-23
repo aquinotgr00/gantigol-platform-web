@@ -22,20 +22,34 @@
                         <label>Address</label>
                         <textarea name="address" class="form-control">{{ $transaction->address }}</textarea>
                     </div>
-
+                    <div class="form-group">
+                        <label>Subdistrict</label>
+                        <br />
+                        <select type="text" class="form-control col-12" name="subdistrict_id" style="width:466px;">
+                            <option value="">Choose One</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <p id="city"></p>                        
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        <p id="province"></p>
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <input type="number" name="postal_code" value="{{ $transaction->postal_code }}" class="form-control"/>
+                        <p id="zip_code"></p>
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
-                        <input type="text" name="phone" value="{{ $transaction->phone }}" class="form-control"/>
+                        <input type="text" name="phone" value="{{ $transaction->phone }}" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" name="email" value="{{ $transaction->email }}" class="form-control"/>
+                        <input type="email" name="email" value="{{ $transaction->email }}" class="form-control" />
                     </div>
-                    
+
                     <div class="text-right">
                         <button class="btn btn-primary" type="submit">
                             Save

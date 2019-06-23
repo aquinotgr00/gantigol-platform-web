@@ -108,8 +108,7 @@ class AllTransactionController extends Controller
             ]);
         }
 
-        $transaction = Transaction::findOrFail($id);
-
+        $transaction = Transaction::findOrFail($id);        
         $transaction->update($request->except('_token', '_method'));
 
         return back();
