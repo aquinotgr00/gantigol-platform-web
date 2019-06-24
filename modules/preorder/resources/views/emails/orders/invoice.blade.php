@@ -28,8 +28,8 @@
                         </tr>
                         <tr>
                             <td colspan="2" style="padding-top: 0px; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; color: #000000; font-family: 'Postmates Std', 'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 28px; font-smoothing: always; font-style: normal; font-weight: 600; letter-spacing: -0.5px; line-height: 52px; mso-line-height-rule: exactly; text-decoration: none;">
-                                INVOICE: INV-2018-02-13-00001
-                                <p style="font-size:20px;margin-top:0px ; font-weight: 400; line-height: 1.3">Nama: Chu id</p>
+                                INVOICE: {{ $invoice['invoice'] }}
+                                <p style="font-size:20px;margin-top:0px ; font-weight: 400; line-height: 1.3">Nama: {{ $invoice['billing_name'] }}</p>
                             </td>
                         </tr>
                         <tr>
@@ -50,10 +50,6 @@
                         <tr style="padding: 0; text-align: left; vertical-align: top;">
                             <td style="padding: 10px; background: #eaeaea; border: 1px #CCC solid;">
 
-                                <center>
-
-                                </center>
-
                                 <table class="row" style="border-collapse: collapse; border-spacing: 0; display: table; padding: 0; position: relative; text-align: left; vertical-align: top; width: 100%;">
                                     <tbody>
                                         <tr style="padding: 0; text-align: left; vertical-align: top;">
@@ -65,18 +61,18 @@
                                                             <th style="Margin: 0; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; padding: 0; text-align: left;">
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-top:10px;margin-bottom: 10px; padding: 0; text-align: center;">
-                                                                    <strong>Billing Name</strong><br> Chu id
+                                                                    <strong>Billing Name</strong><br> {{ $invoice['billing_name'] }}
                                                                 </p>
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align:center;">
-                                                                    <strong>Billing Address</strong><br> Jl Satu No.1, Terban <br> Gondokusuman, Yogyakarta, DI Yogyakarta, 55221
+                                                                    <strong>Billing Address</strong><br>{{ $invoice['billing_address'] }}
                                                                 </p>
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align:center;">
-                                                                    <strong>Billing Phone</strong><br> 082100200300</p>
+                                                                    <strong>Billing Phone</strong><br> {{ $invoice['billing_phone'] }}</p>
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align: center;">
-                                                                    <strong>Billing Contact</strong><br> 082100200300
+                                                                    <strong>Billing Contact</strong><br> {{ $invoice['billing_phone'] }}
                                                                 </p>
 
                                                             </th>
@@ -92,19 +88,19 @@
                                                             <th style="Margin: 0; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; padding: 0; text-align: left;">
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-top:10px;margin-bottom: 10px; padding: 0; text-align: center;">
-                                                                    <strong>Shipping Name</strong><br> Chu id
+                                                                    <strong>Shipping Name</strong><br> {{ $invoice['shipping_name'] }}
                                                                 </p>
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align: center;">
-                                                                    <strong>Shipping Address</strong><br> Jl Satu No.1, Terban <br> Gondokusuman, Yogyakarta, DI Yogyakarta, 55221
+                                                                    <strong>Shipping Address</strong><br>{{ $invoice['shipping_address'] }}
                                                                 </p>
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align:center;">
-                                                                    <strong>Shipping Contact</strong><br> 082100200300</p>
+                                                                    <strong>Shipping Contact</strong><br> {{ $invoice['shipping_phone'] }}</p>
 
 
                                                                 <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica,Arial,sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align: center;">
-                                                                    <strong>Shipping Courier</strong><br> POS PAKET KILAT KHUSUS
+                                                                    <strong>Shipping Courier</strong><br> {{ $invoice['shipping_courier'] }}
                                                                 </p>
 
                                                             </th>
@@ -140,12 +136,19 @@
                         <tr style="border-top:solid 1px #CCC;">
                             <td colspan="3" style="padding:5px;"></td>
                         </tr>
+                        @foreach($invoice['orders'] as $key => $value)
                         <tr>
-                            <td style="padding:0px 10px; font-size:14px;">Sweater Wild Grey [L]</td>
-                            <td style="padding:0px 10px; font-size:14px; text-align:center">1</td>
-                            <td style="padding:0px 10px; font-size:14px; text-align:right">Rp. 270,000</td>
+                            <td style="padding:0px 10px; font-size:14px;">
+                            {{ $value->productVariant->name }}
+                            </td>
+                            <td style="padding:0px 10px; font-size:14px; text-align:center">
+                            {{ $value->qty }}
+                            </td>
+                            <td style="padding:0px 10px; font-size:14px; text-align:right">
+                            Rp. {{ $value->subtotal }}
+                        </td>
                         </tr>
-
+                        @endforeach
                         <tr>
                             <td colspan="3" style="padding:5px;"></td>
                         </tr>
@@ -155,7 +158,7 @@
 
                         <tr>
                             <td style="padding:0px 10px; font-size:14px;">Subtotal</td>
-                            <td colspan="2" style="padding:0px 10px; font-size:14px;text-align:right">Rp. 270,000</td>
+                            <td colspan="2" style="padding:0px 10px; font-size:14px;text-align:right">Rp. {{ number_format($invoice['net_total']) }}</td>
                         </tr>
 
                         <tr>
@@ -166,7 +169,7 @@
                         </tr>
                         <tr>
                             <td style="padding:0px 10px; font-size:14px;">Courier Service</td>
-                            <td colspan="2" style="padding:0px 10px; font-size:14px;text-align:right">Rp. 9,500</td>
+                            <td colspan="2" style="padding:0px 10px; font-size:14px;text-align:right">Rp. {{ number_format($invoice['shipping_cost']) }}</td>
                         </tr>
 
                         <tr>
@@ -178,7 +181,7 @@
 
                         <tr>
                             <td style="padding:0px 10px; font-size:14px;">Total</td>
-                            <td colspan="2" style="padding:0px 10px; font-size:14px;text-align:right">Rp. 279,500</td>
+                            <td colspan="2" style="padding:0px 10px; font-size:14px;text-align:right">Rp. {{ number_format($invoice['gross_total']) }}</td>
                         </tr>
                     </tbody>
                 </table>

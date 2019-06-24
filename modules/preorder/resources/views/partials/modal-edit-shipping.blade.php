@@ -31,15 +31,15 @@
                     </div>
                     <div class="form-group">
                         <label>City</label>
-                        <p id="city"></p>                        
+                        <p id="shipping-city"></p>                        
                     </div>
                     <div class="form-group">
                         <label>Province</label>
-                        <p id="province"></p>
+                        <p id="shipping-province"></p>
                     </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <p id="zip_code"></p>
+                        <p id="shipping-zip_code"></p>
                     </div>
                     <div class="form-group">
                         <label>Phone</label>

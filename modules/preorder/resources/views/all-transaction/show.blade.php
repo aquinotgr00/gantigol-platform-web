@@ -63,6 +63,9 @@
 
         $('select[name="subdistrict_id"]').on('select2:select', function(e) {
             var data = e.params.data;
+            $('#shipping-province').text(data.city.province.name);
+            $('#shipping-city').text(data.city.name);
+            $('#shipping-zip_code').text(data.city.postal_code);
             $('#province').text(data.city.province.name);
             $('#city').text(data.city.name);
             $('#zip_code').text(data.city.postal_code);
