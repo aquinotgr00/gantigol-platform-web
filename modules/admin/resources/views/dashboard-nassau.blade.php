@@ -294,4 +294,59 @@
 <script src="{{ asset('vendor/admin/js/chart-area-demo.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/chart-pie-demo.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/chart-bar-demo.js') }}"></script>
+<script src="//js.pusher.com/3.1/pusher.min.js"></script>
+  <script>
+  // this put your api token in every jquery ajax request
+  $.ajaxSetup({
+    headers: {
+      Authorization: 'Bearer:' + $('meta[name="api-token"]').attr("content")
+    }
+  });
+
+  // notification stuff
+  // https://pusher.com/tutorials/web-notifications-laravel-pusher-channels
+  var notificationsWrapper   = $('.alert-notifications');
+  var notificationsCountElem = $('i.count-notification');
+  var notificationsCount     = parseInt(notificationsCountElem.data('count'));
+  var notifications          = notificationsWrapper.find('div.item-notification');
+
+  if (notificationsCount <= 0) {
+    notificationsWrapper.hide();
+  }
+
+  // Enable pusher logging - don't include this in production
+  Pusher.logToConsole = true;
+
+  var pusher = new Pusher('a80d8a4837ae36fd302d', {
+    cluster: 'ap1',
+    useTLS: true,
+    encrypted: true
+  });
+
+  // Subscribe to the channel we specified in our Laravel Event
+  var channel = pusher.subscribe('quota-fulfilled');
+
+  channel.bind('pusher:subscription_succeeded', function(members) {
+      console.log('successfully subscribed!');
+  });
+
+  // Bind a function to a Event (the full Laravel class)
+  channel.bind('\\Modules\\Preorder\\Events\\QuotaFulfilled', function(data) {
+    var existingNotifications = notifications.html();
+    var newNotificationHtml = `<div class="alert alert-primary" role="alert">`+data.message+`
+        <a href="`+data.url+`" class="dropdown-item">
+            Set Preorder
+        </a></div>`;
+
+    notifications.html(newNotificationHtml + existingNotifications);
+
+    notificationsCount += 1;
+    notificationsCountElem.attr('data-count', notificationsCount);
+    notificationsWrapper.find('.notif-count').text(notificationsCount);
+    notificationsWrapper.show();
+  });
+  </script>
+  <!-- Argon JS -->
+  <script src="{{ asset('js/argon.js?v=1.0.0') }}"></script>
+  <!-- custom script -->
 @endpush

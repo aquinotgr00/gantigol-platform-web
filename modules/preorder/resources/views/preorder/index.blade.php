@@ -95,7 +95,10 @@
     </tool>
 </div>
 <!-- end tools -->
-
+<div class="alert-notifications">
+    <div class="item-notification"></div>
+</div>
+<i data-count="0" class="count-notification"></i>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable" width="100%" cellspacing="0">

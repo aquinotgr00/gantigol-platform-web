@@ -26,6 +26,13 @@
         <div class="form-group">
             <label for="exampleInputCategoryName">{{ ucwords($product->name) }}</label>
             {!! $product->description !!}
+            <b>tags :</b>
+
+            @foreach($product->tags as $key => $value)
+            <span class="badge badge-secondary">{{ $value->name }}</span>
+            @endforeach
+
+
         </div>
         <div class="row">
             <div class="col-sm form-group">
