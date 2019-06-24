@@ -4,6 +4,7 @@ namespace Modules\Preorder\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Modules\Preorder\Http\Resources\TransactionResource;
 use Modules\Preorder\PreOrdersItems;
 use Modules\Preorder\PreOrder;
@@ -13,6 +14,7 @@ use Modules\Product\ProductVariant;
 use Modules\Preorder\Traits\OrderTrait;
 use Modules\Customers\CustomerProfile;
 use Modules\Membership\Member;
+use Modules\Preorder\Mail\InvoiceOrder;
 use Validator;
 
 class TransactionApiController extends Controller
@@ -224,6 +226,24 @@ class TransactionApiController extends Controller
             //create schduler
 
             //$this->scheduleReminders($repeat, $transaction);
+            $invoice = [
+                'billing_name' => (isset($transaction->customer->name)) ? $transaction->customer->name : '',
+                'billing_address' => (isset($transaction->customer->address)) ? $transaction->customer->address : '',
+                'billing_phone' => (isset($transaction->customer->email)) ? $transaction->customer->email : '',
+                'billing_contact' => (isset($transaction->customer->phone)) ? $transaction->customer->phone : '',
+                'shipping_name' => $transaction->name,
+                'shipping_address' => $transaction->address,
+                'shipping_contact' => $transaction->phone,
+                'shipping_phone' => $transaction->phone,
+                'shipping_courier' => $transaction->courier_name,
+                'shipping_cost' => $transaction->courier_fee,
+                'net_total' => $transaction->net_total,
+                'discount' => $transaction->discount,
+                'gross_total' => $transaction->amount,
+                'invoice' => $transaction->invoice,
+                'orders' => $transaction->orders,
+            ];
+            Mail::to($transaction->customer->email)->send(new InvoiceOrder($invoice));
         }
         $transaction->orders;
         foreach ($transaction->orders as $key => $value) {

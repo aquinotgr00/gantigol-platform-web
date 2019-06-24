@@ -5,6 +5,7 @@ namespace Modules\Ecommerce\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Mail;
 
 use Modules\Customers\CustomerProfile;
 use Modules\Ecommerce\Cart;
@@ -12,6 +13,7 @@ use Modules\Ecommerce\Order;
 use Modules\Membership\Member;
 use Modules\Ecommerce\Traits\OrderTrait;
 use Modules\Shipment\Subdistrict;
+use Modules\Preorder\Mail\InvoiceOrder;
 use Validator;
 use DB;
 
@@ -50,7 +52,7 @@ class CheckoutApiController extends Controller
             $request->request->add(['customer_id' => $request->customer_id]);
         }
 
-        $subdistrict = Subdistrict::find($request->shipping_subdistrict_id)->with('city.province')->first();
+        $subdistrict = Subdistrict::find($request->shipping_subdistrict_id);
 
         if (!is_null($subdistrict)) {
 
@@ -74,7 +76,8 @@ class CheckoutApiController extends Controller
                         'phone' => $member->phone,
                         'address' => $member->address,
                         'birthdate' => date('Y-m-d'),
-                        'zip_code' => $request->postal_code
+                        'zip_code' => $request->shipping_zip_code,
+                        'subdistrict_id' => $request->shipping_subdistrict_id
                     ]
                 );
 
@@ -93,7 +96,9 @@ class CheckoutApiController extends Controller
                     'email' => $request->shipping_email,
                     'phone' => $request->shipping_phone,
                     'address' => $request->shipping_address,
-                    'birthdate' => date('Y-m-d')
+                    'birthdate' => date('Y-m-d'),
+                    'zip_code' => $request->shipping_zip_code,
+                    'subdistrict_id' => $request->shipping_subdistrict_id
                 ]
             );
             $request->request->add(['customer_id' => $customer->id]);
@@ -105,10 +110,11 @@ class CheckoutApiController extends Controller
 
         if (
             is_null($customer->subdistrict_id) ||
-            $customer->subdistrict_id < 0
+            is_null($customer->zip_code)
         ) {
             $customer->update([
-                'subdistrict_id' => $request->shipping_subdistrict_id
+                'subdistrict_id' => $request->shipping_subdistrict_id,
+                'zip_code' => $request->shipping_zip_code
             ]);
         }
 
@@ -172,7 +178,25 @@ class CheckoutApiController extends Controller
 
                     //send scdhule reminder
                     //$order->scheduleReminders(3, $order);
+                    $invoice = [
+                        'billing_name' => (isset($order->customer->name)) ? $order->customer->name : '',
+                        'billing_address' => (isset($order->customer->address)) ? $order->customer->address : '',
+                        'billing_phone' => (isset($order->customer->email)) ? $order->customer->email : '',
+                        'billing_contact' => (isset($order->customer->phone)) ? $order->customer->phone : '',
+                        'shipping_name' => $order->shipping_name,
+                        'shipping_address' => $order->shipping_address,
+                        'shipping_contact' => $order->shipping_phone,
+                        'shipping_phone' => $order->shipping_phone,
+                        'shipping_courier' => $order->shipment_name,
+                        'shipping_cost' => $order->shipping_cost,
+                        'net_total' => $order->net_total,
+                        'discount' => $order->discount,
+                        'gross_total' => $order->total_amount,
+                        'invoice' => $order->invoice_id,
+                        'orders' => $order->items,
+                    ];
 
+                    Mail::to($order->billing_email)->send(new InvoiceOrder($invoice));
                 } catch (QueryException $e) {
                     DB::rollback();
                 }
@@ -246,12 +270,5 @@ class CheckoutApiController extends Controller
             }
         }
         return response()->json(['data' => []]);
-
-        if (
-            !is_null($cart) &&
-            !isset($cart->getItems)
-        ) {
-            $cart->delete();
-        }
     }
 }
