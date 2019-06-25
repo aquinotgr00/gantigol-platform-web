@@ -3,17 +3,15 @@
 @section('content')
 @indexPage(['title'=>'Product Variant', 'addNewAction'=>route('product-variant.create')])
 <!-- start table -->
-<div class="table-responsive">
-    <table class="table" id="dataTable">
-        <thead>
-            <tr>
-                <th scope="col">Variant Attribute</th>
-                <th scope="col">Attribute Value</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
-    </table>
-</div>
+<table class="table" id="dataTable">
+    <thead>
+        <tr>
+            <th scope="col">Variant Attribute</th>
+            <th scope="col">Attribute Value</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+</table>
 <!-- end table -->
 @endindexPage
 @endsection

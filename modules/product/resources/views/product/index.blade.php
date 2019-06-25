@@ -10,21 +10,19 @@
 @section('content')
 @indexPage(['title'=>'Products', 'addNewAction'=>route('product.create')])
 <!-- start table -->
-<div class="table-responsive">
-    <table class="table" id="dataTable">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Images</th>
-                <th scope="col">Product Name</th>
-                <th scope="col">Current Stock</th>
-                <th scope="col">Price</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
+<table class="table" id="dataTable">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Images</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Current Stock</th>
+            <th scope="col">Price</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
 
-    </table>
-</div>
+</table>
 <!-- end table -->
 @endindexPage
 

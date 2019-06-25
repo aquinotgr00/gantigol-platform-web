@@ -62,8 +62,8 @@ class PreorderController extends Controller
                 ->rawColumns(['image','product.name', 'action'])
                 ->make(true);
         }
-        $data['title'] = 'Preorder';
-        return view('preorder::preorder.index', compact('data'));
+        
+        return view('preorder::preorder.index');
     }
     /**
      *

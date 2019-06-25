@@ -3,17 +3,15 @@
 @section('content')
 @indexPage(['title'=>'Product Size Chart', 'addNewAction'=>route('product-size-chart.create')])
 <!-- start table -->
-<div class="table-responsive">
-    <table class="table" id="dataTable">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Size Chart Name</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-    </table>
-</div>
+<table class="table" id="dataTable">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Size Chart Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+</table>
 <!-- end table -->
 @endindexPage
 @endsection

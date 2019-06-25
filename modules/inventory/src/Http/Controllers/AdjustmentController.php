@@ -24,10 +24,8 @@ class AdjustmentController extends Controller
             'component' => 'content-title-button',
             'data' => ['buttonLabel' => 'Add new', 'routeName' => 'adjustment.create']
         ];
-        $data = [
-            'title' => 'Adjustment'
-        ];
-        return view('inventory::adjustment.index',compact('getAdjusment', 'contentTitleExtra','data'));
+        
+        return view('inventory::adjustment.index',compact('getAdjusment', 'contentTitleExtra'));
     }
 
     /**
