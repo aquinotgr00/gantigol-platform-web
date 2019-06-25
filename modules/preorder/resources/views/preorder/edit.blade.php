@@ -184,10 +184,8 @@
 @endsection
 
 @mediaLibraryModal
-
+@useTinymce
 @push('scripts')
-<script src="{{ asset('vendor/product/vendor/tinymce/tinymce.min.js?apiKey=jv18ld1zfu6vffpxf0ofb72orrp8ulyveyyepintrvlwdarp') }}">
-</script>
 <script src="{{ asset('vendor/product/js/tagsinput.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/zInput.js') }}"></script>
 <script>
@@ -272,7 +270,9 @@
     $(function() {
 
         tinymce.init({
-            selector: '#productDescription'
+            selector: '#productDescription',
+            plugins: "paste",
+            paste_as_text: true
         });
 
         $('#removeFeaturedImage').click(function(event) {
