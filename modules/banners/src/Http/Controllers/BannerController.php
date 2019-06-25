@@ -9,7 +9,7 @@ use Modules\Banners\BannerCategory;
 use Modules\Medias\Content;
 use Illuminate\Support\Collection;
 use Yajra\Datatables\Datatables;
-
+use Gate;
 
 class BannerController extends Controller
 {
@@ -102,8 +102,11 @@ class BannerController extends Controller
         		->get();
         return Datatables::of($list)
                              ->addColumn('action', function ($list) {
+                                if (Gate::allows('edit-banner')) {
                                 return  '<a href="'.Route('banner.edit',$list->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
                                         <a href="'.Route('banner.delete',$list->id).'" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="Delete"></a>' ;
+                                }
+                                return '';
                             })
                             ->make(true);
     }

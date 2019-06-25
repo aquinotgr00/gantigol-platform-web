@@ -103,6 +103,7 @@
 
 <!-- start table -->
 <h2 class="mt-5 mb-2">Ordered By Date</h2>
+<br/>
 <div class="table-responsive">
     <table class="table table-hover" id="dataTable">
         <thead>

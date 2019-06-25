@@ -8,6 +8,7 @@ use Modules\Blogs\BlogCategory;
 use Modules\Blogs\Blog;
 use Illuminate\Support\Collection;
 use Yajra\Datatables\Datatables;
+use Gate;
 
 class BlogCategoryController extends Controller
 {
@@ -62,8 +63,11 @@ class BlogCategoryController extends Controller
                                 return  $count;
                         })
                              ->addColumn('action', function ($category) {
+                                if (Gate::allows('edit-category-post')) {
                                 return  '<a href="'.Route('blog.category.edit', $category->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
                                         <a href="'.Route('blog.category.edit', $category->id).'" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="Delete"></a>' ;
+                             }
+                             return '';
                              })
                             ->make(true);
     }

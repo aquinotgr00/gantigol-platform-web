@@ -9,6 +9,7 @@ use Modules\Blogs\Blog;
 use Modules\Medias\Content;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
+use Gate;
 
 class BlogController extends Controller
 {
@@ -92,15 +93,21 @@ class BlogController extends Controller
                                         'title' => 'Hide On Website'
                                     ];
                                 }
+                                if (Gate::allows('edit-post')) {
                                 return  '<a href="'.Route('blog.post.edit', $blogs->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
                                         <a href="'.$data["route"].'" class="btn btn-table circle-table '.$data["button"].'" data-toggle="tooltip" data-placement="top" title="'.$data['title'].'"></a>';
+                                }
+                                return '';
                              })
                                 ->addColumn('highlight', function ($blogs) {
                                      $url=Route('blog.category.highlight', ['category'=>$blogs->category_id,'id'=>$blogs->id]);
                                     if(empty($blogs->publish_date)){
                                         $url="#";
                                     }
-                                return '<a href="'.$url.'" class="btn btn-table btn-default " title="Highlight"><button class="btn btn-default">'.$blogs->highlight.'</button></a>';
+                                    if (Gate::allows('edit-post')) {
+                                        return '<a href="'.$url.'" class="btn btn-table btn-default " title="Highlight"><button class="btn btn-default">'.$blogs->highlight.'</button></a>';
+                                    }
+                                    return '';
                             })
                             ->rawColumns(['highlight', 'action'])
                             ->make(true);

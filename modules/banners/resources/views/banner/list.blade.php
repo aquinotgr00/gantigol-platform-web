@@ -8,7 +8,7 @@
 
 @section('content')
             <!-- start tools -->
-            <div>
+            <div class="row mb-3">
                   <tool class="navbar navbar-expand-lg">
                   <div class="form-inline my-2 my-lg-0">
                       <div class="input-group srch">
@@ -25,9 +25,11 @@
                             @endforeach
                           </select>
                     </div>
+                    @can('add-banner')
                       <a class="btn sub-circle my-2 my-sm-0" href="{{Route('banner.create')}}" role="button">
                         <img class="add-svg" src="{{asset('vendor/admin/images/add.svg')}}" alt="add-image">
                       </a>
+                    @endcan
                   </div>
               </tool>
             </div>
