@@ -75,7 +75,7 @@
     <input type="hidden" name="view_batch" value="1" />
     @endcan
     <div class="table-responsive">
-        <table class="table table-bordered" id="batchDataTable" width="100%" cellspacing="0">
+        <table class="table" id="batchDataTable" width="100%" cellspacing="0">
             <thead>
                 <tr>
                     <th>Production Date</th>

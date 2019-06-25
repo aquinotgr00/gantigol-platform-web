@@ -4,7 +4,7 @@
         var datatables = $('#paidDatatable').DataTable({
             "ajax": "{{ route('transaction.paid',$preOrder->id) }}",
             "order": [
-                [3, "desc"]
+                [0, "desc"]
             ],
             "columns": [{
                     "data": "created_at"
@@ -30,11 +30,6 @@
                     }
                 }
             ],
-            "fnRowCallback": function(nRow, aData, iDisplayIndex) {
-                var index = iDisplayIndex + 1;
-                $('td:eq(0)', nRow).html(index);
-                return nRow;
-            },
             dom: 'Bfrtip',
             buttons: ['excel', 'pdf', 'print']
 
@@ -69,33 +64,9 @@
 </script>
 @endpush
 <div id="paid-pre" class="tab-pane">
-    <div class="row mb-3">
-        <div class="col col-md-4 mt-4">
-            <div>
-                <small>Summary Order :</small>
-                <span class="Summary-ord">M : 10 L : 10 XL : 10</span>
-            </div>
-            <div>
-                <small>Total Order : </small>
-                <span class="Summary-ord">30</span>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class=" form-group float-right mr-2">
-                <div>
-                    <label>Export Data</label>
-                </div>
-                <div class="btn-group" role="group" aria-label="#">
-                    <button type="button" data-trigger="buttons-pdf" class="btn btn-line">PDF</button>
-                    <button type="button" data-trigger="buttons-excel" class="btn btn-line">Excel</button>
-                    <button type="button" data-trigger="buttons-print" class="btn btn-line">Print</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="table-responsive">
         <!-- start table -->
-        <table class="table table-bordered" id="paidDatatable" width="100%" cellspacing="0">
+        <table class="table" id="paidDatatable" width="100%" cellspacing="0">
             <thead>
                 <tr>
                     <th>Order Date</th>

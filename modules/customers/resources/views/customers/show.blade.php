@@ -2,6 +2,10 @@
 
 @useDatatables()
 
+@push('styles')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet">
+@endpush
+
 @section('content')
 <!-- start info -->
 <div class="row">
@@ -12,7 +16,8 @@
             </div>
             <div class="col-md mt-2">
                 <span data-toggle=modal role="button" data-target="#EditCustomerInfo">
-                    <button class="btn btn-edit-frm float-right" data-toggle="tooltip" data-placement="top" data-original-title="Edit Customer Info"></button>
+                    <button class="btn btn-edit-frm float-right" data-toggle="tooltip" data-placement="top"
+                        data-original-title="Edit Customer Info"></button>
                 </span>
             </div>
         </div>
@@ -26,8 +31,20 @@
             <p>{{ ucfirst($customer->address) }}</p>
         </div>
         <div class="form-group">
+            <label>Subdistrict</label>
+            <p>{{ $customer->subdistrict->name }}</p>
+        </div>
+        <div class="form-group">
+            <label>City</label>
+            <p>{{ $customer->subdistrict->city->name }}</p>
+        </div>
+        <div class="form-group">
+            <label>Province</label>
+            <p>{{ $customer->subdistrict->city->province->name }}</p>
+        </div>
+        <div class="form-group">
             <label>Zip Code</label>
-            <p>{{ $customer->zip_code }}</p>
+            <p>{{ $customer->subdistrict->city->postal_code }}</p>
         </div>
         <div class="form-group">
             <label>Phone Number </label>
@@ -38,9 +55,9 @@
             <p>{{ $customer->email }}</p>
         </div>
     </div>
-    
+
     @php
-        $orders = $customer->orders()->paginate(5);
+    $orders = $customer->orders()->paginate(5);
     @endphp
     <div class="col-sm grs">
         <div>
@@ -114,6 +131,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
 <script>
     $(document).ready(function () {
 
@@ -126,7 +144,7 @@
                 method: 'GET',
                 data: function (d) {
                     d._token = "{{ csrf_token() }}",
-                    d.status = $('input[name="status"]').val()
+                        d.status = $('input[name="status"]').val()
                 }
             },
             order: [[0, "desc"]],
@@ -143,6 +161,35 @@
         $('.dropdown-menu a').on("click", function (e) {
             $('input[name="activity"]').val($(this).text());
             dataTable.draw();
+        });
+
+        $('select[name="subdistrict_id"]').select2({
+            ajax: {
+                url: '{{ url("shipment/subdistrict") }}',
+                dataType: 'json',
+                data: function(params) {
+                    var query = {
+                        q: params.term
+                    }
+                    return query;
+                },
+                processResults: function(res) {
+                    // Tranforms the top-level key of the response object from 'items' to 'results'
+                    return {
+                        results: res.data
+                    };
+                }
+            }
+        });
+
+        $('select[name="subdistrict_id"]').on('select2:select', function(e) {
+            var data = e.params.data;
+            $('#province').text(data.city.province.name);
+            $('#city').text(data.city.name);
+            $('#zip_code').text(data.city.postal_code);
+            $('#province').text(data.city.province.name);
+            $('#city').text(data.city.name);
+            $('#zip_code').text(data.city.postal_code);
         });
     });
 

@@ -77,6 +77,9 @@ class PaidOrderController extends Controller
                     $input = '<input type="text" name="shipping_tracking_number[]" class="form-control" value="' . $query->shipping_tracking_number . '"/>';
                     return $input;
                 })*/
+                ->addColumn('shipment_name', function ($query) {
+                    return strtoupper($query->shipment_name);
+                })
                 ->addColumn('invoice_id', function ($query) {
                     $link = '<a href="'.route('paid-order.show',$query->id).'" >';
                     $link .= $query->invoice_id;

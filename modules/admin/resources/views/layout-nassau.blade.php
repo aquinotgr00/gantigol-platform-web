@@ -4,7 +4,7 @@
 <head>
     @include('admin::includes-nassau.meta')
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'GantiGol') }}</title>
 
     @stack('pre-core-style')
     @include('admin::includes-nassau.core-style')

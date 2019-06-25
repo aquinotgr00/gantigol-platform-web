@@ -14,10 +14,27 @@
 					<div class="row">
 						<div class="col-4">
 							<div class="form-group">
-								<a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="selectLogoImage">
-									<img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="logo-image" class="img-fluid img-thumbnail add-img-featured" />
+								@php
+
+								$img_plus = asset('vendor/admin/images/image-plus.svg');
+								$img_logo = $img_plus;
+								$img_favicon = $img_plus;
+
+								if(isset($settingDashboard->logo)){
+								$img_logo = $settingDashboard->logo;
+								}
+
+								if(isset($settingDashboard->favicon)){
+								$img_favicon = $settingDashboard->favicon;
+								}
+								@endphp
+
+								<a href="#" data-toggle="modal" data-target="#media-library-modal"
+									data-multi-select="false" data-on-select="selectLogoImage">
+									<img src="{{ $img_logo }}" id="logo-image"
+										class="img-fluid img-thumbnail add-img-featured" />
 								</a>
-								<input type="hidden" name="logo" />
+								<input type="hidden" name="logo" value="{{ $img_logo }}" />
 							</div>
 						</div>
 						<div class="col-7">
@@ -30,10 +47,12 @@
 					<div class="row">
 						<div class="col-4">
 							<div class="form-group">
-								<a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="selectFaviconImage">
-									<img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="favicon-image" class="img-fluid img-thumbnail add-img-featured" />
+								<a href="#" data-toggle="modal" data-target="#media-library-modal"
+									data-multi-select="false" data-on-select="selectFaviconImage">
+									<img src="{{ $img_favicon }}" id="favicon-image"
+										class="img-fluid img-thumbnail add-img-featured" />
 								</a>
-								<input type="hidden" name="favicon" />
+								<input type="hidden" name="favicon" value="{{ $img_favicon }}" />
 							</div>
 						</div>
 						<div class="col-7">
@@ -45,21 +64,27 @@
 		</div>
 
 		<hr>
-
+		@if (Session::has('success'))
+		<div class="alert alert-success">Success! password updated</div>
+		@endif
+		
 		<div class="pt-3 pb-3">
 			<h2 class="mb-4">Account Setting</h2>
 			<div>
 				<div class="form-group">
-					<label for="exampleInputPassword1">Old Password</label>
-					<input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+					<label>Old Password</label>
+					<input type="password" class="form-control" name="password" />
 				</div>
 				<div class="form-group">
-					<label for="exampleInputPassword1">New Password</label>
-					<input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+					<label>New Password</label>
+					<input type="password" class="form-control {{ $errors->has('new_password') ? ' is-invalid' : '' }}" name="new_password" />
+					@if ($errors->has('new_password'))
+					<div class="invalid-feedback">{{ $errors->first('new_password') }}</div>
+					@endif
 				</div>
 				<div class="form-group">
-					<label for="exampleInputPassword1">Confirm New Password</label>
-					<input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+					<label>Confirm New Password</label>
+					<input type="password" class="form-control" name="new_password_confirmation" />
 				</div>
 			</div>
 		</div>
@@ -73,10 +98,8 @@
 					<div class="form-group">
 						<label for="inputRepeat">Repeat Reminder</label>
 						<div class="input-group mb-3">
-							<input type="number" class="form-control" id="inputRepeat" 
-							name="repeat"
-							value="{{ (isset($settingReminder->repeat))? $settingReminder->repeat : 0 }}"
-							 />
+							<input type="number" class="form-control" id="inputRepeat" name="repeat"
+								value="{{ (isset($settingReminder->repeat))? $settingReminder->repeat : 0 }}" />
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon1">Times</span>
 							</div>
@@ -87,10 +110,8 @@
 					<div class="form-group">
 						<label for="inputInterval">Interval Reminder</label>
 						<div class="input-group mb-3">
-							<input type="number" class="form-control"
-							id="inputInterval"
-							name="interval"
-							value="{{ (isset($settingReminder->interval))? $settingReminder->interval : 0 }}" />
+							<input type="number" class="form-control" id="inputInterval" name="interval"
+								value="{{ (isset($settingReminder->interval))? $settingReminder->interval : 0 }}" />
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon1">Hours</span>
 							</div>
@@ -132,20 +153,20 @@
 <script>
 	function selectLogoImage(images) {
 		const {
-            id,
-            url
-        } = images[0]
-        $('#logo-image').attr('src', url)
-        $('input[name="logo"]').val(url);
+			id,
+			url
+		} = images[0]
+		$('#logo-image').attr('src', url)
+		$('input[name="logo"]').val(url);
 	}
 
-	function selectFaviconImage(images){
+	function selectFaviconImage(images) {
 		const {
-            id,
-            url
-        } = images[0]
-        $('#favicon-image').attr('src', url)
-        $('input[name="favicon"]').val(url);
+			id,
+			url
+		} = images[0]
+		$('#favicon-image').attr('src', url)
+		$('input[name="favicon"]').val(url);
 	}
 </script>
 @endpush

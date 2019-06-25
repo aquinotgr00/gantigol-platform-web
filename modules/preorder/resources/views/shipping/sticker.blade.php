@@ -10,6 +10,7 @@
     <style>
         body {
             font-family: Avenir, sans-serif;
+            font-size: 10px;
         }
         
         * {
@@ -22,9 +23,9 @@
         /* Create two equal columns that floats next to each other */
         .column {
             float: left;
-            width: {{ (isset($setting->width))? $setting->width.'%'  : '10%' }};
+            width: 25%;
             padding: 10px;
-            height: {{ (isset($setting->height))? $setting->height.'px'  : '100px' }};
+            height: 150px;
             border: 3px solid #333;
             /* Should be removed. Only for demonstration */
         }
@@ -43,8 +44,14 @@
     <div class="row">
         @foreach($production as $key => $value)
         <div class="column" >
-            <h2>{{ $value->getTransaction->name }}</h2>
+            <h3>{{ ucwords($value->getTransaction->name) }}</h3>
             <p>{{ $value->getTransaction->address }}</p>
+            
+            @if(isset($value->getTransaction->getProduction->tracking_number))
+            <b>Kurir</b> <p>{{ strtoupper($value->getTransaction->courier_name) }}</p>
+            <b>No. Resi:</b><p>{{ $value->getTransaction->getProduction->tracking_number }}</p>
+            @endif
+
         </div>
         @endforeach
     </div>

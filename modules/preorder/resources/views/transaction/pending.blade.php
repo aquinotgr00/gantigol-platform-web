@@ -55,37 +55,6 @@
 </script>
 @endpush
 <div id="pending-pre" class="tab-pane active">
-    <div class="row mb-3">
-        <div class="col col-md-4 mt-4">
-            <div>
-                <small>Summary Order :</small>
-                <span class="Summary-ord">M : 10 L : 10 XL : 10</span>
-            </div>
-            <div>
-                <small>Total Order : </small>
-                <span class="Summary-ord">30</span>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class=" form-group float-right mr-2">
-                <div>
-                    <label>Export Data</label>
-                </div>
-                <div class="btn-group" role="group" aria-label="#">
-                    <button type="button" data-trigger="buttons-pdf" class="btn btn-line">PDF</button>
-                    <button type="button" data-trigger="buttons-excel" class="btn btn-line">Excel</button>
-                    <button type="button" data-trigger="buttons-print" class="btn btn-line">Print</button>
-                    @can('send-reminder')
-                    <!--<a href="{{ route('transaction.send-reminder',$preOrder->id) }}" 
-                            class="btn btn-primary">Send reminder
-                        </a>-->
-                    @endcan
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end tools -->
-
     <!-- start table -->
     <div class="table-responsive">
         <table class="table" id="pendingDataTable" width="100%" cellspacing="0">
