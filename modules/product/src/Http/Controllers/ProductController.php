@@ -23,8 +23,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data['title'] = 'Product';
-        return view("product::product.index", compact('data'));
+        return view("product::product.index");
     }
 
     /**
@@ -349,12 +348,11 @@ class ProductController extends Controller
                         data-toggle="tooltip"
                         data-placement="top"
                         title="Edit"></a>';
-                $button .= '<a href="#" 
+                $button .= '<span data-toggle="tooltip" data-placement="top" title="Adjustment"><a href="#" 
                         data-target="#ModalAdjusment" data-toggle="modal" 
                         class="btn btn-table circle-table adjustment-table" 
-                        data-id="' . $data->id . '" 
-                        data-placement="top" 
-                        title="Adjustment"></a>';
+                        data-id="' . $data->id . '">
+                        </a></span>';
                 $button .= '<a href="' . route('product.set-visible', $data->product_id) . '"';
 
                 if ($data->visible == 1) {

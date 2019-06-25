@@ -12,8 +12,7 @@ class ProductSizeChartController extends Controller
 {
     public function index()
     {
-        $data['title'] = 'Product Size Chart';
-        return view("product::product-size-chart.index", compact('data'));
+        return view("product::product-size-chart.index");
     }
 
     public function create()

@@ -1,36 +1,14 @@
 @extends('admin::layout-nassau')
-
 @push('styles')
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<style>
+    span[data-toggle=tooltip] {
+        display:inline-block;
+        
+    }
+</style>
 @endpush
-
-@push('scripts')
-<script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-@endpush
-
 @section('content')
-<!-- start tools -->
-<div>
-    <tool class="navbar navbar-expand-lg">
-        <form class="form-inline my-2 my-lg-0">
-            <div class="input-group srch">
-                <input type="text" class="form-control search-box" placeholder="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-search" type="button">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('product.create') }}" role="button">
-                <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
-            </a>
-        </form>
-    </tool>
-</div>
-<!-- end tools -->
-
+@indexPage(['title'=>'Products', 'addNewAction'=>route('product.create')])
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable">
@@ -48,7 +26,7 @@
     </table>
 </div>
 <!-- end table -->
-
+@endindexPage
 
 @include('product::includes.modal-adjustment')
 
@@ -99,7 +77,10 @@
                 "targets": [0],
                 "visible": false,
                 "searchable": false
-            }]
+            }],
+            drawCallback: function(settings) {
+                $('[data-toggle="tooltip"]').tooltip()
+            }
         });
 
         $('#ModalAdjusment').on('shown.bs.modal', function(e) {

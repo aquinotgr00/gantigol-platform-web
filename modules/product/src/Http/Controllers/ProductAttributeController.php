@@ -12,10 +12,7 @@ class ProductAttributeController extends Controller
 {
     public function index()
     {
-        $data = [
-            'title'=>'Product Variant'
-        ];
-        return view('product::product-variant.index',compact('data'));
+        return view('product::product-variant.index');
     }
     
     public function create()
