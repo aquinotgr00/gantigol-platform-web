@@ -203,6 +203,8 @@ return [
         Modules\Promo\Providers\PromoServiceProvider::class,
         Modules\Inventory\Providers\InventoryServiceProvider::class,
         Modules\Shipment\Providers\ShipmentServiceProvider::class,
+        
+        Modules\Report\Providers\ReportServiceProvider::class,
     ],
 
     /*

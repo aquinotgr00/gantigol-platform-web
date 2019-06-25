@@ -2,10 +2,25 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 <style>
-    #dataTable_paginate{
+    #dataTable_paginate {
         display: none;
+    }
+
+    #dataTable_paginate {
+        display: none;
+    }
+
+    .dataTables_info {
+        display: none;
+    }
+
+    .table-responsive {
+        overflow-x: hidden;
+    }
+
+    .card-default {
+        height: 600px;
     }
 </style>
 @endpush
@@ -33,7 +48,7 @@
                             <h4>Customer Info</h4>
                         </div>
                         <div class="float-right">
-                           <!--  <a href="#EditCustomerInfo" data-toggle=modal >
+                            <!--  <a href="#EditCustomerInfo" data-toggle=modal >
                                 <i class="fas fa-pencil-alt"></i>
                             </a> -->
                         </div>
@@ -56,26 +71,26 @@
                     </div>
                     <div class="form-group">
                         <label>Subdistrict</label>
-                        @if(isset($order->customer))
-                        <p>{{ $order->customer->subdisctrict }}</p>
+                        @if(isset($order->customer->subdistrict))
+                        <p>{{ $order->customer->subdistrict->name }}</p>
                         @endif
                     </div>
                     <div class="form-group">
                         <label>City</label>
-                        @if(isset($order->customer))
-                        <p>{{ $order->customer->city }}</p>
+                        @if(isset($order->customer->subdistrict->city))
+                        <p>{{ $order->customer->subdistrict->city->name }}</p>
                         @endif
                     </div>
                     <div class="form-group">
                         <label>Province</label>
-                        @if(isset($order->customer))
-                        <p>{{ $order->customer->province }}</p>
+                        @if(isset($order->customer->subdistrict->city->province))
+                        <p>{{ $order->customer->subdistrict->city->province->name }}</p>
                         @endif
                     </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        @if(isset($order->customer))
-                        <p>{{ $order->customer->zip_code }}</p>
+                        @if(isset($order->customer->subdistrict->city))
+                        <p>{{ $order->customer->subdistrict->city->zip_code }}</p>
                         @endif
                     </div>
                     <div class="form-group">
@@ -103,7 +118,7 @@
                             <h4>Shipping Info</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#editShipping" data-toggle=modal >
+                            <a href="#editShipping" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                         </div>
@@ -157,7 +172,7 @@
                             <h4>Shipping Details</h4>
                         </div>
                         <div class="float-right">
-                            <a href="#editStatus"  data-toggle=modal >
+                            <a href="#editStatus" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <!--<a href="#">
@@ -172,9 +187,9 @@
                     <div class="form-group">
                         <label>Order Status</label>
                         @php
-                        $status_id      = $order->order_status;
-                        $selected       = (isset(array_keys($status)[$status_id]))? array_keys($status)[$status_id] : '';
-                        $selected_desc  = (isset($desc[$status_id]))? $desc[$status_id] : '';
+                        $status_id = $order->order_status;
+                        $selected = (isset(array_keys($status)[$status_id]))? array_keys($status)[$status_id] : '';
+                        $selected_desc = (isset($desc[$status_id]))? $desc[$status_id] : '';
                         @endphp
                         <p>
                             {{ $selected }}
@@ -197,33 +212,30 @@
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable">
                 <thead>
-                    <th>No</th>
-                    <th>Item</th>
-                    <th>Size</th>
-                    <th>Qty</th>
+                    <th>Product</th>
                     <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Discount (IDR)</th>
                     <th>Subtotal</th>
                 </thead>
                 @if(isset($order->items))
                 <tbody>
                     @foreach($order->items as $key => $value)
                     <tr>
-                        <td>{{ $key+1 }}</td>
                         <td>
+                            <img src="{{ $value->productVariant->product->image }}" height="50px;">
                             @if(isset($value->productVariant->product))
-                            {{ $value->productVariant->product->name }}
+                            {{ $value->productVariant->product->name }} #{{ $value->productVariant->variant }}
                             @endif
                         </td>
                         <td>
-                            @if(isset($value->productVariant))
-                            {{ $value->productVariant->variant }}
-                            @endif
+                            {{ number_format($value->price) }}
                         </td>
                         <td>
                             {{ $value->qty }}
                         </td>
                         <td>
-                            {{ number_format($value->price) }}
+                            0
                         </td>
                         <td>
                             {{ number_format($value->subtotal) }}
@@ -231,16 +243,31 @@
                     </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tfoot>
+                        <tr>
+                            <td><strong>Shipping Cost</strong></td>
+                            <td colspan="3">
+                                {{ strtoupper($order->shipment_name) }}
+                            </td>
+                            <td>{{ number_format($order->shipping_cost) }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"><strong>Discount</strong></td>
+                            <td>{{ number_format($order->discount) }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <h5><strong>Total</strong></h5>
+                            </td>
+                            <td>
+                                <h5>{{ number_format($order->total_amount) }}</h5>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </tfoot>
                 @endif
             </table>
-            <div class="row">
-                <div class="col text-left">
-                    <h4>Total</h4>
-                </div>
-                <div class="col text-right">
-                    <h4>{{ number_format($order->total_amount) }}</h4>
-                </div>
-            </div>
         </div>
     </div>
 </div>

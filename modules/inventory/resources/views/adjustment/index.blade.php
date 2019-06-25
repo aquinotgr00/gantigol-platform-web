@@ -29,7 +29,6 @@
             <th class="col-sm-2">Date</th>
         </tr>
     </thead>
-
     <tbody>
         @foreach ($getAdjusment as $i => $row)
         <tr>
@@ -49,13 +48,13 @@
 
 @push('scripts')
 <script>
-    $(function() {
+    $(function () {
 
         var datatables = $('#dataTable').DataTable();
 
         $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function() {
+        $('.search-box').on('keyup', function () {
 
             datatables.search(this.value).draw();
         });

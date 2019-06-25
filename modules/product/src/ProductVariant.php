@@ -23,7 +23,7 @@ class ProductVariant extends Model
         
     public function getNameAttribute() {
         if($this->product) {
-            return $this->product->name.' #Size: '.$this->size_code;
+            return $this->product->name.' #'.ucwords($this->variant);
         }
         return $this->product;
     }

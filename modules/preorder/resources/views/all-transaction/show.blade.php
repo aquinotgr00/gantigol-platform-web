@@ -2,7 +2,7 @@
 
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet">
 <style>
     .card-heading-content {
         margin-top: 8px;
@@ -17,7 +17,19 @@
     }
 
     .card-transaction {
-        height: 406px;
+        height: 600px;
+    }
+
+    #dataTable_paginate {
+        display: none;
+    }
+
+    .dataTables_info {
+        display: none;
+    }
+
+    .table-responsive {
+        overflow-x: hidden;
     }
 </style>
 @endpush
@@ -25,9 +37,39 @@
 @push('scripts')
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
         $('#dataTable').DataTable();
+
+        $('select[name="subdistrict_id"]').select2({
+            ajax: {
+                url: '{{ url("shipment/subdistrict") }}',
+                dataType: 'json',
+                data: function(params) {
+                    var query = {
+                        q: params.term
+                    }
+                    return query;
+                },
+                processResults: function(res) {
+                    // Tranforms the top-level key of the response object from 'items' to 'results'
+                    return {
+                        results: res.data
+                    };
+                }
+            }
+        });
+
+        $('select[name="subdistrict_id"]').on('select2:select', function(e) {
+            var data = e.params.data;
+            $('#shipping-province').text(data.city.province.name);
+            $('#shipping-city').text(data.city.name);
+            $('#shipping-zip_code').text(data.city.postal_code);
+            $('#province').text(data.city.province.name);
+            $('#city').text(data.city.name);
+            $('#zip_code').text(data.city.postal_code);
+        });
     });
 </script>
 @endpush
@@ -73,10 +115,29 @@ $customer = $transaction->customer;
                         <label>Address</label>
                         <p>{{ $customer->address }}</p>
                     </div>
-
+                    <div class="form-group">
+                        <label>Subdistrict</label>
+                        @if(isset($customer->subdistrict))
+                        <p>{{ $customer->subdistrict->name }}</p>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        @if(isset($customer->subdistrict->city))
+                        <p>{{ $customer->subdistrict->city->name }}</p>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        @if(isset($customer->subdistrict->city->province))
+                        <p>{{ $customer->subdistrict->city->province->name }}</p>
+                        @endif
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <p>{{ $customer->zip_code }}</p>
+                        @if(isset($customer->subdistrict->city))
+                        <p>{{ $customer->subdistrict->city->postal_code }}</p>
+                        @endif
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
@@ -116,10 +177,21 @@ $customer = $transaction->customer;
                         <label>Address</label>
                         <p>{{ $transaction->address }}</p>
                     </div>
-
+                    <div class="form-group">
+                        <label>Subdistrict</label>
+                        <p>{{ $transaction->getSubdistrict->name }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <p>{{ $transaction->getSubdistrict->city->name }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Province</label>
+                        <p>{{ $transaction->getSubdistrict->city->province->name }}</p>
+                    </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <p>{{ $transaction->postal_code }}</p>
+                        <p>{{ $transaction->getSubdistrict->city->postal_code }}</p>
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
@@ -172,7 +244,7 @@ $customer = $transaction->customer;
                     <div class="form-group">
                         <label>Notes</label>
                         <p>{{ $transaction->note }}</p>
-                        
+
                     </div>
                 </div>
             </div>
@@ -185,28 +257,28 @@ $customer = $transaction->customer;
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable">
                 <thead>
-                    <th>No</th>
-                    <th>Item</th>
-                    <th>Size</th>
-                    <th>Qty</th>
+                    <th>Product</th>
                     <th>Price</th>
+                    <th>Qty</th>
+                    <th>Discount</th>
                     <th>Subtotal</th>
                 </thead>
                 <tbody>
                     @foreach($orders as $key => $value)
                     <tr>
-                        <td>{{ $key+1 }}</td>
                         <td>
-                            {{ strtoupper($value->model) }}
+                            <img src="{{ $value->productVariant->product->image }}" height="50px;">
+                            {{ $value->productVariant->product->name }} #{{ $value->productVariant->variant }}
                         </td>
                         <td>
-                            {{ strtoupper($value->size) }}
+                            {{ number_format($value->price) }}
+
                         </td>
                         <td>
                             {{ $value->qty }}
                         </td>
                         <td>
-                            {{ number_format($value->price) }}
+                            0
                         </td>
                         <td>
                             {{ number_format($value->subtotal) }}
@@ -214,6 +286,25 @@ $customer = $transaction->customer;
                     </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td><strong>Shipping Cost</strong></td>
+                        <td colspan="3">{{ $transaction->courier_name }}</td>
+                        <td>{{ number_format($transaction->courier_fee) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"><strong>Discount</strong></td>
+                        <td>{{ number_format($transaction->discount) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <h5><strong>Total</strong></h5>
+                        </td>
+                        <td>
+                            <h5>{{ number_format($transaction->amount) }}</h5>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>

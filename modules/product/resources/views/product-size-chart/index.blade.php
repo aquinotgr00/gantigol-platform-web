@@ -1,6 +1,7 @@
 @extends('admin::layout-nassau')
 
 @section('content')
+
 @indexPage(['title'=>'Product Size Chart', 'addNewAction'=>route('product-size-chart.create')])
 <!-- start table -->
 <table class="table" id="dataTable">
@@ -60,9 +61,9 @@
             }
         });
 
-        $('#dataTable_filter').css('display','none');
+        $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function () {    
+        $('.search-box').on('keyup', function () {
             datatables.search(this.value).draw();
         });
 

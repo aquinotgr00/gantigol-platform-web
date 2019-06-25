@@ -50,7 +50,7 @@ class MidtransApiController extends Controller
 
                     $transaction->update(['status' => 'paid']);
 
-                    if ($transaction->preOrder->total >= $transaction->preOrder->quota) {
+                    if ($transaction->preOrder->order_received >= $transaction->preOrder->quota) {
                         event(new \Modules\Preorder\Events\QuotaFulfilled($transaction->preOrder));
                     }
 

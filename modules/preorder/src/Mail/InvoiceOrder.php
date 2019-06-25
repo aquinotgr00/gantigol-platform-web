@@ -36,9 +36,9 @@ class InvoiceOrder extends Mailable
      */
     public function build()
     {
-        return $this->subject('Invoice Order #'.$this->transaction->id)
-        ->markdown('preorder::emails.orders.invoice')->with([
-            'transaction' => $this->transaction,
+        return $this->subject('Invoice #'.$this->transaction['invoice'])
+        ->view('preorder::emails.orders.invoice')->with([
+            'invoice' => $this->transaction,
         ]);
     }
 }

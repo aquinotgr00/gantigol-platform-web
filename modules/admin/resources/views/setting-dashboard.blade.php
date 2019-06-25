@@ -104,7 +104,7 @@
 		</div>
 
 		<hr>
-
+		<!--
 		<div class="pt-3 pb-3">
 			<h2 class="mb-4">Courier Option</h2>
 			@if(isset($couriers))
@@ -117,7 +117,7 @@
 			@endif
 
 		</div>
-
+		-->
 		<div class="float-right">
 			<button type="submit" class="btn btn-success">Submit</button>
 		</div>

@@ -7,3 +7,5 @@
 
 <!-- favicon -->
 <link rel="shortcut icon" type="image/png" href="{{ asset('vendor/admin/images/favicon.png') }}"/>
+
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet"> 

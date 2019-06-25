@@ -1,6 +1,6 @@
-@extends ('emails.layouts.with-menu')
+@extends('ecommerce::emails.layouts.with-menu')
 
-@section ('content')
+@section('content')
 
 <h4 style="Margin:0;Margin-bottom:10px;color:inherit;font-family:Helvetica,Arial,sans-serif;color:#444;font-size:16px;font-weight:400;line-height:1.3;margin:0;margin-bottom:10px;padding:0;word-wrap:normal;text-align:center;">Hi {{$name}}, Selamat Bergabung di Starcross.</h4>
 

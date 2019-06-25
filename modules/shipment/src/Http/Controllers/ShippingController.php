@@ -87,7 +87,7 @@ class ShippingController extends Controller
             $request->request->add(['destination' => $request->d]);
             $request->request->add(['weight' => $request->w]);
             $request->request->add(['courier' => $request->c]);
-            $request->request->add(['originType' => 'subdistrict']);
+            $request->request->add(['originType' => 'city']);
             $request->request->add(['destinationType' => 'subdistrict']);
             
             $req = $this->client->request('POST', 'cost', [
@@ -169,7 +169,9 @@ class ShippingController extends Controller
         
         $term = $request->query('q');
         if($term) {
-            $subdistricts->where('name','like','%'.$term.'%');
+            $subdistricts
+            ->where('name','like','%'.$term.'%')
+            ->select('subdistricts.*','subdistricts.name as text');
         }
         return $subdistricts->paginate(10);
     }

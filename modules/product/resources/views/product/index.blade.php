@@ -3,11 +3,11 @@
 <style>
     span[data-toggle=tooltip] {
         display:inline-block;
-        
     }
 </style>
 @endpush
 @section('content')
+
 @indexPage(['title'=>'Products', 'addNewAction'=>route('product.create')])
 <!-- start table -->
 <table class="table" id="dataTable">
@@ -40,7 +40,7 @@
         }
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         var datatables = $('#dataTable').DataTable({
             processing: true,
             serverSide: true,
@@ -52,26 +52,26 @@
                 }
             },
             columns: [{
-                    data: 'created_at'
-                },
-                {
-                    data: 'image'
-                },
-                {
-                    data: 'name'
-                },
-                {
-                    data: 'quantity_on_hand'
-                },
-                {
-                    data: 'price'
-                },
-                {
-                    data: 'action'
-                },
+                data: 'created_at'
+            },
+            {
+                data: 'image'
+            },
+            {
+                data: 'name'
+            },
+            {
+                data: 'quantity_on_hand'
+            },
+            {
+                data: 'price'
+            },
+            {
+                data: 'action'
+            },
             ],
-            order: [[ 0, "desc" ]],
-            columnDefs : [{
+            order: [[0, "desc"]],
+            columnDefs: [{
                 "targets": [0],
                 "visible": false,
                 "searchable": false
@@ -81,21 +81,21 @@
             }
         });
 
-        $('#ModalAdjusment').on('shown.bs.modal', function(e) {
+        $('#ModalAdjusment').on('shown.bs.modal', function (e) {
             var button = e.relatedTarget;
             var id = $(button).data('id');
             $('input[name="product_variants_id"]').val(id);
 
         });
 
-        $('#form-add-adjustment').submit(function(event) {
+        $('#form-add-adjustment').submit(function (event) {
             event.preventDefault();
 
             $.ajax({
                 type: "POST",
                 url: $(this).attr('action'),
                 data: $(this).serializeArray(),
-                success: function(data) {
+                success: function (data) {
 
                     if (data.id > 0) {
                         $('#ModalAdjusment').modal('hide');
@@ -109,7 +109,7 @@
 
         $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function() {
+        $('.search-box').on('keyup', function () {
 
             datatables.search(this.value).draw();
         });

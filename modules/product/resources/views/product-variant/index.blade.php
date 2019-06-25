@@ -60,9 +60,9 @@
             }
         });
 
-        $('#dataTable_filter').css('display','none');
+        $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function () { 
+        $('.search-box').on('keyup', function () {
             datatables.search(this.value).draw();
         });
     });

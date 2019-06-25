@@ -35,7 +35,7 @@ class Transaction extends Model
         'discount'
     ];
 
-    protected $appends = ['amount_weight'];
+    protected $appends = ['amount_weight','net_total'];
 
     /**
      * Show all the reminders based on transaction id.
@@ -138,5 +138,11 @@ class Transaction extends Model
             }
         }
         return $amount_weight;
+    }
+
+    public function getNetTotalAttribute()
+    {
+        $net_total = intval($this->amount) - intval($this->courier_fee) + intval($this->discount);
+        return $net_total;
     }
 }

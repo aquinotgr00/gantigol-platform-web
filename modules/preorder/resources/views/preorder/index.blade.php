@@ -3,10 +3,10 @@
 @push('scripts')
 
 <script>
-    $(document).ready(function() {
-        var delay = (function() {
+    $(document).ready(function () {
+        var delay = (function () {
             var timer = 0;
-            return function(callback, ms, that) {
+            return function (callback, ms, that) {
                 clearTimeout(timer);
                 timer = setTimeout(callback.bind(that), ms);
             };
@@ -20,26 +20,26 @@
                 method: 'GET'
             },
             columns: [{
-                    data: 'product.created_at'
-                },
-                {
-                    data: 'image'
-                },
-                {
-                    data: 'product.name'
-                },
-                {
-                    data: 'end_date'
-                },
-                {
-                    data: 'order_received'
-                },
-                {
-                    data: 'product.price'
-                },
-                {
-                    data: 'action'
-                },
+                data: 'product.created_at'
+            },
+            {
+                data: 'image'
+            },
+            {
+                data: 'product.name'
+            },
+            {
+                data: 'end_date'
+            },
+            {
+                data: 'order_received'
+            },
+            {
+                data: 'product.price'
+            },
+            {
+                data: 'action'
+            },
             ],
             order: [
                 [0, "desc"]
@@ -56,8 +56,8 @@
 
         $('#dataTable_filter').css('display', 'none');
 
-        $('#search').on('keyup', function() {
-            delay(function() {
+        $('#search').on('keyup', function () {
+            delay(function () {
                 datatables.search(this.value).draw();
             }, 1000, this);
         });
@@ -70,7 +70,14 @@
 @can('edit-preorder')
 <input type="hidden" name="edit-preorder" value="1">
 @endcan
+
 @indexPage(['title'=>'Preorders', 'addNewAction'=>route('list-preorder.create')])
+
+<div class="alert-notifications">
+    <div class="item-notification"></div>
+</div>
+<i data-count="0" class="count-notification"></i>
+
 <!-- start table -->
 <table class="table" id="dataTable" width="100%" cellspacing="0">
     <thead>

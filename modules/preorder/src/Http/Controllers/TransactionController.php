@@ -145,7 +145,7 @@ class TransactionController extends Controller
             'status' => $status
         ];
 
-        return view('preorder::transaction.show')->with($data);
+        return view('preorder::all-transaction.show')->with($data);
     }
 
     public function sendReminder(int $id)
