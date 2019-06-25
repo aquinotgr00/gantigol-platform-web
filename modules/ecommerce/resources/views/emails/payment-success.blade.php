@@ -1,4 +1,4 @@
-@extends('ecommerce::emails.layouts.gantigol')
+@extends('ecommerce::ecommerce::emails.layouts.gantigol')
 
 @section('content')
 <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">

@@ -12,22 +12,26 @@
 
 @section('content')
 <!-- start tools -->
-<div>
-    <tool class="navbar navbar-expand-lg">
-        <form class="form-inline my-2 my-lg-0">
-            <div class="input-group srch">
-                <input type="text" class="form-control search-box" placeholder="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-search" type="button">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('product-variant.create') }}" role="button">
-                <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
-            </a>
-        </form>
-    </tool>
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div>
+            <tool class="navbar navbar-expand-lg">
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="input-group srch">
+                        <input type="text" class="form-control search-box" placeholder="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-search" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <a class="btn sub-circle my-2 my-sm-0" href="{{ route('product-variant.create') }}" role="button">
+                        <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
+                    </a>
+                </form>
+            </tool>
+        </div>
+    </div>
 </div>
 <!-- end tools -->
 
@@ -87,9 +91,9 @@
             ]
         });
 
-        $('#dataTable_filter').css('display','none');
+        $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function () { 
+        $('.search-box').on('keyup', function () {
             datatables.search(this.value).draw();
         });
     });

@@ -14,25 +14,29 @@
 @section('content')
 
 <!-- start tools -->
-<div>
-    <tool class="navbar navbar-expand-lg">
-        <form class="form-inline my-2 my-lg-0">
-            <div class="input-group srch">
-                <input type="text" class="form-control search-box" placeholder="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-search" type="button">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('adjustment.create') }}" role="button">
-                <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
-            </a>
-        </form>
-    </tool>
+<div class="row mb-3">
+    <div class="col">
+        <div>
+            <tool class="navbar navbar-expand-lg">
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="input-group srch">
+                        <input type="text" class="form-control search-box" placeholder="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-search" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <a class="btn sub-circle my-2 my-sm-0" href="{{ route('adjustment.create') }}" role="button">
+                        <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
+                    </a>
+                </form>
+            </tool>
+        </div>
+    </div>
 </div>
 <!-- end tools -->
-<hr>
+
 @if ($message = Session::get('successMessage'))
 <div class="alert alert-success alert-block">
     <button type="button" class="close" data-dismiss="alert">×</button>
@@ -48,7 +52,8 @@
 @endif
 
 <div class="table-responsive">
-    <table class="table table-bordered" id="dataTable" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+    <table class="table" id="dataTable" role="grid" aria-describedby="dataTable_info"
+        style="width: 100%;">
         <thead>
             <tr role="row">
                 <th class="col-sm-3">Product Name</th>
@@ -80,13 +85,13 @@
 
 @push('scripts')
 <script>
-    $(function() {
+    $(function () {
 
         var datatables = $('#dataTable').DataTable();
 
         $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function() {
+        $('.search-box').on('keyup', function () {
 
             datatables.search(this.value).draw();
         });

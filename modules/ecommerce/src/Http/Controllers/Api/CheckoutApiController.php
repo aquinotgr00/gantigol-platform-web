@@ -177,7 +177,13 @@ class CheckoutApiController extends Controller
                     DB::commit();
 
                     //send scdhule reminder
-                    //$order->scheduleReminders(3, $order);
+                    /*
+                    try {
+                        $order->scheduleReminders(3, $order);
+                    } catch (Exception $ex) {
+                        error_log($ex);
+                    }*/
+                                        
                     $invoice = [
                         'billing_name' => (isset($order->customer->name)) ? $order->customer->name : '',
                         'billing_address' => (isset($order->customer->address)) ? $order->customer->address : '',
@@ -195,8 +201,13 @@ class CheckoutApiController extends Controller
                         'invoice' => $order->invoice_id,
                         'orders' => $order->items,
                     ];
-
-                    Mail::to($order->billing_email)->send(new InvoiceOrder($invoice));
+                    /*
+                    try {
+                        Mail::to($order->billing_email)->send(new InvoiceOrder($invoice));
+                    } catch (Exception $ex) {
+                        error_log($ex);
+                    }*/
+                    
                 } catch (QueryException $e) {
                     DB::rollback();
                 }

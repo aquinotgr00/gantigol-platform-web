@@ -10,16 +10,20 @@
 @indexPage(['title'=>'Product Categories','addNewAction'=>route('product-categories.create')])
 
 @table
-    @slot('headerColumns')
-        <tr>
-            <th scope="col">Image</th>
-            <th scope="col">Parent Categories » Category</th>
-            <th scope="col">Action</th>
-        </tr>
-    @endslot
-    @foreach ($categories as $category)
-        @include('product::includes.productcategory-table-row', ['category'=>$category, 'parent'=>'', 'parentSizeCodes'=>''])
-    @endforeach
+<div class="row mb-3">
+    <div class="col">
+        @slot('headerColumns')
+    </div>
+</div>
+<tr>
+    <th scope="col">Image</th>
+    <th scope="col">Parent Categories » Category</th>
+    <th scope="col">Action</th>
+</tr>
+@endslot
+@foreach ($categories as $category)
+@include('product::includes.productcategory-table-row', ['category'=>$category, 'parent'=>'', 'parentSizeCodes'=>''])
+@endforeach
 @endtable
 
 @endindexPage
@@ -49,14 +53,14 @@
             });
         }
     }
-    
-    $(document).ready(function(){
-        
+
+    $(document).ready(function () {
+
         var datatables = $('.table').DataTable();
 
-        $('.dataTables_filter').css('display','none');
+        $('.dataTables_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function () {    
+        $('.search-box').on('keyup', function () {
             datatables.search(this.value).draw();
         });
     });
