@@ -122,7 +122,9 @@ class MediaServiceProvider extends ServiceProvider
      */
     private function loadViewShares()
     {
-        View::share('mediaCategories', MediaCategories::all());
+        if (!$this->app->runningInConsole()) {
+            View::share('mediaCategories', MediaCategories::all());
+        }
     }
     
     /**
@@ -132,7 +134,9 @@ class MediaServiceProvider extends ServiceProvider
      */
     private function loadViewComposers()
     {
-        View::composer('medias::media-gallery', 'Modules\Medias\Http\ViewComposers\MediaGalleryViewComposer');
+        if (!$this->app->runningInConsole()) {
+            View::composer('medias::media-gallery', 'Modules\Medias\Http\ViewComposers\MediaGalleryViewComposer');
+        }
     }
     
     /**
