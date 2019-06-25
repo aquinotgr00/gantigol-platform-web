@@ -36,6 +36,11 @@ class CustomerProfile extends Model
     /**
      * Accessors
      */
+    public function getNameAttribute($value)
+    {
+        return ucwords($value);
+    }
+    
     public function getGenderAttribute($value)
     {
         return strtoupper($value);
