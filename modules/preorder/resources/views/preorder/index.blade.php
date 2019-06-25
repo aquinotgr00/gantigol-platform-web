@@ -10,10 +10,10 @@
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
 <script>
-    $(document).ready(function() {
-        var delay = (function() {
+    $(document).ready(function () {
+        var delay = (function () {
             var timer = 0;
-            return function(callback, ms, that) {
+            return function (callback, ms, that) {
                 clearTimeout(timer);
                 timer = setTimeout(callback.bind(that), ms);
             };
@@ -27,26 +27,26 @@
                 method: 'GET'
             },
             columns: [{
-                    data: 'product.created_at'
-                },
-                {
-                    data: 'image'
-                },
-                {
-                    data: 'product.name'
-                },
-                {
-                    data: 'end_date'
-                },
-                {
-                    data: 'order_received'
-                },
-                {
-                    data: 'product.price'
-                },
-                {
-                    data: 'action'
-                },
+                data: 'product.created_at'
+            },
+            {
+                data: 'image'
+            },
+            {
+                data: 'product.name'
+            },
+            {
+                data: 'end_date'
+            },
+            {
+                data: 'order_received'
+            },
+            {
+                data: 'product.price'
+            },
+            {
+                data: 'action'
+            },
             ],
             order: [
                 [0, "desc"]
@@ -60,8 +60,8 @@
 
         $('#dataTable_filter').css('display', 'none');
 
-        $('#search').on('keyup', function() {
-            delay(function() {
+        $('#search').on('keyup', function () {
+            delay(function () {
                 datatables.search(this.value).draw();
             }, 1000, this);
         });
@@ -75,24 +75,28 @@
 <input type="hidden" name="edit-preorder" value="1">
 @endcan
 <!-- start tools -->
-<div>
-    <tool class="navbar navbar-expand-lg">
-        <form class="form-inline my-2 my-lg-0">
-            <div class="input-group srch">
-                <input type="search" id="search" class="form-control search-box" placeholder="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-search" type="button">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            @can('create-preorder')
-            <a class="btn sub-circle my-2 my-sm-0" href="{{ route('list-preorder.create') }}" role="button">
-                <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
-            </a>
-            @endcan
-        </form>
-    </tool>
+<div class="row mb-3">
+    <div class="col">
+        <div>
+            <tool class="navbar navbar-expand-lg">
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="input-group srch">
+                        <input type="search" id="search" class="form-control search-box" placeholder="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-search" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    @can('create-preorder')
+                    <a class="btn sub-circle my-2 my-sm-0" href="{{ route('list-preorder.create') }}" role="button">
+                        <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
+                    </a>
+                    @endcan
+                </form>
+            </tool>
+        </div>
+    </div>
 </div>
 <!-- end tools -->
 <div class="alert-notifications">

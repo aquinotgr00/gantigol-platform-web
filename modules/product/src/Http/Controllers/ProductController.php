@@ -321,15 +321,27 @@ class ProductController extends Controller
 
     public function ajaxAllProduct()
     {
+        $product_po = DB::table('pre_orders')
+        ->select('pre_orders.product_id')
+        ->join('products', 'products.id', '=', 'pre_orders.product_id')
+        ->get();
+        
+        $products_id = [];
+        
+        foreach ($product_po as $key => $value) {
+            $products_id[] = $value->product_id;
+        }
+        
         $product = DB::table('product_variants')
             ->join('products', 'products.id', '=', 'product_variants.product_id')
-            ->join('pre_orders', 'pre_orders.product_id', '!=', 'product_variants.product_id')
             ->select(
                 'product_variants.*',
                 'products.name',
                 'products.visible',
                 'products.image'
-            )->get();
+            )
+            ->whereNotIn('product_variants.product_id',$products_id)
+            ->get();
 
         return Datatables::of($product)
             ->addColumn('image', function ($data) {
