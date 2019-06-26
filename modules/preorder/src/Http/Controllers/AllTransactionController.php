@@ -5,6 +5,7 @@ namespace Modules\Preorder\Http\Controllers;
 use App\Http\Controllers\Controller;
 use DataTables;
 use Illuminate\Http\Request;
+use Modules\Preorder\PreOrder;
 use Modules\Preorder\Production;
 use Modules\Preorder\Transaction;
 
@@ -87,9 +88,19 @@ class AllTransactionController extends Controller
 
         if ($request->has('tracking_number')) {
 
-            $request->validate([
-                'status' => 'in:pending,paid,shipped,rejected,returned,completed',
-            ]);
+            if ($request->status == 'paid' && $transaction->status != 'paid') {
+
+                $transaction->preOrder->increment('order_received');
+                $total = $transaction->preOrder->total;
+                foreach ($transaction->orders as $key => $value) {
+                    $total += intval($value->qty);
+                }
+                $preOrder = PreOrder::find($transaction->pre_order_id);
+                if (!is_null($preOrder)) {
+                    $preOrder->total = $total;
+                    $preOrder->update();
+                }
+            }
 
             $tracking_number = trim($request->tracking_number);
             if (
@@ -97,7 +108,7 @@ class AllTransactionController extends Controller
                 $transaction->getProduction->tracking_number != $tracking_number
             ) {
                 $production = Production::where('transaction_id', $id)->first();
-                
+
                 $production->update([
                     'tracking_number' => $tracking_number,
                 ]);
@@ -119,10 +130,9 @@ class AllTransactionController extends Controller
                 'email' => 'required',
                 'phone' => 'required',
                 'address' => 'required',
-                'postal_code' => 'required',
             ]);
         }
-        
+
         $transaction->update($request->except('_token', '_method'));
 
         return back();

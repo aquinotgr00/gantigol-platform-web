@@ -10,7 +10,7 @@ if (Gate::forUser($user)->allows('view-product-category')) {
     ];
 }
 
-if (Gate::forUser($user)->allows('view-product-variant')) {
+if (Gate::forUser($user)->allows('view-variant')) {
     $submenuItems[] = [
         'routeName'=>'product-variant.index',
         'title'=>'Product Variants'

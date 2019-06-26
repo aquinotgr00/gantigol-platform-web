@@ -34,6 +34,8 @@ class ProductPrivilagesTableSeeder extends Seeder
             ['name'=>'edit size chart', 'privilege_category_id'=>$productPrivilegeCategoryId],
             ['name'=>'set visible', 'privilege_category_id'=>$productPrivilegeCategoryId],
             ['name'=>'set adjustment', 'privilege_category_id'=>$productPrivilegeCategoryId],
+            ['name'=>'delete size chart', 'privilege_category_id'=>$productPrivilegeCategoryId],
+            ['name'=>'delete variant', 'privilege_category_id'=>$productPrivilegeCategoryId],
         ]);
     }
 }

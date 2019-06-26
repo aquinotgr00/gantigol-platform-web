@@ -291,6 +291,7 @@ select.form-control:not([size]):not([multiple]) {
 	color: #5E6368;
 	border-color: #E8EDF4;
 	border-left: none;
+	background-color: #ffffff;
 }
 .badge-primary {
     color: #4285F4;
@@ -424,6 +425,7 @@ img .add-svg{
 	height: 30px;
 	width: 30px;
 	margin-right: 12px;
+	background-color: #ffffff;
 }
 .circle-table:last-child{
 	margin-right: 0;

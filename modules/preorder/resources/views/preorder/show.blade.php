@@ -29,9 +29,25 @@
         </div>
         <div class="form-group">
             <label>Price</label>
-            <p>
-                {{ number_format($product->price) }}
-            </p>
+            <p>Rp {{ number_format($product->price) }}</p>
+        </div>
+        <div class="row">
+            <div class="col-sm form-group">
+                <label>Weight</label>
+                <p>{{ $product->weight }} gr</p>
+            </div>
+            <div class="col-sm form-group">
+                <label>Quota</label>
+                <p>{{ $preOrder->quota }}</p>
+            </div>
+            <div class="col-sm form-group">
+                <label>Order Received</label>
+                <p>{{ $preOrder->order_received }}</p>
+            </div>
+            <div class="col-sm form-group">
+                <label>Total</label>
+                <p>{{ $preOrder->total }}</p>
+            </div>
         </div>
         <div class="form-group">
             <label>Category</label>
@@ -55,7 +71,7 @@
                 <thead>
                     <tr>
                         <th scope="col">SKU</th>
-                        <th scope="col">Size Code</th>
+                        <th scope="col">Variant</th>
                         <th scope="col">Stock</th>
                         <th scope="col">Price</th>
                     </tr>
@@ -65,7 +81,7 @@
                     @foreach($variants as $key => $value)
                     <tr>
                         <td>{{ $value->sku }}</td>
-                        <td>{{ $value->size_code }}</td>
+                        <td>{{ $value->variant }}</td>
                         <td>{{ $value->quantity_on_hand }}</td>
                         <td>{{ number_format($value->price) }}</td>
                     </tr>

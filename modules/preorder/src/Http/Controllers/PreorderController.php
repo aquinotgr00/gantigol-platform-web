@@ -56,8 +56,14 @@ class PreorderController extends Controller
                             'title' => 'Hide On Website'
                         ];
                     }
-                    return  '<a href="' . Route('list-preorder.edit', $row->id) . '" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>
-                    <a href="' . $data["route"] . '" class="btn btn-table circle-table ' . $data["button"] . '" data-toggle="tooltip" data-placement="top" title="' . $data['title'] . '"></a>';
+                    $button  = '<a href="' . Route('list-preorder.edit', $row->id) . '" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>';
+                    $button .= '<a href="' . $data["route"] . '" class="btn btn-table circle-table ' . $data["button"] . '" data-toggle="tooltip" data-placement="top" title="' . $data['title'] . '"></a>';
+
+                    if ($row->total >= $row->quota) {
+                        $button .='<button type="button" data-url="'.route('list-preorder.reset',$row->id).'" class="btn circle-table btn-reset" onclick="resetPreorder(this)"  data-toggle="tooltip" data-placement="top" title="Reset PreOrder"></button>';
+                    }
+
+                    return $button;
                 })
                 ->rawColumns(['image','product.name', 'action'])
                 ->make(true);
@@ -322,5 +328,20 @@ class PreorderController extends Controller
             }
         }
         return redirect()->route('list-preorder.index');
+    }
+
+    public function resetPreOrder(int $id)
+    {
+        $preOrder = PreOrder::find($id);
+        
+        if (
+            !is_null($preOrder) &&
+            ($preOrder->order_received >= $preOrder->quota)
+        ) {
+            $preOrder->order_received = 0;
+            $preOrder->update();
+        }
+        
+        return response()->json(['data' => $preOrder]);
     }
 }

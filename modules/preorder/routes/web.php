@@ -28,3 +28,5 @@ Route::put('all-transaction/{id}', 'AllTransactionController@update')->name('all
 Route::get('transaction/card', 'AllTransactionController@indexCard')->name('transaction.card');
 Route::post('store-shipping-number', 'TransactionController@storeShippingNumber')->name('store-shipping-number');
 Route::get('show-invoice', 'AllTransactionController@showInvoice')->name('show-invoice');
+
+Route::post('reset-preorder/{id}', 'PreorderController@resetPreOrder')->name('list-preorder.reset');

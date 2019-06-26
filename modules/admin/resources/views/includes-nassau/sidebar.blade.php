@@ -1,23 +1,19 @@
 <!-- start sidebar -->
 <nav class="col-sm-2 sidebar" id="sidebar">
     @php
+    
     $img_logo = asset('vendor/admin/images/logo-nassau.svg');
-    @endphp 
-    @if(class_exists('\Modules\Admin\SettingDashboard'))
-    
-    @php
-    
-    $setting = \Modules\Admin\SettingDashboard::first();
-    
-    if(isset($setting->logo)){
-        $img_logo = $setting->logo;
+
+    if(class_exists('\Modules\Admin\SettingDashboard')){
+        $setting = \Modules\Admin\SettingDashboard::first();
+        if(isset($setting->logo) && !empty($setting->logo)){
+            $img_logo = $setting->logo;
+        }
+
     }
 
     @endphp
 
-    @else 
-    
-    @endif
     <img src="{{ $img_logo }}" class="logo logo-nav" alt="logo nassau">
     <hr>
     <ul class="nav flex-column nav-item">

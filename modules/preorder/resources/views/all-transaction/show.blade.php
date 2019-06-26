@@ -39,20 +39,20 @@
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#dataTable').DataTable();
 
         $('select[name="subdistrict_id"]').select2({
             ajax: {
                 url: '{{ url("shipment/subdistrict") }}',
                 dataType: 'json',
-                data: function(params) {
+                data: function (params) {
                     var query = {
                         q: params.term
                     }
                     return query;
                 },
-                processResults: function(res) {
+                processResults: function (res) {
                     // Tranforms the top-level key of the response object from 'items' to 'results'
                     return {
                         results: res.data
@@ -61,7 +61,7 @@
             }
         });
 
-        $('select[name="subdistrict_id"]').on('select2:select', function(e) {
+        $('select[name="subdistrict_id"]').on('select2:select', function (e) {
             var data = e.params.data;
             $('#shipping-province').text(data.city.province.name);
             $('#shipping-city').text(data.city.name);
@@ -98,9 +98,11 @@ $customer = $transaction->customer;
                             <h4>Customer Info</h4>
                         </div>
                         <div class="float-right">
+                            @can('edit-order-customer')
                             <a href="#EditCustomerInfo" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
+                            @endcan
                         </div>
                     </div>
                     <hr>
@@ -160,9 +162,11 @@ $customer = $transaction->customer;
                             <h4>Shipping Info</h4>
                         </div>
                         <div class="float-right">
+                            @can('edit-order-shipping-info')
                             <a href="#editShipping" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
+                            @endcan
                         </div>
                     </div>
                     <hr>
@@ -214,9 +218,11 @@ $customer = $transaction->customer;
                             <h4>Shipping Details</h4>
                         </div>
                         <div class="float-right">
+                            @can('edit-order-shipping-details')
                             <a href="#editStatus" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
+                            @endcan
                             <!--
                             <a href="#">
                                 <i class="fas fa-shipping-fast"></i>
@@ -268,7 +274,9 @@ $customer = $transaction->customer;
                     <tr>
                         <td>
                             <img src="{{ $value->productVariant->product->image }}" height="50px;">
+                            <a href="{{ route('list-preorder.show',$value->transaction->pre_order_id) }}">
                             {{ $value->productVariant->product->name }} #{{ $value->productVariant->variant }}
+                            </a>
                         </td>
                         <td>
                             {{ number_format($value->price) }}
@@ -289,7 +297,7 @@ $customer = $transaction->customer;
                 <tfoot>
                     <tr>
                         <td><strong>Shipping Cost</strong></td>
-                        <td colspan="3">{{ $transaction->courier_name }}</td>
+                        <td colspan="3">{{ strtoupper($transaction->courier_name) }}</td>
                         <td>{{ number_format($transaction->courier_fee) }}</td>
                     </tr>
                     <tr>

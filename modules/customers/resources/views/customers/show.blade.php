@@ -32,19 +32,19 @@
         </div>
         <div class="form-group">
             <label>Subdistrict</label>
-            <p>{{ $customer->subdistrict->name }}</p>
+            <p>{{ (isset($customer->subdistrict->name))? $customer->subdistrict->name : '' }}</p>
         </div>
         <div class="form-group">
             <label>City</label>
-            <p>{{ $customer->subdistrict->city->name }}</p>
+            <p>{{ (isset($customer->subdistrict->name))? $customer->subdistrict->city->name : '' }}</p>
         </div>
         <div class="form-group">
             <label>Province</label>
-            <p>{{ $customer->subdistrict->city->province->name }}</p>
+            <p>{{ (isset($customer->subdistrict->name))? $customer->subdistrict->city->province->name : '' }}</p>
         </div>
         <div class="form-group">
             <label>Zip Code</label>
-            <p>{{ $customer->subdistrict->city->postal_code }}</p>
+            <p>{{ (isset($customer->subdistrict->name))? $customer->subdistrict->city->postal_code : '' }}</p>
         </div>
         <div class="form-group">
             <label>Phone Number </label>
