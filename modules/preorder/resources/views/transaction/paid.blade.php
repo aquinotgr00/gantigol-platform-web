@@ -10,28 +10,24 @@
                     "data": "created_at"
                 },
                 {
-                    "data": "invoice",
-                    "render": function(data, type, row) {
-                        return '<a href="{{ url('admin/show-transaction') }}/' + row.id + '?preorder={{ $preOrder->id }}">' + data + '</a>';
-                    }
+                    "data": "invoice"
                 },
                 {
                     "data": "name"
                 },
                 {
-                    "data": "orders",
-                    "render": function(data, type, row) {
-                        var variant_qty = "";
-                        $.each(data, function(key, val) {
-                            variant_qty += val.product_variant.variant + " : ";
-                            variant_qty += val.qty + "<br/>";
-                        });
-                        return variant_qty;
-                    }
+                    "data": "variant_qty"
                 }
             ],
             dom: 'Bfrtip',
-            buttons: ['excel', 'pdf', 'print']
+            buttons: ['excel', 'pdf', 'print'],
+            buttons: {
+                buttons: [
+                    { extend: 'pdf', className: 'btn btn-line' },
+                    { extend: 'excel', className: 'btn btn-line' },
+                    { extend: 'print', className: 'btn btn-line' },
+                ]
+            }
 
         });
 
@@ -52,7 +48,7 @@
 
         });
 
-        $('.dt-buttons').css('display', 'none');
+        //$('.dt-buttons').css('display', 'none');
 
         $.each($('.btn-line'), function(key, value) {
             $(value).click(function(){

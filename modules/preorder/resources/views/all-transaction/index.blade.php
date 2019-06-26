@@ -136,7 +136,7 @@
                 }
             },
             order: [
-                [0, "desc"]
+                [1, "desc"]
             ],
             columns: [{
                     data: 'id',
@@ -152,10 +152,7 @@
                     data: 'name'
                 },
                 {
-                    data: 'courier_name',
-                    render: function(data, type, row) {
-                        return data + ' ' + row.courier_type;
-                    }
+                    data: 'courier_name'
                 },
                 {
                     data: 'status'

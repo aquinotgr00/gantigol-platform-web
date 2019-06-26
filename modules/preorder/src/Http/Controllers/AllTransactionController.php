@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Modules\Preorder\PreOrder;
 use Modules\Preorder\Production;
 use Modules\Preorder\Transaction;
+use Illuminate\Support\Facades\Mail;
+use Modules\Preorder\Mail\WayBill;
 
 class AllTransactionController extends Controller
 {
@@ -52,6 +54,12 @@ class AllTransactionController extends Controller
                     $link .= $query->invoice;
                     $link .= '</a>';
                     return $link;
+                })
+                ->addColumn('courier_name', function ($query) {
+                    return strtoupper($query->courier_name);
+                })
+                ->addColumn('name', function ($query) {
+                    return ucwords($query->name);
                 })
                 ->rawColumns(['id', 'invoice'])
                 ->make(true);
@@ -115,10 +123,8 @@ class AllTransactionController extends Controller
 
                 try {
 
-                    Mail::to($order->shipping_email)->send(new WayBill($transaction));
-                    $order->update([
-                        'order_status' => 3,
-                    ]);
+                    Mail::to($transaction->email)->send(new WayBill($transaction));
+                    
                 } catch (\Swift_TransportException $e) {
                     $response = $e->getMessage();
                 }

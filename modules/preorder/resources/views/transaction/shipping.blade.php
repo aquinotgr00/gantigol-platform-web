@@ -3,11 +3,30 @@
 @push('styles')
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/admin/css/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet">
+<style>
+    div.dt-buttons {
+        float: right;
+        margin: 10px;
+        display:inline-block;
+    }
+    .dataTables_filter{
+        clear:both;
+    }
+</style>
 @endpush
 
 @push('scripts')
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/jszip.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/pdfmake.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/vfs_fonts.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.print.min.js') }}"></script>
+<script src="{{ asset('vendor/admin/js/datatables/buttons.colVis.min.js') }}"></script>
 <script>
     function inputResi(obj) {
         var id = $(obj).attr('id');
@@ -33,80 +52,44 @@
     }
 
     $(document).ready(function() {
-        var production_json = $('#p-production-json').val();
 
-        var selected = JSON.parse(production_json);
-
-        $('#heading-start-production-date').text(selected.start_production_date);
-        $('#heading-end-production-date').text(selected.end_production_date);
-        $('#heading-status').text(selected.status.toUpperCase());
-
-
-        var dataTable = $('#datatable-shipping').DataTable({
-            "data": selected.get_productions,
+        var datatables = $('#datatable-shipping').DataTable({
+            "ajax": "{{ route('shipping.datatables',$production_batch->id) }}",
+            "order": [
+                [0, "desc"]
+            ],
             "columns": [{
-                    "data": "get_transaction.created_at"
+                    "data": "created_at"
                 },
                 {
-                    "data": "get_transaction.invoice",
-                    "render": function(data, type, row) {
-                        return '<a href="{{ url('admin/show-transaction') }}/' + row.get_transaction.id + '?preorder={{ $preOrder->id }}">' + data + '</a>';
-                    }
+                    "data": "invoice"
                 },
                 {
-                    "data": "get_transaction.name"
+                    "data": "name"
                 },
                 {
-                    "data": "get_transaction.orders",
-                    "render": function(data, type, row) {
-                        var amount = 0;
-                        var variant = "";
-                        var variants = [];
-                        $.each(data, function(index, value) {
-                            switch (value.product_variant.variant) {
-                                case value.product_variant.variant:
-                                    amount += parseInt(value.qty);
-                                    break;
-                            }
-                            variants[value.product_variant.variant] = amount;
-                        });
-                        return variant;
-                    }
+                    "data": "variant_qty"
                 },
                 {
-                    "data": "get_transaction.courier_name",
-                    "render": function(data, type, row) {
-
-                        var input = '<input type="text" name="courier_name[]"';
-                        input += ' onclick="showModalCourier(this)" ';
-                        input += ' class="form-control form-table form-success"';
-                        input += ' id="' + row.id + '"';
-                        input += ' data-fee="' + row.get_transaction.courier_fee + '"';
-                        input += ' data-type="' + row.get_transaction.courier_type + '"';
-                        input += ' placeholder="' + data + '">';
-                        return input;
-                    }
+                    "data": "courier_name"
                 },
                 {
-                    "data": "tracking_number",
-                    "render": function(data, type, row) {
-                        var input = '<div class="input-group-append">';
-                        input += "<input type='hidden' value='" + row.id + "' name='production_id[]' />";
-                        input += '<input type="text" name="tracking_number[]" class="form-control form-table form-success" id="' + row.id + '" placeholder="' + data + '">';
-                        input += '<button class="btn btn-tbl" id="btn-tbl-' + row.id + '" data-toggle="tooltip" data-placement="top" title="" data-original-title="Submit" style="display:none;">';
-                        input += '</button></div>';
-                        return input;
-                    }
+                    "data": "tracking_number"
                 },
                 {
-                    "data": "status",
-                    "render": function(data, type, row) {
-                        return data.replace(/_/g, " ").toUpperCase();
-                    }
+                    "data": "status"
                 }
             ],
             dom: 'Bfrtip',
-            buttons: ['excel', 'pdf', 'print']
+            buttons: ['excel', 'pdf', 'print'],
+            buttons: {
+                buttons: [
+                    { extend: 'pdf', className: 'btn btn-line' },
+                    { extend: 'excel', className: 'btn btn-line' },
+                    { extend: 'print', className: 'btn btn-line' },
+                ]
+            }
+
         });
 
         $('#form-input-shipping-number').submit(function(e) {
@@ -120,7 +103,7 @@
                 success: function(data) {
                     if (typeof data.data.id !== "undefined") {
                         alert('Success ! add shipping number');
-                        window.location.href = "{{ route('shipping.transaction',$preOrder->id) }}";
+                        window.location.href = "{{ route('shipping.transaction',$production_batch->preOrder->id) }}";
                     } else {
                         alert('Error ! faield to add shipping number :(');
                     }
@@ -149,7 +132,7 @@
 
         });
 
-        $('.dt-buttons').css('display', 'none');
+        //$('.dt-buttons').css('display', 'none');
 
         $.each($('.btn-line'), function(key, value) {
             $(value).click(function() {
@@ -163,33 +146,6 @@
 @endpush
 
 @section('content')
-<!-- start tools -->
-
-<div class="row mb-3">
-    <div class="col col-md-4 mt-4">
-        <div>
-            <small>Summary Order :</small>
-            <span class="Summary-ord">M : 10 L : 10 XL : 10</span>
-        </div>
-        <div>
-            <small>Total Order : </small>
-            <span class="Summary-ord">30</span>
-        </div>
-    </div>
-    <div class="col-md-8">
-        <div class=" form-group float-right mr-2">
-            <div>
-                <label>Export Data</label>
-            </div>
-            <div class="btn-group" role="group" aria-label="#">
-                <button type="button" data-trigger="buttons-pdf" class="btn btn-line">PDF</button>
-                <button type="button" data-trigger="buttons-excel" class="btn btn-line">Excel</button>
-                <button type="button" data-trigger="buttons-print" class="btn btn-line">Print</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end tools -->
 
 <!-- start table -->
 <form action="{{ route('store-shipping-number') }}" method="post">
@@ -219,8 +175,6 @@
         </button>
     </div>
 </form>
-
-<input type="hidden" id="p-production-json" value="{{ (isset($production_json))? $production_json : '[]' }}" readonly />
 
 @include('preorder::includes.modal-input-shipping-number')
 

@@ -5,17 +5,18 @@ namespace Modules\Preorder\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Modules\Preorder\Http\Resources\TransactionResource;
-use Modules\Preorder\PreOrdersItems;
-use Modules\Preorder\PreOrder;
-use Modules\Preorder\SettingReminder;
-use Modules\Preorder\Transaction;
-use Modules\Product\ProductVariant;
-use Modules\Preorder\Traits\OrderTrait;
 use Modules\Customers\CustomerProfile;
 use Modules\Membership\Member;
+use Modules\Preorder\Http\Resources\TransactionResource;
 use Modules\Preorder\Mail\InvoiceOrder;
+use Modules\Preorder\PreOrder;
+use Modules\Preorder\PreOrdersItems;
+use Modules\Preorder\SettingReminder;
+use Modules\Preorder\Traits\OrderTrait;
+use Modules\Preorder\Transaction;
+use Modules\Product\ProductVariant;
 use Validator;
+use DataTables;
 
 class TransactionApiController extends Controller
 {
@@ -37,15 +38,39 @@ class TransactionApiController extends Controller
      */
     public function getPendingByPreorder(int $pre_order_id)
     {
-        $preOrder    = PreOrder::find($pre_order_id);
-        $transaction = array();
-        if (isset($preOrder->transaction)) {
-            $transaction = $preOrder->transaction->where('status', 'pending');
-            foreach ($preOrder->transaction as $key => $value) {
-                $value->orders;
-            }
-        }
-        return new TransactionResource($transaction);
+        $transaction = Transaction::where('pre_order_id', $pre_order_id)
+            ->where('status', 'pending')
+            ->get();
+        return Datatables::of($transaction)
+            ->addColumn('created_at', function ($data) {
+                return date_format($data->created_at, 'Y-m-d');
+            })
+            ->addColumn('invoice', function ($data) {
+                return '<a href="' . route('all-transaction.show', $data->id) . '">' . $data->invoice . '</a>';
+            })
+            ->addColumn('variant_qty', function ($data) {
+                $variant_qty = '';
+                $variant_qty_items = [];
+                foreach ($data->orders as $key => $value) {
+                    $variant_qty_items[$value->productVariant->variant][] = $value->qty;
+                }
+
+                foreach ($variant_qty_items as $label => $item) {
+                    $variant_qty .= ucwords($label) . ' : ';
+                    $variant_qty .= array_sum($item);
+                    $variant_qty .= '<br/>';
+                }
+                return $variant_qty;
+            })
+            ->addColumn('email_received', function ($data) {
+                $reminder = '';
+                for ($i = 0; $i < $data->payment_reminder; $i++) {
+                    $reminder .= '<img class="alert-pre" src="' . asset('vendor/admin/images/alert-' . $i . '.svg') . '" alt="indicator reminder"></a>';
+                }
+                return $reminder;
+            })
+            ->rawColumns(['invoice','variant_qty','email_received'])
+            ->toJson();
     }
     /**
      *
@@ -62,8 +87,31 @@ class TransactionApiController extends Controller
             ->whereNull('productions.transaction_id')
             ->where('transactions.status', 'paid')
             ->where('transactions.pre_order_id', $pre_order_id)
-            ->paginate(25);
-        return new TransactionResource($transaction);
+            ->get();
+
+        return Datatables::of($transaction)
+            ->addColumn('created_at', function ($data) {
+                return date_format($data->created_at, 'Y-m-d');
+            })
+            ->addColumn('invoice', function ($data) {
+                return '<a href="' . route('all-transaction.show', $data->id) . '">' . $data->invoice . '</a>';
+            })
+            ->addColumn('variant_qty', function ($data) {
+                $variant_qty = '';
+                $variant_qty_items = [];
+                foreach ($data->orders as $key => $value) {
+                    $variant_qty_items[$value->productVariant->variant][] = $value->qty;
+                }
+
+                foreach ($variant_qty_items as $label => $item) {
+                    $variant_qty .= ucwords($label) . ' : ';
+                    $variant_qty .= array_sum($item);
+                    $variant_qty .= '<br/>';
+                }
+                return $variant_qty;
+            })
+            ->rawColumns(['invoice','variant_qty','email_received'])
+            ->toJson();
     }
     /**
      *
@@ -91,20 +139,20 @@ class TransactionApiController extends Controller
             'postal_code' => 'required',
             'subdistrict_id' => 'required',
             'courier_fee' => 'required|numeric',
-            'courier_name' => 'required'
+            'courier_name' => 'required',
         ]);
 
         if ($validator->fails()) {
             return new TransactionResource($validator->messages());
         }
 
-        $settingReminder    =  SettingReminder::first();
-        $repeat             = (isset($settingReminder->repeat)) ? intval($settingReminder->repeat) : 3;
-        $interval           = (isset($settingReminder->interval)) ? intval($settingReminder->interval) : 8;
-        $hour               = $repeat * $interval;
-        $start              = date('Y-m-d');
+        $settingReminder = SettingReminder::first();
+        $repeat = (isset($settingReminder->repeat)) ? intval($settingReminder->repeat) : 3;
+        $interval = (isset($settingReminder->interval)) ? intval($settingReminder->interval) : 8;
+        $hour = $repeat * $interval;
+        $start = date('Y-m-d');
 
-        $payment_duedate    = date('Y-m-d h:is', strtotime('+' . $hour . ' hour', strtotime($start)));
+        $payment_duedate = date('Y-m-d h:is', strtotime('+' . $hour . ' hour', strtotime($start)));
 
         $transaction = Transaction::create(
             array_merge(
@@ -114,7 +162,7 @@ class TransactionApiController extends Controller
                     'amount' => 0,
                     'pre_order_id' => $request->pre_order_id,
                     'customer_id' => 0,
-                    'payment_duedate' => $payment_duedate
+                    'payment_duedate' => $payment_duedate,
                 ]
             )
         );
@@ -123,7 +171,7 @@ class TransactionApiController extends Controller
             !is_null($transaction) &&
             isset($transaction->id)
         ) {
-            $customer_id = NULL;
+            $customer_id = null;
             if ($request->has('user_id')) {
 
                 $member = Member::find($request->user_id);
@@ -156,17 +204,17 @@ class TransactionApiController extends Controller
                 $customer_id = $customer->id;
             }
 
-            $invoice_id     = str_pad($transaction->id, 5, "0", STR_PAD_LEFT);
-            $invoice_parts  = array('INV', date('Y-m-d'), $invoice_id);
-            $invoice        = implode('-', $invoice_parts);
+            $invoice_id = str_pad($transaction->id, 5, "0", STR_PAD_LEFT);
+            $invoice_parts = array('INV', date('Y-m-d'), $invoice_id);
+            $invoice = implode('-', $invoice_parts);
             $transaction->update([
                 'invoice' => $invoice,
-                'customer_id' => $customer_id
+                'customer_id' => $customer_id,
             ]);
         }
 
-        $quantity   = 0;
-        $amount     = 0;
+        $quantity = 0;
+        $amount = 0;
 
         if (!is_null($request->items)) {
             $amount = 0;
@@ -194,13 +242,13 @@ class TransactionApiController extends Controller
                             'model' => $productVariant->variant,
                             'qty' => $item['qty'],
                             'price' => $price,
-                            'subtotal' => $subtotal
+                            'subtotal' => $subtotal,
                         ]);
                     }
                 } else {
                     return new TransactionResource(['errors' => [
                         'message' => "item doesn't have product_id",
-                        'status' => 'danger'
+                        'status' => 'danger',
                     ]]);
                     break;
                 }
@@ -216,12 +264,12 @@ class TransactionApiController extends Controller
                 $transaction->update([
                     'amount' => $amount,
                     'quantity' => $quantity,
-                    'discount' => $request->discount
+                    'discount' => $request->discount,
                 ]);
             } else {
                 $transaction->update([
                     'amount' => $amount,
-                    'quantity' => $quantity
+                    'quantity' => $quantity,
                 ]);
             }
 
@@ -256,8 +304,8 @@ class TransactionApiController extends Controller
             $transaction->getSubdistrict;
         }
 
-        $names      = preg_split('/\s+/', $transaction->name);
-        $last_name  = '';
+        $names = preg_split('/\s+/', $transaction->name);
+        $last_name = '';
 
         foreach ($names as $key => $value) {
             if ($key != 0) {
@@ -274,7 +322,7 @@ class TransactionApiController extends Controller
                 'name' => $value->productVariant->name,
                 'quantity' => $value->qty,
                 'price' => $value->price,
-                'subtotal' => $value->subtotal
+                'subtotal' => $value->subtotal,
             ];
         }
         $addtional = [
@@ -283,15 +331,15 @@ class TransactionApiController extends Controller
                 'name' => $request->courier_name,
                 'quantity' => 1,
                 'price' => $transaction->courier_fee,
-                'subtotal' => $transaction->courier_fee
+                'subtotal' => $transaction->courier_fee,
             ],
             [
                 'id' => $transaction->discount . '1',
                 'name' => 'Discount',
                 'quantity' => 1,
                 'price' => (is_null($transaction->discount)) ? 0 : intval(-$transaction->discount),
-                'subtotal' => (is_null($transaction->discount)) ? 0 : intval(-$transaction->discount)
-            ]
+                'subtotal' => (is_null($transaction->discount)) ? 0 : intval(-$transaction->discount),
+            ],
         ];
 
         $item_details = array_merge($item_details, $addtional);
@@ -299,17 +347,17 @@ class TransactionApiController extends Controller
         $invoice = [
             'transaction_details' => [
                 'order_id' => $transaction->invoice,
-                'gross_amount' => $transaction->amount
+                'gross_amount' => $transaction->amount,
             ],
             'customer_details' => [
                 'first_name' => $names[0],
-                'last_name'  => $last_name,
+                'last_name' => $last_name,
                 'email' => $transaction->email,
                 'phone' => $transaction->phone,
                 'billing_address' => $transaction->address,
-                'shipping_address' => $transaction->address
+                'shipping_address' => $transaction->address,
             ],
-            'item_details' => $item_details
+            'item_details' => $item_details,
         ];
 
         return new TransactionResource($invoice);
