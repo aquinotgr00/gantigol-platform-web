@@ -8,7 +8,7 @@
 
 @section('content')
             <!-- start tools -->
-            <div>
+            <div class="row mb-3">
                   <tool class="navbar navbar-expand-lg">
                   <form class="form-inline my-2 my-lg-0">
                       <div class="input-group srch">
@@ -19,9 +19,11 @@
                             </button>
                          </div>
                     </div>
+                     @can('add-category-post')
                       <a class="btn sub-circle my-2 my-sm-0" href="{{Route('blog.category.new')}}" role="button">
                         <img class="add-svg" src="{{ asset('vendor/admin/images/add.svg') }}" alt="add-image">
                       </a>
+                    @endcan
                   </form>
               </tool>
             </div>
@@ -51,6 +53,7 @@
             $('#category-table').DataTable({
                 processing: true,
                 serverSide: true,
+                "dom": 'lrtip',
                 ajax: '{!! route('blog.category.list') !!}',
                 columns: [
                     { data: 'name', name: 'name' },
