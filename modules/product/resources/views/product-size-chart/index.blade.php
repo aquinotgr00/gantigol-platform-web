@@ -2,7 +2,19 @@
 
 @section('content')
 
-@indexPage(['title'=>'Product Size Chart', 'addNewAction'=>route('product-size-chart.create')])
+@php 
+
+$user = Auth::user();
+
+$args = ['title'=>'Product Size Chart'];
+
+if (Gate::forUser($user)->allows('create-size-chart')) {
+    $args['addNewAction'] = route('product-size-chart.create'); 
+}
+
+@endphp
+
+@indexPage($args)
 <!-- start table -->
 <table class="table" id="dataTable">
     <thead>

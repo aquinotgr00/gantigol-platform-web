@@ -118,9 +118,11 @@
                             <h4>Shipping Info</h4>
                         </div>
                         <div class="float-right">
+                            @can('edit-order-shipping-info')
                             <a href="#editShipping" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
+                            @endcan
                         </div>
                     </div>
                     <hr>
@@ -172,9 +174,11 @@
                             <h4>Shipping Details</h4>
                         </div>
                         <div class="float-right">
+                            @can('edit-order-shipping-details')
                             <a href="#editStatus" data-toggle=modal>
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
+                            @endcan
                             <!--<a href="#">
                                 <i class="fas fa-shipping-fast"></i>
                             </a>-->

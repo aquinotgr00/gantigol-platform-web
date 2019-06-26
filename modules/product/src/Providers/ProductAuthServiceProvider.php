@@ -75,5 +75,13 @@ class ProductAuthServiceProvider extends ServiceProvider
         Gate::define('edit-product-category', function ($admin) {
             return $admin->privileges->contains('privilege_id', Privilege::where('name', 'edit product category')->value('id'));
         });
+
+        Gate::define('delete-size-chart', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'delete size chart')->value('id'));
+        });
+
+        Gate::define('delete-variant', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'delete variant')->value('id'));
+        });
     }
 }

@@ -2,17 +2,19 @@
 
 namespace Modules\Product\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Modules\Product\Product;
-use Modules\Product\ProductVariant;
-use Modules\Product\ProductImage;
-use Modules\Inventory\Adjustment;
-use Spatie\Activitylog\Models\Activity;
-use Validator;
-use DataTables;
 use Auth;
+use DataTables;
 use DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Spatie\Activitylog\Models\Activity;
+
+use Modules\Inventory\Adjustment;
+use Modules\Product\Product;
+use Modules\Product\ProductImage;
+use Modules\Product\ProductVariant;
+use Validator;
 
 class ProductController extends Controller
 {
@@ -35,7 +37,7 @@ class ProductController extends Controller
     {
         $data = [
             'title' => ucwords('add new product'),
-            'back' => route('product.index')
+            'back' => route('product.index'),
         ];
         $categories = [];
         if (class_exists('\Modules\ProductCategory\ProductCategory')) {
@@ -88,7 +90,7 @@ class ProductController extends Controller
                     'price' => $request->price,
                     'initial_balance' => $request->initial_balance,
                     'quantity_on_hand' => $request->initial_balance,
-                    'variant' => 'ALL SIZE'
+                    'variant' => 'ALL SIZE',
                 ]);
             }
         }
@@ -110,18 +112,18 @@ class ProductController extends Controller
                         'product_id' => $product->id,
                         'price' => $request->list_price[$key],
                         'initial_balance' => $request->list_initial[$key],
-                        'quantity_on_hand' => $request->list_initial[$key]
+                        'quantity_on_hand' => $request->list_initial[$key],
                     ]);
                 }
             }
         }
 
         if ($request->has('images')) {
-            
+
             foreach ($request->images as $key => $value) {
                 $productImage = ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => $value
+                    'image' => $value,
                 ]);
             }
         }
@@ -150,7 +152,7 @@ class ProductController extends Controller
 
         $data = [
             'title' => ucwords($product->name . ' #' . $productVariant->variant),
-            'back' => route('product.index')
+            'back' => route('product.index'),
         ];
         return view("product::product.show", compact('product', 'productVariant', 'categories', 'data'));
     }
@@ -163,16 +165,16 @@ class ProductController extends Controller
     public function edit(int $id)
     {
         $productVariant = ProductVariant::findOrFail($id);
-        $product_tags   = Product::with('tagged')->find($productVariant->product_id);
-        $get_tags       = [];
+        $product_tags = Product::with('tagged')->find($productVariant->product_id);
+        $get_tags = [];
         foreach ($product_tags->tags as $key => $value) {
             $get_tags[] = $value->name;
         }
-        $related_tags   = implode(',', $get_tags);
-        $product        = $productVariant->product;
+        $related_tags = implode(',', $get_tags);
+        $product = $productVariant->product;
         $data = [
             'title' => $product->name,
-            'back' => route('product.index')
+            'back' => route('product.index'),
         ];
         $categories = [];
         if (class_exists('\Modules\ProductCategory\ProductCategory')) {
@@ -200,13 +202,13 @@ class ProductController extends Controller
         $productVariant = ProductVariant::findOrFail($id);
 
         $product = Product::findOrFail($productVariant->product_id);
-        
+
         $data['description'] = $request->description;
-        $data['status']     = $request->status;
-        $data['price']      = intval($request->price);
-        $data['name']       = $request->name;
-        $data['weight']     = $request->weight;
-        
+        $data['status'] = $request->status;
+        $data['price'] = intval($request->price);
+        $data['name'] = $request->name;
+        $data['weight'] = $request->weight;
+
         if ($request->has('image')) {
             $trim_img = trim($request->image);
             if (!empty($trim_img)) {
@@ -219,11 +221,11 @@ class ProductController extends Controller
                 $data['category_id'] = $request->category_id;
             }
         }
-        
+
         $product->update($data);
-        
+
         $productVariant->update([
-            'price' => $data['price']
+            'price' => $data['price'],
         ]);
 
         //activity log
@@ -233,7 +235,7 @@ class ProductController extends Controller
                 ->performedOn($variant)
                 ->causedBy($user)
                 ->withProperties([
-                    'activity' => 'Change Description'
+                    'activity' => 'Change Description',
                 ])
                 ->log('Change Description');
         }
@@ -253,7 +255,7 @@ class ProductController extends Controller
             foreach ($request->images as $key => $value) {
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => $value
+                    'image' => $value,
                 ]);
             }
         }
@@ -267,7 +269,7 @@ class ProductController extends Controller
             'method' => 'required',
             'qty' => 'required',
             'note' => 'required',
-            'product_variants_id' => 'required'
+            'product_variants_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -275,8 +277,8 @@ class ProductController extends Controller
         }
 
         $variant_id = $request->input('product_variants_id');
-        $method     = $request->input('method');
-        $qty        = $request->input('qty');
+        $method = $request->input('method');
+        $qty = $request->input('qty');
 
         $variant = ProductVariant::with("product")->find($variant_id);
         if (empty($variant)) {
@@ -285,7 +287,7 @@ class ProductController extends Controller
 
         if ($method == '-' and $variant->quantity_on_hand < $qty) {
             $data = [
-                'message' => "Invalid number. Product {$variant->product->name} size {$variant->variant} only has {$variant->quantity_on_hand}!"
+                'message' => "Invalid number. Product {$variant->product->name} size {$variant->variant} only has {$variant->quantity_on_hand}!",
             ];
             return response()->json($data);
         }
@@ -311,7 +313,7 @@ class ProductController extends Controller
             ->performedOn($variant)
             ->causedBy($user)
             ->withProperties([
-                'activity' => ($method == '+') ? 'Add Stock' : 'Reduce Stock'
+                'activity' => ($method == '+') ? 'Add Stock' : 'Reduce Stock',
             ])
             ->log($request->note);
 
@@ -321,16 +323,16 @@ class ProductController extends Controller
     public function ajaxAllProduct()
     {
         $product_po = DB::table('pre_orders')
-        ->select('pre_orders.product_id')
-        ->join('products', 'products.id', '=', 'pre_orders.product_id')
-        ->get();
-        
+            ->select('pre_orders.product_id')
+            ->join('products', 'products.id', '=', 'pre_orders.product_id')
+            ->get();
+
         $products_id = [];
-        
+
         foreach ($product_po as $key => $value) {
             $products_id[] = $value->product_id;
         }
-        
+
         $product = DB::table('product_variants')
             ->join('products', 'products.id', '=', 'product_variants.product_id')
             ->select(
@@ -339,7 +341,7 @@ class ProductController extends Controller
                 'products.visible',
                 'products.image'
             )
-            ->whereNotIn('product_variants.product_id',$products_id)
+            ->whereNotIn('product_variants.product_id', $products_id)
             ->get();
 
         return Datatables::of($product)
@@ -349,33 +351,43 @@ class ProductController extends Controller
                 return '<img src="' . $image_url . '" alt="#" style="width:50px;">';
             })
             ->addColumn('name', function ($data) {
-                $link  = '<a href="' . route('product.show', $data->id) . '" >';
+                $link = '<a href="' . route('product.show', $data->id) . '" >';
                 $link .= $data->name . ' #' . $data->variant;
                 $link .= '</a>';
                 return $link;
             })
             ->addColumn('action', function ($data) {
-                $button = '<a href="' . route('product.edit', $data->id) . '"
+
+                $user = Auth::user();
+
+                $button = '';
+
+                if (Gate::forUser($user)->allows('edit-product')) {
+                    $button .= '<a href="' . route('product.edit', $data->id) . '"
                         class="btn btn-table circle-table edit-table"
                         data-toggle="tooltip"
                         data-placement="top"
                         title="Edit"></a>';
-                $button .= '<span data-toggle="tooltip" data-placement="top" title="Adjustment"><a href="#" 
-                        data-target="#ModalAdjusment" data-toggle="modal" 
-                        class="btn btn-table circle-table adjustment-table" 
+                }
+                if (Gate::forUser($user)->allows('set-adjustment')) {
+                    $button .= '<span data-toggle="tooltip" data-placement="top" title="Adjustment"><a href="#"
+                        data-target="#ModalAdjusment" data-toggle="modal"
+                        class="btn btn-table circle-table adjustment-table"
                         data-id="' . $data->id . '">
                         </a></span>';
-                $button .= '<a href="' . route('product.set-visible', $data->product_id) . '"';
-
-                if ($data->visible == 1) {
-                    $button .= 'class="btn btn-table circle-table show-table" title="Hide On Website"';
-                } else {
-                    $button .= 'class="btn btn-table circle-table hide-table" title="Show On Website"';
                 }
+                if (Gate::forUser($user)->allows('set-visible')) {
+                    $button .= '<a href="' . route('product.set-visible', $data->product_id) . '"';
+                    if ($data->visible == 1) {
+                        $button .= 'class="btn btn-table circle-table show-table" title="Hide On Website"';
+                    } else {
+                        $button .= 'class="btn btn-table circle-table hide-table" title="Show On Website"';
+                    }
 
-                $button .= 'data-toggle="tooltip"
+                    $button .= 'data-toggle="tooltip"
                         data-placement="top" >
                         </a>';
+                }
                 return $button;
             })
             ->rawColumns(['image', 'name', 'action'])
@@ -385,7 +397,7 @@ class ProductController extends Controller
     public function ajaxDetailProductActivites(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
-            'activity' => 'required'
+            'activity' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -422,7 +434,7 @@ class ProductController extends Controller
         } else {
             $request->session()->flash('alert', 'Fail to update product visible');
         }
-        return back(); //redirect()->route('product.index');
+        return back();
     }
 
     public function deleteImage(int $id)

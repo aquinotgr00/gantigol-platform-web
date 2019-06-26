@@ -16,7 +16,9 @@ $img_favicon = asset('vendor/admin/images/favicon.ico');
 
 if(class_exists('\Modules\Admin\SettingDashboard')){
     $setting        = \Modules\Admin\SettingDashboard::first();
-    $img_favicon    = $setting->favicon;
+    if(!is_null($setting)){
+        $img_favicon = $setting->favicon;
+    }
 } 
 @endphp
 

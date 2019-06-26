@@ -8,7 +8,19 @@
 @endpush
 @section('content')
 
-@indexPage(['title'=>'Products', 'addNewAction'=>route('product.create')])
+@php 
+
+$user = Auth::user();
+
+$args = ['title'=>'Products'];
+
+if (Gate::forUser($user)->allows('create-product')) {
+    $args['addNewAction'] = route('product.create'); 
+}
+
+@endphp
+
+@indexPage($args)
 <!-- start table -->
 <table class="table" id="dataTable">
     <thead>

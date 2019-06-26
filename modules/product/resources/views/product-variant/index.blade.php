@@ -1,7 +1,19 @@
 @extends('admin::layout-nassau')
 
 @section('content')
-@indexPage(['title'=>'Product Variant', 'addNewAction'=>route('product-variant.create')])
+@php 
+
+$user = Auth::user();
+
+$args = ['title'=>'Product Variant'];
+
+if (Gate::forUser($user)->allows('create-variant')) {
+    $args['addNewAction'] = route('product-variant.create'); 
+}
+
+@endphp
+
+@indexPage($args)
 <!-- start table -->
 <table class="table" id="dataTable">
     <thead>

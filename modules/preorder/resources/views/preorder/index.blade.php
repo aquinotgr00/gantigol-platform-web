@@ -3,6 +3,33 @@
 @push('scripts')
 
 <script>
+
+    function resetPreorder(obj) {
+        var ajaxRequest = $(obj).data('url');
+
+        if (confirm('Are you sure?')) {
+            
+            $.ajax({
+                type: 'POST',
+                url: ajaxRequest,
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (res) {
+                    if (res.data.id > 0) {
+                        alert('Success! Preorder reset from 0');
+                        location.reload();
+                    }else{
+                        console.log(res);
+                    }
+                }
+            });
+        }
+
+        return false;
+    }
+
     $(document).ready(function () {
         var delay = (function () {
             var timer = 0;
@@ -49,7 +76,7 @@
                 "visible": false,
                 "searchable": false
             }],
-            drawCallback: function(settings) {
+            drawCallback: function (settings) {
                 $('[data-toggle="tooltip"]').tooltip()
             }
         });
