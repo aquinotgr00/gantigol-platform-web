@@ -12,6 +12,8 @@
 
 @section('content')
 <!-- start tools -->
+<div class="row mb-3">
+    <div class="col">
 <div>
     <tool class="navbar navbar-expand-lg">
         <form class="form-inline my-2 my-lg-0">
@@ -26,8 +28,9 @@
         </form>
     </tool>
 </div>
+</div>
+</div>
 <!-- end tools -->
-<hr>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable">
@@ -51,7 +54,7 @@
     function deleteItem(id) {
 
         if (confirm('Are u sure?')) {
-            
+
         }
     }
 
@@ -91,7 +94,7 @@
 
         $('#dataTable_filter').css('display','none');
 
-        $('.search-box').on('keyup', function () { 
+        $('.search-box').on('keyup', function () {
             datatables.search(this.value).draw();
         });
     });

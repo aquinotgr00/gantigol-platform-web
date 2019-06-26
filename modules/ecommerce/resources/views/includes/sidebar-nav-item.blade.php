@@ -1,16 +1,27 @@
-<!-- Nav Item - Preorder-->
-<li>
-    <a href="#orderSubmenu" data-toggle="collapse" aria-expanded="true" class="">Order Management</a>
-    <ul class="list-unstyled collapse" id="orderSubmenu" style="">
-        <li>
-            <a  {{ (Route::is('paid-order.index'))? 'class=active' : '' }} href="{{ route('paid-order.index') }}">
-                <span>Paid Order</span>
-            </a>
-        </li>
-        <li>
-            <a  {{ (Route::is('order-transaction.index'))? 'class=active' : '' }} href="{{ route('order-transaction.index') }}">
-                <span>Transaction</span>
-            </a>
-        </li>
-    </ul>
-</li>
+<!-- Nav Item - Ecommerce-->
+@php 
+$submenuItems = [];
+$user = Auth::user();
+
+if (Gate::forUser($user)->allows('view-paid-order')) {
+    $submenuItems[] = [
+        'routeName'=>'paid-order.index',
+        'title'=>'Paid Order'
+    ];
+}
+
+if (Gate::forUser($user)->allows('view-order-transaction')) {
+    $submenuItems[] = [
+        'routeName'=>'order-transaction.index',
+        'title'=>'Transaction'
+    ];
+}
+
+@endphp 
+
+@sidebarSubmenuNav([
+    'submenu'=>'ecommerce',
+    'title'=>'Order Management',
+    'submenuItems'=> $submenuItems,
+    'expandables'=> []
+])

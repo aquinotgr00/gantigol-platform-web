@@ -188,12 +188,12 @@ class CheckoutApiController extends Controller
                     DB::commit();
 
                     //send scdhule reminder
-                    /*
+                    
                     try {
                         $order->scheduleReminders(3, $order);
                     } catch (Exception $ex) {
                         error_log($ex);
-                    }*/
+                    }
                                         
                     $invoice = [
                         'billing_name' => (isset($order->customer->name)) ? $order->customer->name : '',
@@ -212,12 +212,12 @@ class CheckoutApiController extends Controller
                         'invoice' => $order->invoice_id,
                         'orders' => $order->items,
                     ];
-                    /*
+                    
                     try {
                         Mail::to($order->billing_email)->send(new InvoiceOrder($invoice));
                     } catch (Exception $ex) {
                         error_log($ex);
-                    }*/
+                    }
                     
                 } catch (QueryException $e) {
                     DB::rollback();

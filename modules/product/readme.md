@@ -18,3 +18,12 @@ Run this command to update the classes it needs.
 composer dump-autoload
 
 ```
+### Publish public asset
+```php
+php artisan vendor:publish --tag=product:public
+```
+
+### Run Seeder
+```
+php artisan db:seed --class=\\Modules\\Product\\Seeders\\ProductPrivilagesTableSeeder
+```

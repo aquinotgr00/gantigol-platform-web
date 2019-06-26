@@ -19,3 +19,8 @@ Run this command to update the classes it needs.
 composer dump-autoload
 
 ```
+
+### Run seeder
+```shell
+php artisan db:seed --class=\\Modules\\Ecommerce\\Seeders\\EcommerceForPrivilegesTableSeeder
+```

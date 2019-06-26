@@ -11,6 +11,8 @@
 @endpush
 
 @section('content')
+<div class="row mb-3">
+    <div class="col">
 <div>
     <tool class="navbar navbar-expand-lg">
         <form class="form-inline my-2 my-lg-0">
@@ -30,10 +32,11 @@
         </form>
     </tool>
 </div>
-<hr/>
+</div>
+</div>
 <!-- start table -->
 <div class="table-responsive">
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <table class="table" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
                 <th>Name</th>
@@ -63,9 +66,9 @@
                 </td>
                 @can('edit-user')
                 <td>
-                    <a href="{{ route('users.edit',['user'=>$user]) }}" 
-                        class="btn btn-table circle-table edit-table" 
-                        data-toggle="tooltip" 
+                    <a href="{{ route('users.edit',['user'=>$user]) }}"
+                        class="btn btn-table circle-table edit-table"
+                        data-toggle="tooltip"
                         data-placement="top" title="" data-original-title="Edit">
                     </a>
                 </td>
@@ -85,14 +88,14 @@
         let action = '{{ route("users.status", "@@") }}'.replace('@@', $(this).data('user'))
         $('<form method="post" action="' + action + '">@csrf @method("PUT")</form>').appendTo('body').submit()
     })
-    
+
     $(document).ready(function(){
         var datatables = $('#dataTable').DataTable();
-        
+
         $('#dataTable_filter').css('display','none');
 
         $('#search').on('keyup', function () {
-            
+
             datatables.search(this.value).draw();
         });
     });

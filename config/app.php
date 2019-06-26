@@ -192,10 +192,11 @@ return [
         Modules\Blogs\BlogServiceProvider::class,
 
         Modules\ProductCategory\Providers\ProductCategoryServiceProvider::class,
-        Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Ecommerce\Providers\EcommerceServiceProvider::class,
+        Modules\Ecommerce\Providers\EcommerceAuthServiceProvider::class,
         Modules\Customers\Providers\CustomerServiceProvider::class,
         
+        Modules\Product\Providers\ProductAuthServiceProvider::class,
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Preorder\Providers\PreOrderServiceProvider::class,
         Modules\Preorder\Providers\PreorderAuthServiceProvider::class,

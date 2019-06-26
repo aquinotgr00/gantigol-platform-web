@@ -47,23 +47,26 @@
 
 @section('content')
 <!-- start tools -->
-<div>
-    <tool class="navbar navbar-expand-lg">
-        <form class="form-inline my-2 my-lg-0">
-            <div class="input-group srch">
-                <input type="search" id="search" class="form-control search-box" placeholder="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-search" type="button">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            
-        </form>
-    </tool>
+<div class="row mb-3">
+    <div class="col">
+        <div>
+            <tool class="navbar navbar-expand-lg">
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="input-group srch">
+                        <input type="search" id="search" class="form-control search-box" placeholder="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-search" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </tool>
+        </div>
+    </div>
 </div>
 <!-- end tools -->
-<hr/>
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable" width="100%" cellspacing="0">
