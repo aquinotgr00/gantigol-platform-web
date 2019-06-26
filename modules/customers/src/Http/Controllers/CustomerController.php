@@ -3,20 +3,14 @@
 namespace Modules\Customers\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Modules\Customers\CustomerProfile;
-use Session;
-use Validator;
 use DataTables;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $data = [
-            'title' => 'Customers'
-        ];
-        return view('customers::customers.index', compact('data'));
+        return view('customers::customers.index');
     }
 
     public function create()

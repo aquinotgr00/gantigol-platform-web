@@ -41,6 +41,28 @@ class Member extends Authenticatable
         'password',
         'remember_token',
     ];
+    
+    /**
+     * Get the member's name.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucwords($value);
+    }
+    
+    /**
+     * Get the member's address.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getAddressAttribute($value)
+    {
+        return ucfirst($value);
+    }
 
     /**
      * find user by username or email using passport

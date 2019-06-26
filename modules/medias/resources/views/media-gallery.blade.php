@@ -11,9 +11,6 @@ $asPage = $asPage??true;
             @endif
         </form>
     </div>
-    <div class="col pgntn">
-        {{ $media->appends(request()->only('s','c'))->links($asPage?null:'medias::includes.pagination.bootstrap-4') }}
-    </div>
     <div class="col">
         <div class="float-right">
             @filterMediaByCategory
@@ -27,3 +24,9 @@ $asPage = $asPage??true;
     @each('medias::media-gallery-item', $media, 'file')
 </div>
 {{-- end gallery --}}
+
+<div class="d-flex justify-content-center">
+    <div class="pgntn">
+        {{ $media->appends(request()->only('s','c'))->links($asPage?'medias::includes.pagination.default':'medias::includes.pagination.bootstrap-4') }}
+    </div>
+</div>

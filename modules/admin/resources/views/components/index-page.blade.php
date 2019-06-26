@@ -1,19 +1,28 @@
-@push('styles')
-<link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-@endpush
+@useDatatables
 
 {{-- start header --}}
 @pageHeader(['title'=>$title])
 {{-- end header --}}
 
 {{-- start tools --}}
-<div>
-    <tool class="navbar navbar-expand-lg">
-        <form class="form-inline my-2 my-lg-0">
-            @searchbar()
-            @addNewButton(['action'=>$addNewAction])
-        </form>
-    </tool>
+<div class="row mb-3">
+    <div class="col-md-3">
+        <tool class="navbar navbar-expand-lg">
+            <form class="form-inline my-2 my-lg-0">
+                @searchbar()
+                @isset($addNewAction)
+                    @if(isset($addNewPrivilege))
+                        @can($addNewPrivilege)
+                            @addNewButton(['action'=>$addNewAction])
+                        @endcan
+                    @else
+                        @addNewButton(['action'=>$addNewAction])
+                    @endif
+                    
+                @endisset
+            </form>
+        </tool>
+    </div>
 </div>
 {{-- end tools --}}
 
@@ -30,14 +39,7 @@
 {{-- end table --}}
 
 {{-- start pagination --}}
-<br>
-<hr>
 <div>
     {{-- pagination --}}
 </div>
 {{-- end pagination --}}
-
-@push('scripts')
-<script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-@endpush

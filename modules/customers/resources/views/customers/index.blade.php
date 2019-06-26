@@ -1,10 +1,6 @@
 @extends('admin::layout-nassau')
 
-@useDatatables
-
 @push('scripts')
-<script src="{{ asset('vendor/admin/js/datatables/dataTables.select.min.js') }}"></script>
-
 <script>
     function titleCase(str) {
         str = str.toLowerCase().split(' ');
@@ -26,7 +22,7 @@
                 {
                     "data": "name",
                     "render": function (data, type, row) {
-                        return '<a href="{{ url("admin/list-customer") }}/' + row.id + '">' + titleCase(data) + '</a>';
+                        return '<a href="{{ url("admin/list-customer") }}/' + row.id + '">' + data + '</a>';
                     }
                 },
                 { "data": "email" },
@@ -46,27 +42,7 @@
 @endpush
 
 @section('content')
-<!-- start tools -->
-<div class="row mb-3">
-    <div class="col">
-        <div>
-            <tool class="navbar navbar-expand-lg">
-                <form class="form-inline my-2 my-lg-0">
-                    <div class="input-group srch">
-                        <input type="search" id="search" class="form-control search-box" placeholder="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-search" type="button">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                </form>
-            </tool>
-        </div>
-    </div>
-</div>
-<!-- end tools -->
+@indexPage(['title'=>'Customers'])
 <!-- start table -->
 <div class="table-responsive">
     <table class="table" id="dataTable" width="100%" cellspacing="0">
@@ -82,5 +58,5 @@
     </table>
 </div>
 <!-- end table -->
-
+@endindexPage
 @endsection

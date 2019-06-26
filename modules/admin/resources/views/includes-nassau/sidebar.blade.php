@@ -26,17 +26,17 @@
         <!-- Nav Item - Users -->
         @can('view-users')
         @sidebarSubmenuNav([
-        'submenu'=>'user',
-        'title'=>'User Management',
-        'submenuItems'=>[
-        ['routeName'=>'list-customer.index','title'=>'Customers'],
-        ['routeName'=>'list-membership.index','title'=>'Memberships'],
-        ['routeName'=>'users.index','title'=>'Administrator']
-        ],
-        'expandables'=>[
-        'users.create',
-        'users.edit',
-        ]
+            'submenu'=>'user',
+            'title'=>'User Management',
+            'submenuItems'=>[
+                ['routeName'=>'list-customer.index','title'=>'Customers'],
+                ['routeName'=>'list-membership.index','title'=>'Memberships'],
+                ['routeName'=>'users.index','title'=>'Administrators']
+            ],
+            'expandables'=>[
+                'users.create',
+                'users.edit',
+            ]
         ])
         @endcan
 

@@ -34,6 +34,7 @@ class AdminServiceProvider extends ServiceProvider
         'pageHeader',
         'sidebarNavItem',
         'useDatatables',
+        'useTinymce',
         'sidebarSubmenuNav'
     ];
     

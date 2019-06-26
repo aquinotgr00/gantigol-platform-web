@@ -12,10 +12,7 @@ class MembershipController extends Controller
 {
     public function index()
     {
-        $data = [
-            'title' => 'Memberships'
-        ];
-        return view('membership::membership.index',compact('data'));
+        return view('membership::membership.index');
     }
     
     public function show(Member $member)
