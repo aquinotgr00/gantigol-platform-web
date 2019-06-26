@@ -25,10 +25,8 @@ class UserController extends Controller
         $this->authorize('index', Auth::user());
         
         $users  = Admin::where('email', '<>', 'admin@mail.com')->paginate(15);
-        $data   = [
-            'title' => 'Administrators'
-        ];
-        return view('admin::user.nassau.index', compact('users','data'));
+        
+        return view('admin::user.nassau.index', compact('users'));
     }
 
     /**

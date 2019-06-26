@@ -3,7 +3,7 @@
 @useDatatables
 
 @section('content')
-@pageHeader(['title'=>ucwords($member->name),'back'=>route('list-membership.index')])
+@pageHeader(['title'=>$member->name,'back'=>route('list-membership.index')])
 <!-- start info -->
 <div class="row">
     <div class="col-4">
@@ -18,11 +18,11 @@
         <hr class="mt-0">
         <div class="form-group">
             <label>Name</label>
-            <p>{{ ucwords($member->name) }}</p>
+            <p>{{ $member->name }}</p>
         </div>
         <div class="form-group">
             <label>Address</label>
-            <p>{{ ucfirst($member->address) }}</p>
+            <p>{{ $member->address }}</p>
         </div>
         <div class="form-group">
             <label>Zip Code</label>

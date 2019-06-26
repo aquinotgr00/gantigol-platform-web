@@ -13,7 +13,7 @@
             'submenuItems'=>[
                 ['routeName'=>'list-customer.index','title'=>'Customers'],
                 ['routeName'=>'list-membership.index','title'=>'Memberships'],
-                ['routeName'=>'users.index','title'=>'Administrator']
+                ['routeName'=>'users.index','title'=>'Administrators']
             ],
             'expandables'=>[
                 'users.create',

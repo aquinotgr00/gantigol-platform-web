@@ -1,5 +1,3 @@
- 
-    
 @extends('admin::layout-nassau')
 
 @push('styles')
@@ -91,9 +89,9 @@
       </div> 
     </div>
 @endsection
+@useTinymce
 @push('scripts')
  <script src="{{asset('vendor/product/js/bootstrap-tagsinput.js')}}"></script>
- <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
       <script>
       var dialogConfigQuote =  {
           title: 'quote text',
@@ -181,6 +179,8 @@
         tinymce.init({
           selector:'textarea',
            toolbar: 'dialog-quote-btn|dialog-hotlink-btn',
+           plugins: "paste",
+           paste_as_text: true,
            setup: function (editor) {
             editor.ui.registry.addButton('dialog-quote-btn', {
               text: 'Quote',
