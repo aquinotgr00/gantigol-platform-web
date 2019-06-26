@@ -8,7 +8,7 @@ use Modules\Banners\Banner;
 use Modules\Banners\BannerCategory;
 use Illuminate\Support\Collection;
 use Yajra\Datatables\Datatables;
-
+use Gate;
 
 class BannerPlacementController extends Controller
 {
@@ -76,7 +76,10 @@ class BannerPlacementController extends Controller
                                 return  $count;
                             })
                              ->addColumn('action', function ($list) {
+                                if (Gate::allows('edit-category-banner')) {
                                 return  '<a href="'.Route('banner-category.edit',$list->id).'" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="Edit"></a>' ;
+                                }
+                                return '';
                             })
                             ->make(true);
     }

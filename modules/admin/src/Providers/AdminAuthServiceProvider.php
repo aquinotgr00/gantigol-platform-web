@@ -79,11 +79,24 @@ class AdminAuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('content-management', function ($admin) {
-            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'content management')->value('id'));
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'view post')
+                ->orWhere('name', 'view banner')
+                ->orWhere('name', 'view category post')
+                ->orWhere('name', 'view category banner')
+                ->first()
+                ->value('id'));
         });
 
         Gate::define('promo-management', function ($admin) {
-            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'promo management')->value('id'));
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'view promo')
+                ->value('id'));
+        });
+
+        Gate::define('report-management', function ($admin) {
+            return $admin->privileges->contains('privilege_id', Privilege::where('name', 'view report variants')
+                ->orWhere('name', 'view report sales')
+                ->first()
+                ->value('id'));
         });
     }
 }

@@ -190,6 +190,7 @@ return [
         Modules\Membership\MemberRegistrationServiceProvider::class,
 
         Modules\Blogs\BlogServiceProvider::class,
+        Modules\Blogs\Providers\BlogAuthServiceProvider::class,
 
         Modules\ProductCategory\Providers\ProductCategoryServiceProvider::class,
         Modules\Product\Providers\ProductServiceProvider::class,
@@ -199,12 +200,19 @@ return [
         Modules\Product\Providers\ProductServiceProvider::class,
         Modules\Preorder\Providers\PreOrderServiceProvider::class,
         Modules\Preorder\Providers\PreorderAuthServiceProvider::class,
+
         Modules\Banners\Providers\BannerServiceProvider::class,
+        Modules\Banners\Providers\BannerAuthServiceProvider::class,
+
         Modules\Promo\Providers\PromoServiceProvider::class,
+        Modules\Promo\Providers\PromoAuthServiceProvider::class,
+
+        
         Modules\Inventory\Providers\InventoryServiceProvider::class,
         Modules\Shipment\Providers\ShipmentServiceProvider::class,
         
         Modules\Report\Providers\ReportServiceProvider::class,
+        Modules\Report\Providers\ReportAuthServiceProvider::class,
     ],
 
     /*

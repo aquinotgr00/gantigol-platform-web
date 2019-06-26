@@ -9,7 +9,7 @@ use Modules\Promo\Promocode;
 use Modules\Promo\PromoCreationHandler;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
-
+use Gate;
 class PromoController extends Controller
 {
     
@@ -60,7 +60,11 @@ class PromoController extends Controller
                                 if(is_null($list->expires_at)){
                                     $active = "show";
                                 }
+                                if (Gate::allows('disable-promo')) {
                                 return  '<a href="'.Route('promo.delete',$list->code).'"onclick="return confirm(\'Are you sure you want to delete this item\')" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="Delete" ></a>' ;
+                                }
+                                return '';
+                                
                             })
                             ->make(true);
     }

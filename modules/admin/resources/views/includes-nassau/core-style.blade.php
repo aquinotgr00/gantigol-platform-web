@@ -6,6 +6,6 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('vendor/admin/css/style.css') }}">
 
 <!-- favicon -->
-<link rel="shortcut icon" type="image/png" href="{{ asset('vendor/admin/images/favicon.png') }}"/>
+<link rel="shortcut icon" type="image/png" href="{{ asset('vendor/admin/images/favicon.ico') }}"/>
 
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet"> 

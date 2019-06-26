@@ -67,7 +67,9 @@
                   <input type="text" name="keywords" class="form-control" id="exampleInputCategoryPrize" value="{{implode( ", ", $tags )}}" data-role="tagsinput">
                 </div>
                  <div class="d-flex flex-row-reverse">
+                  @can('publish-post')
                   <button type="submit" class="btn btn-success ml-4" formaction="{{Route('blog.post.publish',$post->id)}}">Publish</button>
+                  @endcan
                   <button type="submit" class="btn btn-outline-secondary" formaction="{{Route('blog.post.update')}}">Save As Draft</button>
                 </div>
               </form>
