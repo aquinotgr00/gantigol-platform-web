@@ -106,6 +106,7 @@ class CheckoutApiController extends Controller
             $request->request->add(['billing_email' => $request->shipping_email]);
             $request->request->add(['billing_phone' => $request->shipping_phone]);
             $request->request->add(['billing_address' => $request->shipping_address]);
+            
         }
 
         if (
@@ -172,17 +173,27 @@ class CheckoutApiController extends Controller
                 try {
 
                     $order = Order::create($request->except('_token'));
-
+                    
+                    if (isset($order->shippingSubdistrict->name)) {
+                        
+                        $order->update([
+                            'shipping_subdistrict' => $order->shippingSubdistrict->name,
+                            'shipping_city' => $order->shippingSubdistrict->city->name,
+                            'shipping_province' => $order->shippingSubdistrict->city->province->name,
+                            'shipping_zip_code' => $order->shippingSubdistrict->city->postal_code,
+                        ]);
+                    }
+                    
                     $order->items()->saveMany($items);
                     DB::commit();
 
                     //send scdhule reminder
-                    /*
+                    
                     try {
                         $order->scheduleReminders(3, $order);
                     } catch (Exception $ex) {
                         error_log($ex);
-                    }*/
+                    }
                                         
                     $invoice = [
                         'billing_name' => (isset($order->customer->name)) ? $order->customer->name : '',
@@ -201,12 +212,12 @@ class CheckoutApiController extends Controller
                         'invoice' => $order->invoice_id,
                         'orders' => $order->items,
                     ];
-                    /*
+                    
                     try {
                         Mail::to($order->billing_email)->send(new InvoiceOrder($invoice));
                     } catch (Exception $ex) {
                         error_log($ex);
-                    }*/
+                    }
                     
                 } catch (QueryException $e) {
                     DB::rollback();

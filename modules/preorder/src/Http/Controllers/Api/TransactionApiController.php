@@ -135,7 +135,8 @@ class TransactionApiController extends Controller
                             'email' => $member->email,
                             'phone' => $member->phone,
                             'address' => $member->address,
-                            'birthdate' => date('Y-m-d')
+                            'birthdate' => date('Y-m-d'),
+                            'subdistrict_id' => $request->subdistrict_id,
                         ]
                     );
                     $customer_id = $customer->id;
@@ -149,6 +150,7 @@ class TransactionApiController extends Controller
                         'phone' => $transaction->phone,
                         'address' => $transaction->address,
                         'birthdate' => date('Y-m-d'),
+                        'subdistrict_id' => $request->subdistrict_id,
                     ]
                 );
                 $customer_id = $customer->id;

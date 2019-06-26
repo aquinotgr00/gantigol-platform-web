@@ -90,7 +90,7 @@
                     <div class="form-group">
                         <label>Zip Code</label>
                         @if(isset($order->customer->subdistrict->city))
-                        <p>{{ $order->customer->subdistrict->city->zip_code }}</p>
+                        <p>{{ $order->customer->subdistrict->city->postal_code }}</p>
                         @endif
                     </div>
                     <div class="form-group">
@@ -200,6 +200,10 @@
                     <div class="form-group">
                         <label>Tracking Number</label>
                         <p>{{ $order->shipping_tracking_number }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <p>{{ $order->notes }}</p>
                     </div>
                 </div>
             </div>

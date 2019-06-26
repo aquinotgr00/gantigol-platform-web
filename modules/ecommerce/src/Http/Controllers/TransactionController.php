@@ -3,23 +3,23 @@
 namespace Modules\Ecommerce\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\Ecommerce\Order;
 use DataTables;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Modules\Ecommerce\Order;
 use Modules\Preorder\Mail\WayBill;
 
 class TransactionController extends Controller
-{   
+{
     public function index(Request $request)
-    {   
+    {
         $orders = (new Order)->newQuery();
         if ($request->has(['startdate', 'enddate'])) {
             //
-            $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            $orders = $orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
         }
         $orders->get();
-        
+
         if ($request->has('status')) {
             $status = config('ecommerce.order.status');
             if (isset($status[$request->status])) {
@@ -30,10 +30,10 @@ class TransactionController extends Controller
 
         if ($request->has('invoice')) {
             $invoice = trim($request->invoice);
-            
+
             if (!empty($invoice)) {
-                $orders = Order::where('invoice_id','like', '%'.$invoice.'%')
-                    ->orWhere('billing_name','like', '%'.$invoice.'%');
+                $orders = Order::where('invoice_id', 'like', '%' . $invoice . '%')
+                    ->orWhere('billing_name', 'like', '%' . $invoice . '%');
             }
         }
         if ($request->ajax()) {
@@ -46,6 +46,12 @@ class TransactionController extends Controller
                     $status = config('ecommerce.order.status');
                     return array_keys($status)[$query->order_status];
                 })
+                ->addColumn('shipment_name', function ($query) {
+                    return strtoupper($query->shipment_name);
+                })
+                ->addColumn('billing_name', function ($query) {
+                    return ucwords($query->billing_name);
+                })
                 ->addColumn('invoice_id', function ($query) {
                     $link = '<a href="' . route('paid-order.show', $query->id) . '" >';
                     $link .= $query->invoice_id;
@@ -56,40 +62,46 @@ class TransactionController extends Controller
                 ->make(true);
         }
         $data = [
-            'title' => 'Transactions'
+            'title' => 'Transactions',
         ];
 
         return view('ecommerce::transactions.index', compact('orders', 'data'));
     }
 
     public function update(Request $request, int $id)
-    {   
+    {
         $request->validate([
             'shipping_name',
             'shipping_phone',
-            'shipping_address'
+            'shipping_address',
         ]);
         $order = Order::findOrFail($id);
-        $order->update($request->except('_token', '_method'));
+        $tracking_number = trim($request->shipping_tracking_number);
+        
         if (
-            $request->has('shipping_tracking_number')  &&
-            $order->shipping_tracking_number == $request->shipping_tracking_number
+            !empty($tracking_number) &&
+            $order->shipping_tracking_number != $tracking_number
         ) {
-            if(!empty($request->shipping_tracking_number)){
-                try {
-                    $send = [
+            try {
+                $send = (object) [
+                    'tracking_number' => $order->shipping_tracking_number,
+                    'invoice' => $order->invoice_id,
+                    'getProduction' => (object) [
                         'tracking_number' => $order->shipping_tracking_number,
-                        'invoice' => $order->invoice_id
-                    ];
-                    Mail::to($order->shipping_email)->send(new WayBill($send));
-                    $order->update([
-                        'order_status' => 3
-                    ]);
-                } catch (\Swift_TransportException $e) {
-                    $response = $e->getMessage();
-                }
-            }
+                    ],
+                    'orders' => (object) $order->items,
+                ];
+                Mail::to($order->shipping_email)->send(new WayBill($send));
+                $order->update([
+                    'order_status' => 3,
+                ]);
+            } catch (\Swift_TransportException $e) {
+                $response = $e->getMessage();
+            }   
         }
+
+        $order->update($request->except('_token', '_method'));
+        
         return back();
     }
 }

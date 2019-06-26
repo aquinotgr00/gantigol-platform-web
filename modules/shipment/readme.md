@@ -18,3 +18,9 @@ Run this command to update the classes it needs.
 composer dump-autoload
 
 ```
+### Run Seeder
+```shell
+php artisan db:seed --class=Modules\\Shipment\\ProvincesTableSeeder
+php artisan db:seed --class=Modules\\Shipment\\CitiesTableSeeder
+php artisan db:seed --class=Modules\\Shipment\\SubdistrictsTableSeeder
+```

@@ -3,11 +3,10 @@
 namespace Modules\Preorder\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\Preorder\Transaction;
-use Modules\Preorder\Production;
 use DataTables;
-use Validator;
+use Illuminate\Http\Request;
+use Modules\Preorder\Production;
+use Modules\Preorder\Transaction;
 
 class AllTransactionController extends Controller
 {
@@ -57,44 +56,61 @@ class AllTransactionController extends Controller
                 ->make(true);
         }
         $data = [
-            'title' => 'Transaction'
+            'title' => 'Transaction',
         ];
         return view('preorder::all-transaction.index', compact('orders', 'data'));
     }
 
     public function show(int $id)
     {
-        $transaction    = Transaction::findOrFail($id);
-        $orders         = $transaction->orders;
-        $status         = Transaction::getPossibleEnumValues('status');
-        $data           = [
+        $transaction = Transaction::findOrFail($id);
+        $orders = $transaction->orders;
+        $status = Transaction::getPossibleEnumValues('status');
+        $data = [
             'transaction' => $transaction,
             'orders' => $orders,
             'data' => [
                 'title' => $transaction->invoice,
-                'back' => route('all-transaction.index')
+                'back' => route('all-transaction.index'),
             ],
-            'status' => $status
+            'status' => $status,
         ];
         return view('preorder::all-transaction.show')->with($data);
     }
 
     public function ajaxAllTransactions(Request $request)
-    { }
+    {}
 
     public function update(Request $request, int $id)
     {
+        $transaction = Transaction::findOrFail($id);
+
         if ($request->has('tracking_number')) {
 
             $request->validate([
                 'status' => 'in:pending,paid,shipped,rejected,returned,completed',
             ]);
 
-            $production = Production::where('transaction_id', $id)->first();
-            if (!is_null($production)) {
+            $tracking_number = trim($request->tracking_number);
+            if (
+                !empty($tracking_number) &&
+                $transaction->getProduction->tracking_number != $tracking_number
+            ) {
+                $production = Production::where('transaction_id', $id)->first();
+                
                 $production->update([
-                    'tracking_number' => $request->tracking_number
+                    'tracking_number' => $tracking_number,
                 ]);
+
+                try {
+
+                    Mail::to($order->shipping_email)->send(new WayBill($transaction));
+                    $order->update([
+                        'order_status' => 3,
+                    ]);
+                } catch (\Swift_TransportException $e) {
+                    $response = $e->getMessage();
+                }
             }
         } else {
 
@@ -104,40 +120,42 @@ class AllTransactionController extends Controller
                 'phone' => 'required',
                 'address' => 'required',
                 'postal_code' => 'required',
-                //'status' => 'in:pending,paid,shipped,rejected,returned,completed',
             ]);
         }
-
-        $transaction = Transaction::findOrFail($id);        
+        
         $transaction->update($request->except('_token', '_method'));
 
         return back();
     }
-      public function indexCard(Request $request){
-        $orders = Transaction::whereIn('status', ['paid','completed']);
-        $a = $this->revenueNow($orders,$request);
-        $b = $this->revenuelast($orders,$request);
-        $revenue = $a-$b;
-        $data= [
-                'percentage'=>($b == 0 ? 100 : ($revenue/$b)*100),
-                'sales'=>$a
-            ];
+
+    public function indexCard(Request $request)
+    {
+        $orders = Transaction::whereIn('status', ['paid', 'completed']);
+        $a = $this->revenueNow($orders, $request);
+        $b = $this->revenuelast($orders, $request);
+        $revenue = $a - $b;
+        $data = [
+            'percentage' => ($b == 0 ? 100 : ($revenue / $b) * 100),
+            'sales' => $a,
+        ];
         return $data;
     }
 
-    private function revenueNow($orders,$request){
-         if ($request->has(['startdate', 'enddate'])) {
-                //
-                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
-            }
-           return $orders->sum('amount');
+    private function revenueNow($orders, $request)
+    {
+        if ($request->has(['startdate', 'enddate'])) {
+            //
+            $orders = $orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+        }
+        return $orders->sum('amount');
     }
 
-    private function revenueLast($orders,$request){
-         if ($request->has(['startdate', 'enddate'])) {
-                //
-                $orders =$orders->whereBetween('created_at', [$request->laststartdate, $request->lastenddate]);
-            }
-           return $orders->sum('amount');
+    private function revenueLast($orders, $request)
+    {
+        if ($request->has(['startdate', 'enddate'])) {
+            //
+            $orders = $orders->whereBetween('created_at', [$request->laststartdate, $request->lastenddate]);
+        }
+        return $orders->sum('amount');
     }
 }

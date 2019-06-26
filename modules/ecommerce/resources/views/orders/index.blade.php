@@ -132,7 +132,7 @@
                     data: 'billing_name'
                 },
                 {
-                    data: 'shipping_name'
+                    data: 'shipment_name'
                 },
                 {
                     data: 'shipping_tracking_number'

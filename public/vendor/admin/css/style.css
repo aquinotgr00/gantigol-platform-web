@@ -80,6 +80,7 @@ small span{
 }
 .logo-nav{
 	margin-bottom: 4px;
+	max-height: 50px;
 }
 .sidebar {
     position: fixed;
@@ -856,17 +857,3 @@ footer p{
 .text-red{
 	color:red;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
