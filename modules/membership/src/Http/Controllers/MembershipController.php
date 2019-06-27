@@ -22,7 +22,13 @@ class MembershipController extends Controller
 
     public function ajaxAllMembership(Request $request)
     {
-        $member = Member::all();
-        return DataTables::of($member)->make(true);
+        return DataTables::of(Member::all())
+                ->addColumn('member', function($member){
+                    return [
+                        'name'=>$member->name,
+                        'link'=>route("members.show",["member"=>$member->id])
+                    ];
+                })
+                ->make(true);
     }
 }

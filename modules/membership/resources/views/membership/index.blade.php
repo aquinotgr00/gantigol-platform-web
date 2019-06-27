@@ -32,9 +32,9 @@
             },
             columns: [
                 {
-                    data: 'name',
+                    data: 'member',
                     render: function (data, type, row) {
-                        return '<a href="{{ route("members.show",["member"=>1]) }}">' + data + '</a>';
+                        return '<a href="' + data.link + '">' + data.name + '</a>';
                     }
                 },
                 { data: 'email' },
@@ -42,7 +42,8 @@
                 { data: 'city' },
                 { data: 'gender' },
                 { data: 'created_at' }
-            ]
+            ],
+            order:[]
         });
 
         $('#dataTable_filter').css('display','none');

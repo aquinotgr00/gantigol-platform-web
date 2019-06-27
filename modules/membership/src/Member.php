@@ -6,6 +6,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Gabievi\Promocodes\Traits\Rewardable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 
 class Member extends Authenticatable
 {
@@ -41,6 +42,18 @@ class Member extends Authenticatable
         'password',
         'remember_token',
     ];
+    
+    /**
+     * Global Scope - default order is latest
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->latest();
+        });
+    }
     
     /**
      * Get the member's name.

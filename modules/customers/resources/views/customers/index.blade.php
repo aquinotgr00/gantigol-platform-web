@@ -17,7 +17,7 @@
                 "url": '{{ route("customers.index") }}',
                 "type": 'GET'
             },
-            "order": [[2, "asc"]],
+            "order": [],
             "columns": [
                 {
                     "data": "name",
