@@ -76,8 +76,8 @@
                         </div>
                         <small>
                            <span><a href="#" id="removeFeaturedImage">Remove Image</a></span>
-                            <span>Image size must be 1920x600 with maximum file size</span>
-                            <span>400 kb</span>
+                            <span>Image size must be 868x473 with maximum file size</span>
+                            <span>100 kb</span>
                         </small>
                     </div>
                     
