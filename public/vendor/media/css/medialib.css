@@ -26,3 +26,13 @@
 .media-file p {
 	word-break: break-all;
 }
+
+.media-remove {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin-top: 10px;
+	margin-right: 25px;
+	color: red;
+	display: none;
+}

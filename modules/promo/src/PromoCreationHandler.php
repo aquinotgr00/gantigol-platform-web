@@ -16,7 +16,7 @@ class PromoCreationHandler
        return Promocode::create([
            'code'=>$request->code,
            'reward'=>$request->reward,
-           'data'=>'[]',
+           'data'=>"[".$request->minimum_price."]",
            'is_disposable'=>1,
            'expires_at'=>$request->expires_at
            ]);
@@ -29,11 +29,12 @@ class PromoCreationHandler
      * @return mixed
      */
     public function CreateMultiplePromo($request){
+      $data=['minimum_price'=>$request->minimum_price];
 
        return Promocode::create([
            'code'=>$request->code,
            'reward'=>$request->reward,
-           'data'=>'[]',
+           'data'=>"[".$request->minimum_price."]",
            'expires_at'=>$request->expires_at
            ]);
     }
@@ -43,7 +44,9 @@ class PromoCreationHandler
      * @return mixed
      */
     public function createSinglePromoAuto($request){
-        return Promocodes::create(1,$request->reward, [],$request->expires_at);
+      $data=['minimum_price'=>$request->minimum_price];
+
+        return Promocodes::create(1,$request->reward,"[".$request->minimum_price."]",$request->expires_at);
 
     }
 
@@ -53,8 +56,8 @@ class PromoCreationHandler
      * @return mixed
      */
     public function createMultiplePromoAuto($request){
-
-        return Promocodes::createDisposable(1,$request->reward,[],$request->expires_at);
+      $data=['minimum_price'=>$request->minimum_price];
+        return Promocodes::createDisposable(1,$request->reward,"[".$request->minimum_price."]",$request->expires_at);
 
     }
 }

@@ -21,7 +21,7 @@ $asPage = $asPage??true;
 
 {{-- start gallery --}}
 <div class="row mt-4 media-list">
-    @each('medias::media-gallery-item', $media, 'file')
+    @include('medias::media-gallery-items')
 </div>
 {{-- end gallery --}}
 

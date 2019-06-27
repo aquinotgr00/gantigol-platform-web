@@ -3,6 +3,7 @@
 Route::prefix(config('medias.prefix', 'medias'))->middleware('auth:admin')->group(function () {
     
     Route::get('library', 'MediaController@index')->name('media.library');
+    Route::delete('library/{id}', 'MediaController@destroy')->name('media.destroy');
     Route::get('library/create', 'MediaController@create')->name('media.library.create');
     Route::get('library/store', 'MediaController@create')->name('media.library.store');
     

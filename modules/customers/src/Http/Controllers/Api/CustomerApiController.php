@@ -15,7 +15,6 @@ class CustomerApiController extends Controller
     public function index(Request $request)
     {
         $customer = CustomerProfile::with('user')
-        ->orderBy('created_at', 'DESC')
         ->paginate();
         return new CustomerResource($customer);
     }

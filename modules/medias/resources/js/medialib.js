@@ -89,6 +89,14 @@ $(function() {
 		$('input.dz-hidden-input[type=file]').prop('multiple', multiSelect)
 	})
 	
+	$('#confirm-delete-media-modal').on('show.bs.modal', function (event) {
+		const button = $(event.relatedTarget)
+		const imageId = button.parent().data('imageId')
+		const imageUrl = button.parent().data('imageUrl')
+		$('#form-delete-media').attr('action',$('#form-delete-media').attr('action').replace(/\/[^\/]*$/, '/'+imageId))
+		$('#confirm-delete-media-modal img.media-preview').attr('src', imageUrl)
+	})
+	
 	$('#media-upload').submit(function(event) {
 		event.preventDefault()
 		$.post($("#media-upload").attr('action'),$("#media-upload").serialize())

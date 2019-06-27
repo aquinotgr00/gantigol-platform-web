@@ -7,4 +7,9 @@
         <img class="img-fluid img-thumbnail" src="{{$filePath}}" alt="">
     </a>
     <p class="mt-2 mb-4">{{$file->file_name}}</p>
+    
+    <a class="media-remove" href="#confirm-delete-media-modal" data-toggle="modal">
+        <i class="fas fa-times-circle fa-2x"></i>
+    </a>
+    
 </div>

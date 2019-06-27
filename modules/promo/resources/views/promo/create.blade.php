@@ -57,6 +57,17 @@
               </div> 
             </div>
             <div class="row pr-4">
+              <div class="col-6">
+                <div class="form-group">
+                  <label for="exampleInputCategoryName">Promo Mimimum Payment</label>
+                  <input type="number" class="form-control" name="minimum_price" id="exampleInputAmount">
+                  @if($errors->has('minimum_price'))
+                  <span class="text-danger small">{{$errors->first('minimum_price')}}</span>
+                  @endif
+                </div>
+              </div>
+            </div>
+            <div class="row pr-4">
               <div class="col">
                 <div class="float-right">
                     <button type="submit" class="btn btn-success">Submit</button>

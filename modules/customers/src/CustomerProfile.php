@@ -3,6 +3,7 @@
 namespace Modules\Customers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class CustomerProfile extends Model
 {
@@ -24,6 +25,18 @@ class CustomerProfile extends Model
     ];
     
     protected $dates = ['birthdate'];
+    
+    /**
+     * Global Scope - default order is latest
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('updated_at','desc');
+        });
+    }
     
     /**
      * Get the user that owns the profile.
