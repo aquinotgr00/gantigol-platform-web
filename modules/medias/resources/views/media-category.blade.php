@@ -31,7 +31,7 @@
 
 @section('modals')
 
-<!-- Media Library Modal -->
+{{-- Assign Media Category Modal --}}
 @modal(['id'=>'new-media-category-modal','title'=>'New Media Category', 'verticalCenter'=>true])
     @slot('body')
     <form method="post" action="{{ route('media.storeCategory') }}" id="form-add-media-category">
@@ -44,6 +44,23 @@
             <button type="button" class="btn btn-success" id="button-add-media-category">Add</button>
         </div>
     </form>
+    @endslot
+@endmodal
+
+{{-- Confirm Delete Media Modal --}}
+@modal(['id'=>'confirm-delete-media-modal','title'=>'Delete Media', 'verticalCenter'=>true])
+    @slot('body')
+        <form method="post" action="{{ route('media.destroy',['id'=>1]) }}" id="form-delete-media">
+            @csrf
+            @method('DELETE')
+            <img class="media-preview" src="" />
+            <div class="form-group">
+                <label>Click Delete to confirm</label>
+            </div>
+            <div class="float-right">
+                <button type="submit" class="btn btn-success" id="button-delete-media">Delete</button>
+            </div>
+        </form>
     @endslot
 @endmodal
 

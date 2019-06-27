@@ -1,7 +1,14 @@
 @push('styles')
 <link rel="stylesheet" type="text/css" href="{{ asset('vendor/media/css/medialib.css') }}">
 <style>
+    .media-file:hover .media-remove {
+        display: block;
+    }
     
+    .media-preview {
+        width: 100%;
+        object-fit: contain;
+    }
 </style>
 @endpush
 
