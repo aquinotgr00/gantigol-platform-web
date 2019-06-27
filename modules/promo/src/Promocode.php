@@ -18,6 +18,6 @@ class Promocode extends Model
         'data',
         'is_disposable',
         'expires_at',
-
+        'data',
     ];
 }

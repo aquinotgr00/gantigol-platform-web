@@ -90,12 +90,16 @@ class PromoController extends Controller
         $request->validate([
         'code' => 'required|unique:promocodes|max:255',
         'reward' => 'required|integer|min:1',
+        'minimum_price' =>'required|integer',
         'expires_at'=>'required',
         ]);
         if(!is_null($request->expires_at)){
             $date = strtotime($request->expires_at." 23:59:59");
             
             $request->merge(['expires_at' => date('Y-m-d H:i:s', $date)]);
+        }
+        if(is_null($request->minimum_price)){
+             $request->merge(['minimum_price'=>0]);
         }
     	if(is_null($request->code)){
     		$result = $this->autoGeneratePromo($request);
