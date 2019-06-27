@@ -7,8 +7,7 @@ use Modules\Medias\MediaCategories;
 use Modules\Medias\Media;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Collection;
-use File;
+use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
@@ -73,6 +72,14 @@ class MediaController extends Controller
         }
         
         return view('medias::media-library');
+    }
+    
+    public function destroy(Request $request) {
+        $media = Content::find(1)->media()->find($request->id);
+        if(Storage::delete($media->getPath())) {
+            $media->delete();
+        }
+        return back();
     }
     
     /**
