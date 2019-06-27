@@ -1,60 +1,83 @@
 @push('scripts')
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         var datatables = $('#pendingDataTable').DataTable({
             "ajax": "{{ route('transaction.pending',$preOrder->id) }}",
             "order": [
-                [0, "desc"]
+                [1, "desc"]
             ],
             "columns": [{
-                    "data": "created_at"
-                },
-                {
-                    "data": "invoice",
-                    "render": function(data, type, row) {
-                        return '<a href="{{ url('admin/show-transaction') }}/' + row.id + '?preorder={{ $preOrder->id }}">' + data + '</a>';
-                    }
-                },
-                {
-                    "data": "name"
-                },
-                {
-                    "data": "orders",
-                    "render": function(data, type, row) {
-                        var variant_qty = "";
-                        $.each(data, function(key, val) {
-                            variant_qty += val.qty + "<br/>";
-                        });
-                        return variant_qty;
-                    }
-                },
-                {
-                    "data": "payment_reminder",
-                    "render": function(data, type, row) {
-                        var text = "";
-                        for (var x = 0; x < data; x++) {
-                            text += '<img class="alert-pre" src="{{ asset("vendor/admin") }}/images/alert-' + x + '.svg" alt="indicator reminder"></a>';
-                        }
-                        return text;
-                    }
-                }
+                "data": "created_at"
+            },
+            {
+                "data": "invoice"
+            },
+            {
+                "data": "name"
+            },
+            {
+                "data": "variant_qty"
+            },
+            {
+                "data": "email_received"
+            }
             ],
             dom: 'Bfrtip',
-            buttons: ['excel', 'pdf', 'print']
+            buttons: ['excel', 'pdf', 'print'],
+            buttons: {
+                buttons: [{
+                    extend: 'pdf',
+                    className: 'btn btn-line'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn btn-line'
+                },
+                {
+                    extend: 'print',
+                    className: 'btn btn-line'
+                },
+                ]
+            }
         });
 
-        $('.dt-buttons').css('display', 'none');
+        datatables.buttons().container().appendTo('#buttonExportPending');
+        //$('.dt-buttons').css('display', 'none');
 
-        $.each($('.btn-line'), function(key, value) {
-            $(value).click(function(){
+        $.each($('.btn-line'), function (key, value) {
+            $(value).click(function () {
                 var selector = $(value).data('trigger');
-                $('.'+selector).click();
+                $('.' + selector).click();
             });
         });
     });
 </script>
 @endpush
 <div id="pending-pre" class="tab-pane active">
+    <div class="row mb-3">
+        <div class="col col-md-8 mt-4">
+            <div>
+                <small>Summary Order :</small>
+                <span class="Summary-ord">
+                    @foreach($summary_order as $key => $value)
+                    {{ $key }} : {{ array_sum($value) }} &nbsp; 
+                    @endforeach
+                </span>
+            </div>
+            <div>
+                <small>Total Order : </small>
+                <span class="Summary-ord">{{ $total_order }}</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class=" form-group float-right mr-2">
+                <div>
+                    <label>Export Data</label>
+                </div>
+                <div class="btn-group" id="buttonExportPending" role="group"></div>
+            </div>
+        </div>
+    </div>
     <!-- start table -->
     <div class="table-responsive">
         <table class="table" id="pendingDataTable" width="100%" cellspacing="0">

@@ -7,70 +7,70 @@
                     "data": "start_production_date"
                 },
                 {
-                    "data": "batch_name",
-                    "render": function(data, type, row) {
-                        if ($('input[name="view_batch"]')) {
-                            var button = "";
-                            button += "<a href='{{ url('admin/shipping-transaction') }}/" + row.id + "'>";
-                            button += data;
-                            button += "</a>";
-                            return button;
-                        }
-                    }
+                    "data": "batch_name"
                 },
                 {
                     "data": "batch_qty"
                 },
                 {
-                    "data": "get_productions",
-                    "render": function(data, type, row) {
-
-                        var variant = "";
-                        var variants = [];
-                        var obj = [];
-                        $.each(data, function(key, val) {
-                            var amount = 0;
-                            $.each(val.get_transaction.orders, function(index, data) {
-
-                                switch (data.product_variant.variant) {
-                                    case data.product_variant.variant:
-                                        amount += parseInt(data.qty);
-                                        break;
-                                }
-                                variants[data.product_variant.variant] = amount;
-                            });
-                        });
-                        return variants;
-                    }
+                    "data": "variant_qty"
                 },
                 {
-                    "data": "get_productions",
-                    "render": function(data, type, row) {
-                        var amount = 0;
-                        $.each(data, function(key, val) {
-
-                            if (val.status == 'ready_to_ship') {
-                                amount++;
-                            }
-                        });
-                        return amount;
-                    }
+                    "data": "ready_to_ship"
                 },
                 {
-                    "data": "id",
-                    "render": function(data, type, row) {
-                        var button = '<a href="{{ url("admin/shipping-sticker") }}/' + data + '" class="btn btn-table circle-table print-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print"></a>';
-                        return button;
-                    }
+                    "data": "shipping_sticker"
                 }
-            ]
+            ],
+            dom: 'Bfrtip',
+            buttons: ['excel', 'pdf', 'print'],
+            buttons: {
+                buttons: [{
+                        extend: 'pdf',
+                        className: 'btn btn-line'
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'btn btn-line'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-line'
+                    },
+                ]
+            }
 
         });
+        datatables.buttons().container().appendTo('#buttonExportBatch');
     });
 </script>
 @endpush
 
 <div id="batch-pre" class="tab-pane">
+    <div class="row mb-3">
+        <div class="col col-md-8 mt-4">
+            <div>
+                <small>Summary Order :</small>
+                <span class="Summary-ord">
+                    @foreach($summary_order_batch as $key => $value)
+                    {{ $key }} : {{ array_sum($value) }} &nbsp;
+                    @endforeach
+                </span>
+            </div>
+            <div>
+                <small>Total Order : </small>
+                <span class="Summary-ord">{{ $total_order_batch }}</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class=" form-group float-right mr-2">
+                <div>
+                    <label>Export Data</label>
+                </div>
+                <div class="btn-group" id="buttonExportBatch" role="group"></div>
+            </div>
+        </div>
+    </div>
     @can('view-batch')
     <input type="hidden" name="view_batch" value="1" />
     @endcan

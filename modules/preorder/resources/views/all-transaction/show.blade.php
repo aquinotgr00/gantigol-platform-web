@@ -183,19 +183,19 @@ $customer = $transaction->customer;
                     </div>
                     <div class="form-group">
                         <label>Subdistrict</label>
-                        <p>{{ $transaction->getSubdistrict->name }}</p>
+                        <p>{{ (isset($transaction->getSubdistrict->name))? $transaction->getSubdistrict->name : '' }}</p>
                     </div>
                     <div class="form-group">
                         <label>City</label>
-                        <p>{{ $transaction->getSubdistrict->city->name }}</p>
+                        <p>{{ (isset($transaction->getSubdistrict->city->name))? $transaction->getSubdistrict->city->name : '' }}</p>
                     </div>
                     <div class="form-group">
                         <label>Province</label>
-                        <p>{{ $transaction->getSubdistrict->city->province->name }}</p>
+                        <p>{{ (isset($transaction->getSubdistrict->city->province))? $transaction->getSubdistrict->city->province->name : '' }}</p>
                     </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <p>{{ $transaction->getSubdistrict->city->postal_code }}</p>
+                        <p>{{ (isset($transaction->getSubdistrict->city->postal_code))? $transaction->getSubdistrict->city->postal_code : '' }}</p>
                     </div>
                     <div class="form-group">
                         <label>Phone</label>

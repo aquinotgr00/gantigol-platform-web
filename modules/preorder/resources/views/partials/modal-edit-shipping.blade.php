@@ -26,20 +26,22 @@
                         <label>Subdistrict</label>
                         <br />
                         <select type="text" class="form-control col-12" name="subdistrict_id" style="width:466px;">
-                            <option value="">Choose One</option>
+                            <option value="{{ $transaction->subdistrict_id }}">
+                            {{ (isset($transaction->getSubdistrict->name))? $transaction->getSubdistrict->name : 'Choose One' }}
+                            </option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>City</label>
-                        <p id="shipping-city"></p>                        
+                        <p id="shipping-city">{{ (isset($transaction->getSubdistrict->city->name))? $transaction->getSubdistrict->city->name : '' }}</p>
                     </div>
                     <div class="form-group">
                         <label>Province</label>
-                        <p id="shipping-province"></p>
+                        <p id="shipping-province">{{ (isset($transaction->getSubdistrict->city->province))? $transaction->getSubdistrict->city->province->name : '' }}</p>
                     </div>
                     <div class="form-group">
                         <label>Zip Code</label>
-                        <p id="shipping-zip_code"></p>
+                        <p id="shipping-zip_code">{{ (isset($transaction->getSubdistrict->city->postal_code))? $transaction->getSubdistrict->city->postal_code : '' }}</p>
                     </div>
                     <div class="form-group">
                         <label>Phone</label>

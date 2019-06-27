@@ -52,7 +52,7 @@ class AdjustmentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(StoreAdjustment $request)
-    {
+    {   
         $variant_id = $request->input('product_variants_id');
         $method = $request->input('method');
         $qty = $request->input('qty');
@@ -121,6 +121,7 @@ class AdjustmentController extends Controller
      */
     public function edit(Adjustment $adjustment)
     {
+        
         $productVariants = ProductVariant::with(['product.category.parentCategories'])->get();
 
         $productVariant = ProductVariant::with(['product.category.parentCategories'])->find($adjustment->product_variants_id);

@@ -6,7 +6,7 @@
 
 {{-- start tools --}}
 <div class="row mb-3">
-    <div class="col-md-3">
+    <div class="col-md-5">
         <tool class="navbar navbar-expand-lg">
             <form class="form-inline my-2 my-lg-0">
                 @searchbar()

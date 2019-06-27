@@ -3,6 +3,7 @@
 namespace Modules\Preorder\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Preorder\Http\Resources\ProductionBatchResource;
@@ -154,18 +155,47 @@ class ProductionBatchApiController extends Controller
      */
     public function getByPreOrderID(int $preorder_id)
     {
-        $productionBatch = ProductionBatch::with('getProductions')->where('pre_order_id', $preorder_id)->paginate(25);
-        foreach ($productionBatch as $index => $item) {
-            if ($item->getProductions->count() > 0) {
-                foreach ($item->getProductions as $key => $value) {
-                    $value->getTransaction;
-                    $value->getTransaction->orders;
-                    foreach ($value->getTransaction->orders as $index => $order) {
-                        $order->productVariant;
+        $productionBatch = ProductionBatch::with('getProductions')
+            ->where('pre_order_id', $preorder_id)
+            ->get();
+
+        return Datatables::of($productionBatch)
+            ->addColumn('batch_name', function ($data) {
+                return '<a href="'.route('shipping.transaction',$data->id).'">'.ucwords($data->batch_name).'</a>';   
+            })
+            ->addColumn('variant_qty', function ($data) {
+
+                $variant_qty = '';
+                $variant_qty_items = [];
+
+                foreach ($data->getProductions as $key => $value) {
+
+                    $items = $value->getTransaction->orders;
+                    foreach ($items as $index => $item) {
+                        $variant_qty_items[$item->productVariant->variant][] = $item->qty;
+                    }
+
+                }
+                foreach ($variant_qty_items as $label => $pieces) {
+                    $variant_qty .= ucwords($label) . ' : ';
+                    $variant_qty .= array_sum($pieces);
+                    $variant_qty .= '<br/>';
+                }
+                return $variant_qty;
+            })
+            ->addColumn('ready_to_ship', function ($data) {
+                $amount = 0;
+                foreach ($data->getProductions as $key => $value) {
+                    if (in_array($value->status,['ready_to_ship','shipped'])) {
+                        $amount++;
                     }
                 }
-            }
-        }
-        return ProductionBatchResource::collection($productionBatch);
+                return $amount;
+            })
+            ->addColumn('shipping_sticker', function ($data) {
+                return '<a href="'.route('print.shipping-sticker',$data->id).'" class="btn btn-table circle-table print-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print"></a>';   
+            })
+            ->rawColumns(['batch_name','variant_qty','shipping_sticker'])
+            ->toJson();
     }
 }

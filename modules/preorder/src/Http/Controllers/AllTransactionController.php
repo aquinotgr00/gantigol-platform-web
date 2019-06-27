@@ -8,11 +8,15 @@ use Illuminate\Http\Request;
 use Modules\Preorder\PreOrder;
 use Modules\Preorder\Production;
 use Modules\Preorder\Transaction;
+use Illuminate\Support\Facades\Mail;
+use Modules\Preorder\Mail\WayBill;
+use Auth;
 
 class AllTransactionController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('view-transaction', Auth::user());
         $orders = (new Transaction)->newQuery();
         if ($request->has(['startdate', 'enddate'])) {
             //
@@ -53,6 +57,12 @@ class AllTransactionController extends Controller
                     $link .= '</a>';
                     return $link;
                 })
+                ->addColumn('courier_name', function ($query) {
+                    return strtoupper($query->courier_name);
+                })
+                ->addColumn('name', function ($query) {
+                    return ucwords($query->name);
+                })
                 ->rawColumns(['id', 'invoice'])
                 ->make(true);
         }
@@ -64,6 +74,7 @@ class AllTransactionController extends Controller
 
     public function show(int $id)
     {
+        $this->authorize('view-transaction', Auth::user());
         $transaction = Transaction::findOrFail($id);
         $orders = $transaction->orders;
         $status = Transaction::getPossibleEnumValues('status');
@@ -103,8 +114,10 @@ class AllTransactionController extends Controller
             }
 
             $tracking_number = trim($request->tracking_number);
+            
             if (
                 !empty($tracking_number) &&
+                !is_null($transaction->getProduction) &&
                 $transaction->getProduction->tracking_number != $tracking_number
             ) {
                 $production = Production::where('transaction_id', $id)->first();
@@ -115,13 +128,13 @@ class AllTransactionController extends Controller
 
                 try {
 
-                    Mail::to($order->shipping_email)->send(new WayBill($transaction));
-                    $order->update([
-                        'order_status' => 3,
-                    ]);
+                    Mail::to($transaction->email)->send(new WayBill($transaction));
+                    
                 } catch (\Swift_TransportException $e) {
                     $response = $e->getMessage();
                 }
+            }else{
+                $request->session()->flash('alert', "Transaction doesn't have a production session");
             }
         } else {
 

@@ -17,7 +17,7 @@ Route::get('setting-preorder', 'SettingPreorderController@index')->name('setting
 Route::post('setting-reminder', 'SettingReminderController@store')->name('setting-reminder.store');
 Route::get('send-reminder/{id}', 'TransactionController@sendReminder')->name('transaction.send-reminder');
 
-Route::get('shipping-sticker/{batch_id}', 'TransactionController@printShippingSticker')->name('setting-shipping.sticker');
+Route::get('shipping-sticker/{batch_id}', 'TransactionController@printShippingSticker')->name('print.shipping-sticker');
 Route::get('shipping-preview', 'SettingShippingController@preview')->name('setting-shipping.preview');
 Route::post('shipping-sticker', 'SettingShippingController@storeSize')->name('shipping.store-size');
 
@@ -30,3 +30,5 @@ Route::post('store-shipping-number', 'TransactionController@storeShippingNumber'
 Route::get('show-invoice', 'AllTransactionController@showInvoice')->name('show-invoice');
 
 Route::post('reset-preorder/{id}', 'PreorderController@resetPreOrder')->name('list-preorder.reset');
+
+Route::get('shipping-datatables/{id}', 'TransactionController@getShippingDatatables')->name('shipping.datatables');

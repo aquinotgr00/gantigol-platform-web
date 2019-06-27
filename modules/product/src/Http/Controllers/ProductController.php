@@ -25,6 +25,7 @@ class ProductController extends Controller
      */
     public function index()
     {
+        $this->authorize('view-product', Auth::user());
         return view("product::product.index");
     }
 
@@ -35,6 +36,7 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $this->authorize('create-product', Auth::user());
         $data = [
             'title' => ucwords('add new product'),
             'back' => route('product.index'),
@@ -57,6 +59,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create-product', Auth::user());
         $request->validate([
             'name' => 'required|unique:products',
             'price' => 'required|numeric',
@@ -139,6 +142,7 @@ class ProductController extends Controller
      */
     public function show(int $id)
     {
+        $this->authorize('view-product', Auth::user());
         $productVariant = ProductVariant::findOrFail($id);
         $product = $productVariant->product;
 
@@ -164,6 +168,7 @@ class ProductController extends Controller
      */
     public function edit(int $id)
     {
+        $this->authorize('edit-product', Auth::user());
         $productVariant = ProductVariant::findOrFail($id);
         $product_tags = Product::with('tagged')->find($productVariant->product_id);
         $get_tags = [];
@@ -193,6 +198,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, int $id)
     {
+        $this->authorize('edit-product', Auth::user());
         $request->validate([
             'description' => 'required',
             'name' => 'required',
