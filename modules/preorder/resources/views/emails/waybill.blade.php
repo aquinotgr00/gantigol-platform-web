@@ -46,7 +46,7 @@
                 {{ $value->qty }}
             </td>
             <td style="padding:0px 10px; font-size:14px; text-align:right">
-                {{ $value->price }}
+                {{ number_format($value->price) }}
             </td>
         </tr>
         @endforeach
