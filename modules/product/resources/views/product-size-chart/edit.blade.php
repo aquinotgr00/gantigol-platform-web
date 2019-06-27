@@ -60,7 +60,7 @@
         </div>
         <div class="text-right">
             <input type="hidden" name="image_id" />
-            <input type="hidden" name="image" />
+            <input type="hidden" name="image" value="{{ $productSize->image }}" />
             <button class="btn btn-success">
                 <i class="fa fa-save"></i>&nbsp;
                 Save

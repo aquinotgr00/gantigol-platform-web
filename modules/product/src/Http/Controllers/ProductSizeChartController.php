@@ -14,11 +14,13 @@ class ProductSizeChartController extends Controller
 {
     public function index()
     {
+        $this->authorize('view-size-chart', Auth::user());
         return view("product::product-size-chart.index");
     }
 
     public function create()
     {
+        $this->authorize('create-size-chart', Auth::user());
         $data['title'] = 'Product Size Chart';
         $data['back'] = route('product-size-chart.index');
         $categories = ProductCategory::whereNull('parent_id')->with('subcategories')->get();
@@ -27,6 +29,7 @@ class ProductSizeChartController extends Controller
 
     public function show(int $id)
     {
+        $this->authorize('view-size-chart', Auth::user());
         $productSize = ProductSizeChart::findOrFail($id);
         $categories = [];
         if (class_exists('\Modules\categories\categories')) {
@@ -43,6 +46,7 @@ class ProductSizeChartController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create-size-chart', Auth::user());
         $request->validate([
             'name' => 'required',
             'category_id' => 'required',
@@ -57,6 +61,7 @@ class ProductSizeChartController extends Controller
 
     public function edit(int $id)
     {
+        $this->authorize('edit-size-chart', Auth::user());
         $productSize = ProductSizeChart::findOrFail($id);
         $data['title'] = 'Product Size Chart';
         $data['back'] = route('product-size-chart.index');
@@ -66,6 +71,7 @@ class ProductSizeChartController extends Controller
 
     public function update(Request $request, int $id)
     {
+        $this->authorize('edit-size-chart', Auth::user());
         $request->validate([
             'name' => 'required',
             'category_id' => 'required',

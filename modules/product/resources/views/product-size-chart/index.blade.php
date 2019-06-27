@@ -2,14 +2,14 @@
 
 @section('content')
 
-@php 
+@php
 
 $user = Auth::user();
 
 $args = ['title'=>'Product Size Chart'];
 
 if (Gate::forUser($user)->allows('create-size-chart')) {
-    $args['addNewAction'] = route('product-size-chart.create'); 
+$args['addNewAction'] = route('product-size-chart.create');
 }
 
 @endphp
@@ -19,6 +19,7 @@ if (Gate::forUser($user)->allows('create-size-chart')) {
 <table class="table" id="dataTable">
     <thead>
         <tr>
+            <th>#</th>
             <th>Image</th>
             <th>Size Chart Name</th>
             <th>Action</th>
@@ -31,7 +32,6 @@ if (Gate::forUser($user)->allows('create-size-chart')) {
 
 @push('scripts')
 <script>
-
     function deleteItem(id) {
 
         if (confirm('Are u sure?')) {
@@ -42,7 +42,7 @@ if (Gate::forUser($user)->allows('create-size-chart')) {
                     "_token": "{{ csrf_token() }}"
                 },
                 dataType: 'json',
-                success: function (result) {
+                success: function(result) {
                     if (result.data == 1) {
                         window.location.href = "{{ route('product-size-chart.index')  }}";
                     }
@@ -51,7 +51,7 @@ if (Gate::forUser($user)->allows('create-size-chart')) {
         }
     }
 
-    $(function () {
+    $(function() {
 
         var datatables = $('#dataTable').DataTable({
             processing: true,
@@ -63,11 +63,27 @@ if (Gate::forUser($user)->allows('create-size-chart')) {
                     "_token": "{{ csrf_token() }}"
                 }
             },
-            columns: [
-                { data: 'image' },
-                { data: 'name' },
-                { data: 'action' },
+            columns: [{
+                    data: 'created_at'
+                },
+                {
+                    data: 'image'
+                },
+                {
+                    data: 'name'
+                },
+                {
+                    data: 'action'
+                },
             ],
+            order: [
+                [0, "desc"]
+            ],
+            columnDefs: [{
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+            }],
             drawCallback: function(settings) {
                 $('[data-toggle="tooltip"]').tooltip()
             }
@@ -75,11 +91,10 @@ if (Gate::forUser($user)->allows('create-size-chart')) {
 
         $('#dataTable_filter').css('display', 'none');
 
-        $('.search-box').on('keyup', function () {
+        $('.search-box').on('keyup', function() {
             datatables.search(this.value).draw();
         });
 
     });
-
 </script>
 @endpush

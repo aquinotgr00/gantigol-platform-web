@@ -4,7 +4,7 @@
         var datatables = $('#paidDatatable').DataTable({
             "ajax": "{{ route('transaction.paid',$preOrder->id) }}",
             "order": [
-                [0, "desc"]
+                [1, "desc"]
             ],
             "columns": [{
                     "data": "created_at"
@@ -22,14 +22,24 @@
             dom: 'Bfrtip',
             buttons: ['excel', 'pdf', 'print'],
             buttons: {
-                buttons: [
-                    { extend: 'pdf', className: 'btn btn-line' },
-                    { extend: 'excel', className: 'btn btn-line' },
-                    { extend: 'print', className: 'btn btn-line' },
+                buttons: [{
+                        extend: 'pdf',
+                        className: 'btn btn-line'
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'btn btn-line'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-line'
+                    },
                 ]
             }
 
         });
+
+        datatables.buttons().container().appendTo('#buttonExportPaid');
 
         $('#form-create-batch').submit(function(e) {
             e.preventDefault();
@@ -51,15 +61,39 @@
         //$('.dt-buttons').css('display', 'none');
 
         $.each($('.btn-line'), function(key, value) {
-            $(value).click(function(){
+            $(value).click(function() {
                 var selector = $(value).data('trigger');
-                $('.'+selector).click();
+                $('.' + selector).click();
             });
         });
     });
 </script>
 @endpush
 <div id="paid-pre" class="tab-pane">
+    <div class="row mb-3">
+        <div class="col col-md-8 mt-4">
+            <div>
+                <small>Summary Order :</small>
+                <span class="Summary-ord">
+                    @foreach($summary_order_paid as $key => $value)
+                    {{ $key }} : {{ array_sum($value) }} &nbsp;
+                    @endforeach
+                </span>
+            </div>
+            <div>
+                <small>Total Order : </small>
+                <span class="Summary-ord">{{ $total_order_paid }}</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class=" form-group float-right mr-2">
+                <div>
+                    <label>Export Data</label>
+                </div>
+                <div class="btn-group" id="buttonExportPaid" role="group"></div>
+            </div>
+        </div>
+    </div>
     <div class="table-responsive">
         <!-- start table -->
         <table class="table" id="paidDatatable" width="100%" cellspacing="0">

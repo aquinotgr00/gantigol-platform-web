@@ -11,6 +11,7 @@ use Modules\Product\ProductVariant;
 use Modules\Product\ProductVariantAttribute;
 use Modules\Product\ProductImage;
 use DataTables;
+use Auth;
 
 class PreorderController extends Controller
 {
@@ -21,6 +22,7 @@ class PreorderController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('view-preorder', Auth::user());
         if ($request->ajax()) {
             $preorders = PreOrder::with('product')
                 ->where('status', 'publish')
@@ -94,6 +96,7 @@ class PreorderController extends Controller
      */
     public function create()
     {
+        $this->authorize('create-preorder', Auth::user());
         $data = [
             'title' => 'Create Preorder',
             'back' => route('list-preorder.index')
@@ -115,6 +118,7 @@ class PreorderController extends Controller
      */
     public function show($id)
     {
+        $this->authorize('view-preorder', Auth::user());
         $preOrder = PreOrder::findOrFail($id);
         $categories = [];
         if (class_exists('\Modules\ProductCategory\ProductCategory')) {
@@ -144,6 +148,7 @@ class PreorderController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('view-preorder', Auth::user());
         $request->validate([
             'name' => 'required|unique:products',
             'price' => 'required|numeric',
@@ -227,6 +232,7 @@ class PreorderController extends Controller
      */
     public function edit(int $id)
     {
+        $this->authorize('edit-preorder', Auth::user());
         $preOrder       = PreOrder::findOrFail($id);
         $product_tags   = Product::with('tagged')->find($preOrder->product_id);
         $get_tags       = [];
@@ -266,6 +272,7 @@ class PreorderController extends Controller
 
     public function update(Request $request, int $id)
     {
+        $this->authorize('edit-preorder', Auth::user());
         $request->validate([
             'description' => 'required',
             'start_date' => 'date',
@@ -336,9 +343,9 @@ class PreorderController extends Controller
         
         if (
             !is_null($preOrder) &&
-            ($preOrder->order_received >= $preOrder->quota)
+            ($preOrder->total >= $preOrder->quota)
         ) {
-            $preOrder->order_received = 0;
+            $preOrder->total = 0;
             $preOrder->update();
         }
         

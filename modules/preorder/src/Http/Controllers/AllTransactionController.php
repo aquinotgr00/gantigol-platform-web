@@ -10,11 +10,13 @@ use Modules\Preorder\Production;
 use Modules\Preorder\Transaction;
 use Illuminate\Support\Facades\Mail;
 use Modules\Preorder\Mail\WayBill;
+use Auth;
 
 class AllTransactionController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('view-transaction', Auth::user());
         $orders = (new Transaction)->newQuery();
         if ($request->has(['startdate', 'enddate'])) {
             //
@@ -72,6 +74,7 @@ class AllTransactionController extends Controller
 
     public function show(int $id)
     {
+        $this->authorize('view-transaction', Auth::user());
         $transaction = Transaction::findOrFail($id);
         $orders = $transaction->orders;
         $status = Transaction::getPossibleEnumValues('status');
@@ -111,8 +114,10 @@ class AllTransactionController extends Controller
             }
 
             $tracking_number = trim($request->tracking_number);
+            
             if (
                 !empty($tracking_number) &&
+                !is_null($transaction->getProduction) &&
                 $transaction->getProduction->tracking_number != $tracking_number
             ) {
                 $production = Production::where('transaction_id', $id)->first();
@@ -128,6 +133,8 @@ class AllTransactionController extends Controller
                 } catch (\Swift_TransportException $e) {
                     $response = $e->getMessage();
                 }
+            }else{
+                $request->session()->flash('alert', "Transaction doesn't have a production session");
             }
         } else {
 

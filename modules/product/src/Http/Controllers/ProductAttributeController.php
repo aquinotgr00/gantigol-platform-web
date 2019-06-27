@@ -14,11 +14,13 @@ class ProductAttributeController extends Controller
 {
     public function index()
     {
+        $this->authorize('view-variant', Auth::user());
         return view('product::product-variant.index');
     }
 
     public function create()
     {
+        $this->authorize('create-variant', Auth::user());
         $data = [
             'title' => 'Add New Product Variant',
             'back' => route('product-variant.index'),
@@ -28,6 +30,7 @@ class ProductAttributeController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create-variant', Auth::user());
         $request->validate([
             'attribute' => 'required',
             'value' => 'required',
@@ -38,6 +41,7 @@ class ProductAttributeController extends Controller
 
     public function show(int $id)
     {
+        $this->authorize('view-variant', Auth::user());
         $productVariant = ProductVariantAttribute::findOrFail($id);
         $data = [
             'title' => 'Details Product Variant',
@@ -48,6 +52,7 @@ class ProductAttributeController extends Controller
 
     public function edit(int $id)
     {
+        $this->authorize('edit-variant', Auth::user());
         $productVariant = ProductVariantAttribute::findOrFail($id);
         $data = [
             'title' => 'Edit Product Variant',
@@ -64,6 +69,7 @@ class ProductAttributeController extends Controller
 
     public function update(Request $request, int $id)
     {
+        $this->authorize('edit-variant', Auth::user());
         $request->validate([
             'attribute' => 'required',
         ]);

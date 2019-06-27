@@ -4,16 +4,6 @@
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet">
-<style>
-    div.dt-buttons {
-        float: right;
-        margin: 10px;
-        display:inline-block;
-    }
-    .dataTables_filter{
-        clear:both;
-    }
-</style>
 @endpush
 
 @push('scripts')
@@ -47,7 +37,6 @@
 
     </ul>
 </div>
-
 <div class="tab-content">
     <!-- start tab-pending -->
     <!-- start tools -->

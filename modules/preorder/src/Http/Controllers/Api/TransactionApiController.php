@@ -69,7 +69,7 @@ class TransactionApiController extends Controller
                 }
                 return $reminder;
             })
-            ->rawColumns(['invoice','variant_qty','email_received'])
+            ->rawColumns(['invoice', 'variant_qty', 'email_received'])
             ->toJson();
     }
     /**
@@ -110,7 +110,7 @@ class TransactionApiController extends Controller
                 }
                 return $variant_qty;
             })
-            ->rawColumns(['invoice','variant_qty','email_received'])
+            ->rawColumns(['invoice', 'variant_qty', 'email_received'])
             ->toJson();
     }
     /**
@@ -252,6 +252,21 @@ class TransactionApiController extends Controller
                     ]]);
                     break;
                 }
+            }
+
+            $preOrder = PreOrder::find($request->pre_order_id);
+
+            if (!is_null($preOrder)) {
+                $total  = intval($preOrder->total);
+                $total += intval($quantity);
+                
+                $preOrder->total = $total;
+                $preOrder->update();
+                
+                if ($preOrder->total >= $preOrder->quota) {
+                    event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
+                }
+
             }
 
             $amount += intval($request->courier_fee);

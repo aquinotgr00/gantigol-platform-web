@@ -4,16 +4,6 @@
 <link href="{{ asset('vendor/admin/css/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/style.datatables.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/admin/css/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet">
-<style>
-    div.dt-buttons {
-        float: right;
-        margin: 10px;
-        display:inline-block;
-    }
-    .dataTables_filter{
-        clear:both;
-    }
-</style>
 @endpush
 
 @push('scripts')
@@ -83,14 +73,23 @@
             dom: 'Bfrtip',
             buttons: ['excel', 'pdf', 'print'],
             buttons: {
-                buttons: [
-                    { extend: 'pdf', className: 'btn btn-line' },
-                    { extend: 'excel', className: 'btn btn-line' },
-                    { extend: 'print', className: 'btn btn-line' },
+                buttons: [{
+                        extend: 'pdf',
+                        className: 'btn btn-line'
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'btn btn-line'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-line'
+                    },
                 ]
             }
 
         });
+        datatables.buttons().container().appendTo('#buttonExportBatch');
 
         $('#form-input-shipping-number').submit(function(e) {
             e.preventDefault();
@@ -146,6 +145,31 @@
 @endpush
 
 @section('content')
+
+<div class="row mb-3">
+    <div class="col col-md-8 mt-4">
+        <div>
+            <small>Summary Order :</small>
+            <span class="Summary-ord">
+                @foreach($summary_order_batch as $key => $value)
+                {{ $key }} : {{ array_sum($value) }} &nbsp;
+                @endforeach
+            </span>
+        </div>
+        <div>
+            <small>Total Order : </small>
+            <span class="Summary-ord">{{ $total_order_batch }}</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class=" form-group float-right mr-2">
+            <div>
+                <label>Export Data</label>
+            </div>
+            <div class="btn-group" id="buttonExportBatch" role="group"></div>
+        </div>
+    </div>
+</div>
 
 <!-- start table -->
 <form action="{{ route('store-shipping-number') }}" method="post">
