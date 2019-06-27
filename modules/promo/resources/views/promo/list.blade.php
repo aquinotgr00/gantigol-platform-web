@@ -38,6 +38,7 @@
                       <th scope="col">Promo Code</th>
                       <th scope="col">Promo Type</th>
                       <th scope="col">Amount(IDR)</th>
+                      <th scope="col">Minimum Payment(IDR)</th>
                       <th scope="col">Expired Date</th>
                       <th scope="col">Action</th>
                   </tr>
@@ -50,7 +51,6 @@
  @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="{{ asset('vendor/admin/js/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/admin/js/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script>
@@ -71,7 +71,8 @@
                     { data: 'created_at', name: 'created_at' },
                     { data: 'code', name: 'code' },
                     { data: 'type', name: 'type' },
-                    { data: 'reward', name: 'reward' },
+                    { data: 'reward', name: 'reward',className:'text-right' },
+                    { data: 'minimum_payment', name: 'minimum_payment',className:'text-right' },
                     { data: 'expires_at', name: 'expires_at' },
                     { data: 'action', name: 'action' }
                 ]
