@@ -72,7 +72,6 @@
                     <tr>
                         <th scope="col">SKU</th>
                         <th scope="col">Variant</th>
-                        <th scope="col">Stock</th>
                         <th scope="col">Price</th>
                     </tr>
                 </thead>
@@ -82,7 +81,6 @@
                     <tr>
                         <td>{{ $value->sku }}</td>
                         <td>{{ $value->variant }}</td>
-                        <td>{{ $value->quantity_on_hand }}</td>
                         <td>{{ number_format($value->price) }}</td>
                     </tr>
                     @endforeach
@@ -114,7 +112,7 @@
 
 @push('scripts')
 <script>
-    $(function() {
+    $(function () {
         $('#dataTable').dataTable();
     });
 </script>

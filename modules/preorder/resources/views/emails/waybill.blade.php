@@ -7,8 +7,10 @@
             Invoice: {{ $transaction->invoice }}
         </h3>
         <p style="font-size:14px;margin-top:0px;font-weight:bold">
-            Pengiriman: JNE LAYANAN REGULER
-            (1-2 HARI)</p>
+            Pengiriman: 
+            {{ (isset($transaction->courier_name))? strtoupper($transaction->courier_name) : '' }} 
+            {{ (isset($transaction->courier_type))? strtoupper($transaction->courier_type) : ''  }}
+        </p>
         <p style="font-size:14px;margin-top:0px;font-weight:bold">Nomer
             resi: {{ $transaction->getProduction->tracking_number  }}</p>
     </td>
@@ -80,7 +82,7 @@
                                 Jika Anda mengalami masalah terkait
                                 informasi di email ini,
                                 <br>
-                                <a data-click-track-id="1053" href="https://support.postmates.com/buyer" style="font-weight: 500; color: #000" target="_blank">Help Center</a>.
+                                <a data-click-track-id="1053" href="https://twitter.com/gantigol" style="font-weight: 500; color: #000" target="_blank">Help Center</a>.
                             </td>
                         </tr>
                         <tr>

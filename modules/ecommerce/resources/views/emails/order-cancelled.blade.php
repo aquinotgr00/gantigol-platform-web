@@ -1,4 +1,4 @@
-@extends('emails.layouts.without-menu')
+@extends('emails.layouts.gantigol')
 @section('content')
 <table class="row" style="border-collapse: collapse; border-spacing: 0; display: table; padding: 0; position: relative; text-align: left; vertical-align: top; width: 100%;margin-bottom:40px;">
     <tbody>

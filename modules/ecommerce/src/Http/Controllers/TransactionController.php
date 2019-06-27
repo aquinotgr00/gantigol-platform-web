@@ -82,6 +82,11 @@ class TransactionController extends Controller
             !empty($tracking_number) &&
             $order->shipping_tracking_number != $tracking_number
         ) {
+            
+            $order->update([
+                'shipping_tracking_number' => $tracking_number
+            ]);
+            
             try {
                 $send = (object) [
                     'tracking_number' => $order->shipping_tracking_number,
@@ -90,6 +95,7 @@ class TransactionController extends Controller
                         'tracking_number' => $order->shipping_tracking_number,
                     ],
                     'orders' => (object) $order->items,
+                    'courier_name' => $order->shipment_name 
                 ];
                 Mail::to($order->shipping_email)->send(new WayBill($send));
                 $order->update([
@@ -100,7 +106,7 @@ class TransactionController extends Controller
             }   
         }
 
-        $order->update($request->except('_token', '_method'));
+        $order->update($request->except('_token', '_method','shipping_tracking_number'));
         
         return back();
     }

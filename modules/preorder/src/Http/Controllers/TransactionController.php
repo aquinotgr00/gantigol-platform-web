@@ -2,6 +2,7 @@
 namespace Modules\Preorder\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -12,7 +13,6 @@ use Modules\Preorder\Production;
 use Modules\Preorder\ProductionBatch;
 use Modules\Preorder\Transaction;
 use PDF;
-use Auth;
 
 class TransactionController extends Controller
 {
@@ -26,9 +26,9 @@ class TransactionController extends Controller
     public function pending(int $id)
     {
         $this->authorize('view-transaction', Auth::user());
-        $preOrder           = PreOrder::findOrFail($id);
-        $summary_order      = [];
-        $total_order        = 0;
+        $preOrder = PreOrder::findOrFail($id);
+        $summary_order = [];
+        $total_order = 0;
         foreach ($preOrder->transaction->where('status', 'pending') as $key => $value) {
             foreach ($value->orders as $index => $data) {
                 $total_order += intval($data->qty);
@@ -37,7 +37,7 @@ class TransactionController extends Controller
         }
 
         $summary_order_paid = [];
-        $total_order_paid   = 0;
+        $total_order_paid = 0;
 
         foreach ($preOrder->transaction->where('status', 'paid') as $key => $value) {
             if (is_null($value->getProduction)) {
@@ -49,7 +49,7 @@ class TransactionController extends Controller
         }
 
         $summary_order_batch = [];
-        $total_order_batch   = 0;
+        $total_order_batch = 0;
         $batchPreorder = ProductionBatch::where('pre_order_id', $id)->get();
 
         foreach ($batchPreorder as $key => $value) {
@@ -67,7 +67,7 @@ class TransactionController extends Controller
             'preOrder' => $preOrder,
             'data' => [
                 'title' => $preOrder->product->name,
-                'back' => route('list-preorder.index')
+                'back' => route('list-preorder.index'),
             ],
             'total_order' => $total_order,
             'summary_order' => $summary_order,
@@ -114,14 +114,14 @@ class TransactionController extends Controller
         $this->authorize('view-transaction', Auth::user());
         $production_batch = ProductionBatch::findOrFail($id);
         $summary_order_batch = [];
-        $total_order_batch   = 0;
+        $total_order_batch = 0;
         foreach ($production_batch->getProductions as $key => $value) {
             foreach ($value->getTransaction->orders as $index => $data) {
                 $total_order_batch += intval($data->qty);
                 $summary_order_batch[$data->productVariant->variant][] = $data->qty;
             }
         }
-        
+
         $data = [
             'production_batch' => $production_batch,
             'data' => [
@@ -129,7 +129,7 @@ class TransactionController extends Controller
                 'back' => route('pending.transaction', $production_batch->pre_order_id),
             ],
             'summary_order_batch' => $summary_order_batch,
-            'total_order_batch' => $total_order_batch
+            'total_order_batch' => $total_order_batch,
         ];
         return view('preorder::transaction.shipping')->with($data);
     }
@@ -227,29 +227,27 @@ class TransactionController extends Controller
 
         foreach ($request->production_id as $key => $value) {
             $production = Production::find($value);
+
             $tracking_number = trim($request->tracking_number[$key]);
             if (
                 !is_null($production) &&
                 !empty($tracking_number)
             ) {
-
-                $transaction = Transaction::find($production->transaction_id);
-                if (!is_null($transaction)) {
-                    $transaction->update([
-                        'status' => 'shipped',
-                    ]);
-                }
-
                 try {
                     $production->update([
                         'tracking_number' => $tracking_number,
                         'status' => 'shipped',
                     ]);
+                    
+                    $production->getTransaction->update([
+                        'status' => 'shipped',
+                    ]);
 
+                    $transaction = $production->getTransaction;
                     Mail::to($production->getTransaction->email)->send(new WayBill($transaction));
+
                 } catch (\Swift_TransportException $e) {
                     $response = $e->getMessage();
-
                     break;
                 }
             }

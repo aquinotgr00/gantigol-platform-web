@@ -9,6 +9,7 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Modules\Preorder\PreOrder;
 
 class QuotaFulfilled implements ShouldBroadcast
 {
@@ -19,7 +20,7 @@ class QuotaFulfilled implements ShouldBroadcast
      *
      * @var object
      */
-    public $preOrder;
+    public $product;
 
     /**
      * Place to hold the message that need to send.
@@ -32,16 +33,15 @@ class QuotaFulfilled implements ShouldBroadcast
      * @var string
      */
     public $url;
-
     /**
      *
-     * @param   mixed  $preOrder
+     * @param   PreOrder  $preOrder
      *
      * @return  void
      */
-    public function __construct($preOrder)
+    public function __construct(PreOrder $preOrder)
     {
-        $this->product = $preOrder->product->name;
+        $this->product = $preOrder;
         $this->message = "{$preOrder->product->name} quota is fulfilled.";
         $this->url = route('pending.transaction', $preOrder->id);
     }

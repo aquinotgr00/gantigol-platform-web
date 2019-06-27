@@ -32,32 +32,38 @@
             @method('PUT')
             <div class="form-group">
                 <label for="inputName">Product Title</label>
-                <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" value="{{ $product->name }}" />
+                <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}"
+                    value="{{ $product->name }}" />
                 @if ($errors->has('name'))
                 <div class="invalid-feedback">{{ $errors->first('name') }}</div>
                 @endif
             </div>
             <div class="form-group">
                 <label for="productDescription">Description</label>
-                <textarea type="text" name="description" class="form-control" id="productDescription" rows="3">{{ $product->description }}</textarea>
+                <textarea type="text" name="description" class="form-control" id="productDescription"
+                    rows="3">{{ $product->description }}</textarea>
             </div>
             <div class="form-group">
                 <label>Price</label>
-                <input type="number" name="price" class="form-control{{ $errors->has('price') ? ' is-invalid' : '' }}" value="{{ $price_preorder }}" />
+                <input type="number" name="price" class="form-control{{ $errors->has('price') ? ' is-invalid' : '' }}"
+                    value="{{ $price_preorder }}" />
                 @if ($errors->has('price'))
                 <div class="invalid-feedback">{{ $errors->first('price') }}</div>
                 @endif
             </div>
             <div class="form-group">
                 <label for="weight">Weight (gram)</label>
-                <input type="number" step="any" name="weight" class="form-control{{ $errors->has('weight') ? ' is-invalid' : '' }}" id="weight" value="{{ $product->weight }}" />
+                <input type="number" step="any" name="weight"
+                    class="form-control{{ $errors->has('weight') ? ' is-invalid' : '' }}" id="weight"
+                    value="{{ $product->weight }}" />
                 @if ($errors->has('weight'))
                 <div class="invalid-feedback">{{ $errors->first('weight') }}</div>
                 @endif
             </div>
             <div class="form-group">
                 <label for="selectCategory">Product Category</label>
-                <select class="form-control {{ $errors->has('category_id') ? ' is-invalid' : '' }}" id="selectCategory" name="category_id">
+                <select class="form-control {{ $errors->has('category_id') ? ' is-invalid' : '' }}" id="selectCategory"
+                    name="category_id">
                     <option value="">Select Product Category</option>
                     @if(isset($categories) && ($categories))
                     @foreach ($categories->all() as $category)
@@ -84,7 +90,8 @@
                         @php
                         $start_date = date('Y-m-d', strtotime($preOrder->start_date));
                         @endphp
-                        <input type="date" class="form-control" name="start_date" id="inputStartDate" value="{{ $start_date }}" />
+                        <input type="date" class="form-control" name="start_date" id="inputStartDate"
+                            value="{{ $start_date }}" />
                     </div>
                 </div>
                 <div class="col">
@@ -94,14 +101,48 @@
                         @php
                         $end_date = date('Y-m-d', strtotime($preOrder->end_date));
                         @endphp
-                        <input type="date" class="form-control" name="end_date" id="inputEndDate" value="{{ $end_date }}" />
+                        <input type="date" class="form-control" name="end_date" id="inputEndDate"
+                            value="{{ $end_date }}" />
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <label for="InputCategoryRelatedTag">Related Tag</label>
-                <input type="text" name="tags" data-role="tagsinput" class="form-control" id="InputCategoryRelatedTag" value="{{ $related_tags }}">
+                <input type="text" name="tags" data-role="tagsinput" class="form-control" id="InputCategoryRelatedTag"
+                    value="{{ $related_tags }}">
                 <small>separate with commas</small>
+            </div>
+            <div>
+                <label>Product Variants</label>
+            </div>
+            <div class="table-responsive">
+                <table class="table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">SKU</th>
+                            <th scope="col">Variant</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    @if(!is_null($variants))
+                    <tbody>
+                        @foreach($variants as $key => $value)
+                        <tr>
+                            <td>
+                                <input type="hidden" class="form-control" name="variants_id[]" value="{{ $value->id }}" />
+                                <input type="text" class="form-control" name="skus[]" value="{{ $value->sku }}" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="variants[]" value="{{ $value->variant }}" />
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="prices[]" value="{{ $value->price }}" />
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    @endif
+                </table>
             </div>
             <div class="float-right">
                 <input type="hidden" name="status">
@@ -114,7 +155,8 @@
             <div class="mb-4">
                 <label for="exampleFormControlSelect1">Featured Image</label>
                 <div class="mb-2">
-                    <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false" data-on-select="selectFeatureImage">
+                    <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="false"
+                        data-on-select="selectFeatureImage">
                         @php
 
                         $img_url = asset('vendor/admin/images/image-plus.svg');
@@ -123,7 +165,8 @@
                         }
 
                         @endphp
-                        <img src="{{ $img_url }}" id="img-placeholder" class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}" />
+                        <img src="{{ $img_url }}" id="img-placeholder"
+                            class="img-fluid img-thumbnail add-img-featured {{ $errors->has('image') ? 'is-invalid-img' : '' }}" />
                         @if ($errors->has('image'))
                         <p class="is-valid-image-feedback">{{ $errors->first('image') }}</p>
                         @endif
@@ -142,8 +185,10 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="mb-2">
-                            <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="true" data-on-select="selectAddtionalImage">
-                                <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image" class="img-fluid img-thumbnail add-img-featured" />
+                            <a href="#" data-toggle="modal" data-target="#media-library-modal" data-multi-select="true"
+                                data-on-select="selectAddtionalImage">
+                                <img src="{{ asset('vendor/admin/images/image-plus.svg') }}" id="product-category-image"
+                                    class="img-fluid img-thumbnail add-img-featured" />
                             </a>
                         </div>
                     </div>
@@ -156,15 +201,22 @@
                     @if(isset($product->images))
                     @foreach($product->images as $index => $image)
                     <div class="col-md-4">
-                        <input type="hidden" name="images[]" value="{{ $image->image }}" id="input-img-{{ $image->id }}" />
+                        <input type="hidden" name="images[]" value="{{ $image->image }}"
+                            id="input-img-{{ $image->id }}" />
                         <div class="mb-2 hovereffect">
-                            <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}" id="img-{{ $image->id }}">
+                            <img class="img-fluid img-thumbnail img-additional-size" src="{{ $image->image }}"
+                                id="img-{{ $image->id }}">
                             <div class="overlay-additional btn-img">
                                 <span>
-                                    <a href="#" class="btn btn-table circle-table edit-table mr-2 btn-edit-img" data-toggle="modal" data-target="#media-library-modal" data-id="{{ $image->id }}" data-multi-select="false" data-on-select="editAddtionalImage" title="Edit this image"></a>
+                                    <a href="#" class="btn btn-table circle-table edit-table mr-2 btn-edit-img"
+                                        data-toggle="modal" data-target="#media-library-modal"
+                                        data-id="{{ $image->id }}" data-multi-select="false"
+                                        data-on-select="editAddtionalImage" title="Edit this image"></a>
                                 </span>
                                 <span>
-                                    <a href="{{ route('product.delete-image',$image->id) }}" class="btn btn-table circle-table delete-table btn-delete-image" data-toggle="tooltip" data-placement="top" title="Remove this image"></a>
+                                    <a href="{{ route('product.delete-image',$image->id) }}"
+                                        class="btn btn-table circle-table delete-table btn-delete-image"
+                                        data-toggle="tooltip" data-placement="top" title="Remove this image"></a>
                                 </span>
                             </div>
                         </div>
@@ -205,7 +257,7 @@
 
     function selectAddtionalImage(images) {
         var html = '';
-        $.each(images, function(key, value) {
+        $.each(images, function (key, value) {
             html += templateAddtionalImage(value.url, value.id);
         });
         $('.addtional-images').html(html);
@@ -267,7 +319,7 @@
         $('#input-img-' + obj_id).val(url);
     }
 
-    $(function() {
+    $(function () {
 
         tinymce.init({
             selector: '#productDescription',
@@ -275,7 +327,7 @@
             paste_as_text: true
         });
 
-        $('#removeFeaturedImage').click(function(event) {
+        $('#removeFeaturedImage').click(function (event) {
             var img_plus_src = $('#img-plus').val();
             $('#img-placeholder').attr('src', img_plus_src)
             $('#btn-delete').removeClass('optional')

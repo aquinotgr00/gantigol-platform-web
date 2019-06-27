@@ -3,19 +3,20 @@
 namespace Modules\Ecommerce\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use DB;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-
 use Modules\Customers\CustomerProfile;
 use Modules\Ecommerce\Cart;
 use Modules\Ecommerce\Order;
-use Modules\Membership\Member;
 use Modules\Ecommerce\Traits\OrderTrait;
-use Modules\Shipment\Subdistrict;
+use Modules\Ecommerce\Jobs\PaymentReminderJob;
+use Modules\Membership\Member;
 use Modules\Preorder\Mail\InvoiceOrder;
+use Modules\Preorder\SettingReminder;
+use Modules\Shipment\Subdistrict;
 use Validator;
-use DB;
 
 class CheckoutApiController extends Controller
 {
@@ -31,17 +32,17 @@ class CheckoutApiController extends Controller
             'shipping_cost' => 'required',
             'shipping_subdistrict_id' => 'required',
             'session' => 'required',
-            'shipment_name' => 'required'
+            'shipment_name' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->messages());
         }
 
-        $order_next_id      = Order::getNextID();
-        $invoice_id         = str_pad($order_next_id, 5, "0", STR_PAD_LEFT);
-        $invoice_parts      = array('INV', date('Y-m-d'), $invoice_id);
-        $invoice            = implode('-', $invoice_parts);
+        $order_next_id = Order::getNextID();
+        $invoice_id = str_pad($order_next_id, 5, "0", STR_PAD_LEFT);
+        $invoice_parts = array('INV', date('Y-m-d'), $invoice_id);
+        $invoice = implode('-', $invoice_parts);
 
         $request->request->add(['invoice_id' => $invoice]);
 
@@ -77,7 +78,7 @@ class CheckoutApiController extends Controller
                         'address' => $member->address,
                         'birthdate' => date('Y-m-d'),
                         'zip_code' => $request->shipping_zip_code,
-                        'subdistrict_id' => $request->shipping_subdistrict_id
+                        'subdistrict_id' => $request->shipping_subdistrict_id,
                     ]
                 );
 
@@ -98,7 +99,7 @@ class CheckoutApiController extends Controller
                     'address' => $request->shipping_address,
                     'birthdate' => date('Y-m-d'),
                     'zip_code' => $request->shipping_zip_code,
-                    'subdistrict_id' => $request->shipping_subdistrict_id
+                    'subdistrict_id' => $request->shipping_subdistrict_id,
                 ]
             );
             $request->request->add(['customer_id' => $customer->id]);
@@ -106,7 +107,13 @@ class CheckoutApiController extends Controller
             $request->request->add(['billing_email' => $request->shipping_email]);
             $request->request->add(['billing_phone' => $request->shipping_phone]);
             $request->request->add(['billing_address' => $request->shipping_address]);
-            
+
+        }
+
+        if ($request->has('courier_type')) {
+            $shipment_name = $request->shipment_name;
+            $shipment_name .= ' ' . $request->courier_type;
+            $request->request->add(['shipment_name' => $shipment_name]);
         }
 
         if (
@@ -115,7 +122,7 @@ class CheckoutApiController extends Controller
         ) {
             $customer->update([
                 'subdistrict_id' => $request->shipping_subdistrict_id,
-                'zip_code' => $request->shipping_zip_code
+                'zip_code' => $request->shipping_zip_code,
             ]);
         }
 
@@ -125,18 +132,18 @@ class CheckoutApiController extends Controller
 
             if ($cart->getItems->count() > 0) {
 
-                $total_amount   = 0;
-                $items          = [];
-                $collection     = [];
+                $total_amount = 0;
+                $items = [];
+                $collection = [];
                 //loop cart items
                 foreach ($cart->getItems as $key => $value) {
                     if ($value->checked == 'true') {
                         $collection[] = [
                             'id' => $value->product_id,
                             'qty' => $value->qty,
-                            'price' => $value->price
+                            'price' => $value->price,
                         ];
-                        $subtotal       = intval($value->qty) * intval($value->price);
+                        $subtotal = intval($value->qty) * intval($value->price);
                         $total_amount += intval($subtotal);
 
                         $qty_reduced = intval($value->productVariant->quantity_on_hand) - intval($value->qty);
@@ -145,7 +152,7 @@ class CheckoutApiController extends Controller
 
                             return response()->json([
                                 'data' => 'Out of stock ',
-                                'status' => 462
+                                'status' => 462,
                             ]);
                         }
 
@@ -162,7 +169,7 @@ class CheckoutApiController extends Controller
                     $request->discount > 0
                 ) {
 
-                    $total_amount   = $total_amount - intval($request->discount);
+                    $total_amount = $total_amount - intval($request->discount);
                     $request->request->add(['discount' => $request->discount]);
                 }
 
@@ -173,9 +180,9 @@ class CheckoutApiController extends Controller
                 try {
 
                     $order = Order::create($request->except('_token'));
-                    
+
                     if (isset($order->shippingSubdistrict->name)) {
-                        
+
                         $order->update([
                             'shipping_subdistrict' => $order->shippingSubdistrict->name,
                             'shipping_city' => $order->shippingSubdistrict->city->name,
@@ -183,18 +190,10 @@ class CheckoutApiController extends Controller
                             'shipping_zip_code' => $order->shippingSubdistrict->city->postal_code,
                         ]);
                     }
-                    
+
                     $order->items()->saveMany($items);
                     DB::commit();
 
-                    //send scdhule reminder
-                    
-                    try {
-                        $order->scheduleReminders(3, $order);
-                    } catch (Exception $ex) {
-                        error_log($ex);
-                    }
-                                        
                     $invoice = [
                         'billing_name' => (isset($order->customer->name)) ? $order->customer->name : '',
                         'billing_address' => (isset($order->customer->address)) ? $order->customer->address : '',
@@ -214,11 +213,22 @@ class CheckoutApiController extends Controller
                     ];
                     
                     try {
+                        
                         Mail::to($order->billing_email)->send(new InvoiceOrder($invoice));
+
+                        $settingReminder = SettingReminder::first();
+                        $interval   = (!is_null($settingReminder)) ? $settingReminder->interval : 6;
+                        $repeat     = (!is_null($settingReminder)) ? $settingReminder->repeat : 3;
+                        $interval   = $interval * 60;
+                        for ($i=1; $i <= $repeat; $i++) { 
+                            $interval = $i * $interval;
+                            dispatch(new PaymentReminderJob($i,$order))->delay(now()->addMinutes($interval));
+                        }
+
                     } catch (Exception $ex) {
                         error_log($ex);
                     }
-                    
+
                 } catch (QueryException $e) {
                     DB::rollback();
                 }
@@ -231,8 +241,8 @@ class CheckoutApiController extends Controller
                     }
                 }
 
-                $names      = preg_split('/\s+/', $order->billing_name);
-                $last_name  = '';
+                $names = preg_split('/\s+/', $order->billing_name);
+                $last_name = '';
 
                 foreach ($names as $key => $value) {
                     if ($key != 0) {
@@ -249,7 +259,7 @@ class CheckoutApiController extends Controller
                         'name' => $value->productVariant->name,
                         'quantity' => $value->qty,
                         'price' => $value->price,
-                        'subtotal' => $value->subtotal
+                        'subtotal' => $value->subtotal,
                     ];
                 }
 
@@ -259,34 +269,33 @@ class CheckoutApiController extends Controller
                         'name' => $request->shipment_name,
                         'quantity' => 1,
                         'price' => $order->shipping_cost,
-                        'subtotal' => $order->shipping_cost
+                        'subtotal' => $order->shipping_cost,
                     ],
                     [
                         'id' => $order->discount . '1',
                         'name' => 'Discount',
                         'quantity' => 1,
                         'price' => (is_null($order->discount)) ? 0 : intval(-$order->discount),
-                        'subtotal' => (is_null($order->discount)) ? 0 : intval(-$order->discount)
-                    ]
+                        'subtotal' => (is_null($order->discount)) ? 0 : intval(-$order->discount),
+                    ],
                 ];
 
                 $item_details = array_merge($item_details, $addtional);
 
-
                 $invoice = [
                     'transaction_details' => [
                         'order_id' => $order->invoice_id,
-                        'gross_amount' => $order->total_amount
+                        'gross_amount' => $order->total_amount,
                     ],
                     'customer_details' => [
                         'first_name' => $names[0],
-                        'last_name'  => $last_name,
+                        'last_name' => $last_name,
                         'email' => $order->billing_email,
                         'phone' => $order->billing_phone,
                         'billing_address' => $order->billing_address,
-                        'shipping_address' => $order->shipping_address
+                        'shipping_address' => $order->shipping_address,
                     ],
-                    'item_details' => $item_details
+                    'item_details' => $item_details,
                 ];
                 return response()->json($invoice);
             }
