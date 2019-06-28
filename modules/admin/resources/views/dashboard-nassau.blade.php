@@ -118,19 +118,16 @@
             <div class="card-body">
                 <div class="card-title row">
                     <div class="col-md">
-                        <label>Pie Chart</label>
-                        <button id="btnGroupDrop1" type="button" class="btn btn-summary dropdown-toggle ml-5"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Last 30 Days
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <a class="dropdown-item" href="#">Last 30 Days</a>
-                            <a class="dropdown-item" href="#">Last 365 Days</a>
-                        </div>
+                        <label>Sales Chart</label>
+                        <select id="btnGroupDropSalesPie"  name"salechartpie" type="button" class="btn btn-summary dropdown-toggle ml-5" >
+                        <option  value="month">Last 30 Days</option>
+                        <option value="year">Last 365 Days</option>
+                    </select>
                     </div>
                 </div>
                 <div class="card-body pl-0 pr-0">
                     <div class="chart-pie pt-4">
-                        <canvas id="myPieChart"></canvas>
+                        <canvas id="salePieChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -226,6 +223,7 @@
         cardPagesReguler()
         chartInitiatedSales(defaultFormat)
         chartInitiatedPages(defaultFormat)
+        chartInitiatedSalesPie(defaultFormat)
         tablePosthot()
         tableSaleshot()
     });
@@ -237,6 +235,10 @@
     $('#btnGroupDropPages').change(function() {
 
              chartInitiatedPages($(this).val())
+        });
+    $('#btnGroupDropSalesPie').change(function() {
+
+             chartInitiatedSalesPie($(this).val())
         });
     $('#btnGroupDropCardProduct').change(function() {
             cardItemReguler()
@@ -371,7 +373,69 @@
                 });
         });
     }
+    function chartInitiatedSalesPie(defaultFormat){
+         var request = $.ajax({
+          url: '{{ route("paid-order.chart.pie") }}',
+          method: "get",
+         data: { 
+            startdate : moment().startOf($("#btnGroupDropSalesPie").val()).format('YYYY-MM-DD')+" 00:00:00",
+            enddate : moment().endOf($("#btnGroupDropSalesPie").val()).format('YYYY-MM-DD')+" 00:00:00",
+            filter :  defaultFormat
+          }
+        });
+        request.done(function( data ) {
+            chartY = [];
+            chartX =[];
+            chartColors =[];
 
+          $.each( data, function( key, value ) {
+            chartY.push(statusOrder(key));
+            chartX.push(value);
+            chartColors.push(statusColor(key))
+            });
+
+                var ctx = document.getElementById("salePieChart");
+                var myChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: chartY,
+                        datasets: [{
+                            label: '# of Sales',
+                            data: chartX,
+                            backgroundColor: chartColors,
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false
+                    }
+                });
+        });
+    }
+    function statusOrder(value){
+        switch(value) {
+          case "1":
+            return "Paid"
+            break;
+          case "2":
+            return "Shipped"
+            break;
+          default:
+            return "Completed"
+        }
+    }
+
+    function statusColor(value){
+        switch(value) {
+          case "1":
+            return "Red"
+            break;
+          case "2":
+            return "Blue"
+            break;
+          default:
+            return "Green"
+        }
+    }
     function cardSalesReguler(){
 
         var request = $.ajax({

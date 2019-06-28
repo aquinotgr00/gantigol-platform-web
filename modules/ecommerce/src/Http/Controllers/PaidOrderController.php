@@ -130,6 +130,21 @@ class PaidOrderController extends Controller
                             });
             }
     }
+    public function indexChartPie(Request $request)
+    {   
+            $orders = Order::whereIn('order_status',[1,3,5]);
+            if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            }
+
+                return  $orders->get()->groupBy(function($item)
+                            {
+                              return $item->order_status;
+                            })->map(function ($date) {
+                                return $date->sum('total_amount');
+                            });
+    }
 
     public function indexChartVariants(Request $request)
     {   
