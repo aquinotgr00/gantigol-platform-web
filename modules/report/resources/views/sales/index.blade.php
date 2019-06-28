@@ -318,6 +318,7 @@
                         }]
                     },
                     options: {
+                        maintainAspectRatio: false,
                         scales: {
                             yAxes: [{
                                 ticks: {
