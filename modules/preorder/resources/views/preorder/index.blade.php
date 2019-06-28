@@ -124,8 +124,8 @@
         });
 
         // Bind a function to a Event (the full Laravel class)
-        channel.bind('\\Modules\\Preorder\\Events\\QuotaFulfilled', function (data) {
-            console.log(data + 'wew');
+        channel.bind('Modules\\Preorder\\Events\\QuotaFulfilled', function (data) {
+            
             var existingNotifications = notifications.html();
             var newNotificationHtml = `<div class="alert alert-primary" role="alert">` + data.message + `
         <a href="` + data.url + `" class="dropdown-item">

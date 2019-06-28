@@ -21,6 +21,7 @@ Route::get('report/inventory', 'ReportApiController@inventory')->name('report.in
 Route::get('report/stock', 'ReportApiController@stock')->name('report.stock');
 Route::get('order-regular', 'OrderApiController@index')->name('order-regular.index');
 Route::get('order-regular/{id}', 'OrderApiController@show')->name('order-regular.show');
+Route::get('order/by-user/{id}', 'OrderApiController@getByUserID')->name('order-regular.by-user');
 
 Route::post('payment/notification', 'MidtransApiController@paymentNotification')->name('midtrans.notification');
 Route::post('payment/finish', 'MidtransApiController@paymentFinish')->name('midtrans.finish');
