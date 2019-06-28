@@ -493,7 +493,7 @@
     function tableSaleshot(){
 
         var request = $.ajax({
-          url: '{{ route("blog.post.hot") }}',
+          url: '{{ route("paid-order.count.variant") }}',
           method: "get",
          data: { 
             startdate : moment().startOf($("#btnGroupDropTableSales").val()).format('YYYY-MM-DD')+" 00:00:00",
@@ -503,7 +503,7 @@
         request.done(function( data ) {
             $("#tableSales > tbody ").html("")
             $.each( JSON.parse(data), function( key, value ) {
-                $("#tableSales > tbody ").append("<tr><td><img width='50px' src='"+value.image+"'></td><td>"+value.title+"</td><td class='text-right'>"+value.counter+"</td></tr>");
+                $("#tableSales > tbody ").append("<tr><td><img width='50px' src='"+value.image+"'></td><td class='align-middle'>"+value.name+"</td><td class='align-middle text-right'>"+value.count+"</td></tr>");
             });
         })
     }
