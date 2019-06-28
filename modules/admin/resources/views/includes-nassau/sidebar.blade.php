@@ -30,8 +30,10 @@
                 ['routeName'=>'users.index','title'=>'Administrators']
             ],
             'expandables'=>[
+                'list-customer.show',
+                'members.show',
                 'users.create',
-                'users.edit',
+                'users.edit'
             ]
         ])
         @endcan

@@ -39,8 +39,12 @@
     </div>
 
     @php
-        $orders = $member->customer->orders()->paginate(5);
-        //$orders = [];
+        if($member->customer) {
+            $orders = $member->customer->orders()->paginate(5);
+        }
+        else {
+            $orders = [];
+        }
     @endphp
     <div class="col-sm grs">
         <div>
