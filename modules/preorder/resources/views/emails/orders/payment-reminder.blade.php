@@ -98,7 +98,7 @@
                                 Jika Anda mengalami masalah terkait
                                 informasi di email ini,
                                 <br>
-                                <a data-click-track-id="1053" href="https://support.postmates.com/buyer" style="font-weight: 500; color: #000" target="_blank">Help Center</a>.
+                                <a data-click-track-id="1053" href="https://twitter.com/gantigol" style="font-weight: 500; color: #000" target="_blank">Help Center</a>.
                             </td>
                         </tr>
                         <tr>

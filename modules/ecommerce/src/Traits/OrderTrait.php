@@ -8,6 +8,7 @@ use Modules\Inventory\Adjustment;
 use Modules\Ecommerce\Mail\PaymentReminder;
 use Modules\Ecommerce\Mail\OrderCancelled;
 use Modules\Product\ProductVariant;
+use Modules\Preorder\SettingReminder;
 use App\User;
 
 use Illuminate\Support\Facades\Mail;
@@ -37,29 +38,27 @@ trait OrderTrait
 
     public function getShipmentOptions(int $destination, int $weight, bool $apiFormatted)
     {
-        $originId = config('shipment.origin');
-        $originType = config('shipment.originType');
+        $originId = config('ecommerce.shipment.origin');
+        $originType = config('ecommerce.shipment.originType');
         $client = new Client([
             'headers' => [
                 'Content-type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
-                'key' => config('rajaongkir.api_key')
+                'key' => config('ecommerce.rajaongkir.api_key')
             ]
         ]);
-        $response = $client->request('POST', config('rajaongkir.end_point_api') . '/cost', [
+        $response = $client->request('POST', config('ecommerce.rajaongkir.end_point_api') . '/cost', [
             'form_params' => [
                 'origin' => $originId,
                 'originType' => $originType,
                 'destination' => $destination,
                 'destinationType' => 'subdistrict',
                 'weight' => $weight,
-                'courier' => join(':', config('shipment.services'))
+                'courier' => join(':', config('ecommerce.shipment.services'))
             ]
         ]);
         $apiResponse = json_decode((string)$response->getBody(), true);
         $courier_services = $this->shapeShipmentApiResult($apiResponse, $apiFormatted);
-
-        //dd($courier_services);
         if (!$apiFormatted) {
             session(['shippingOptions' => $courier_services]);
         }
@@ -75,7 +74,7 @@ trait OrderTrait
                     'code' => $courier['code'],
                     'name' => $courier['name'],
                     'costs' => collect($courier['costs'])->filter(function ($cost) {
-                        return !in_array($cost['service'], config('shipment.blacklist'));
+                        return !in_array($cost['service'], config('ecommerce.shipment.blacklist'));
                     })->all()
                 ];
             });
@@ -171,7 +170,16 @@ trait OrderTrait
 
     public function scheduleReminders(int $numberOfReminders, Order $order)
     {
-        $interval = config('ecommerce.transferBca.expired.amount') / ($numberOfReminders + 1);
+        $settingReminder    =  SettingReminder::first();
+        
+        if (is_null($settingReminder)) {
+            $expired  = config('preorder.Reminder.expired.amount');
+        }elseif(isset($settingReminder->interval)){
+            $expired  = intval($settingReminder->interval) * 60;
+        }else{
+            $expired  = 60;
+        }
+        $interval = $expired / ($numberOfReminders + 1);
         for ($i = 1; $i <= $numberOfReminders; $i++) {
             dispatch(function () use ($i, $order) {
                 if ($order->order_status === config('ecommerce.order.status.Pending')) {

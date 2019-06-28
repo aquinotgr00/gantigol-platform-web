@@ -15,7 +15,7 @@
                 data: {
                     _token: "{{ csrf_token() }}"
                 },
-                success: function(res) {
+                success: function (res) {
                     if (res.data.id > 0) {
                         alert('Success! Preorder reset from 0');
                         location.reload();
@@ -29,11 +29,11 @@
         return false;
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
 
-        var delay = (function() {
+        var delay = (function () {
             var timer = 0;
-            return function(callback, ms, that) {
+            return function (callback, ms, that) {
                 clearTimeout(timer);
                 timer = setTimeout(callback.bind(that), ms);
             };
@@ -47,26 +47,26 @@
                 method: 'GET'
             },
             columns: [{
-                    data: 'product.created_at'
-                },
-                {
-                    data: 'image'
-                },
-                {
-                    data: 'product.name'
-                },
-                {
-                    data: 'end_date'
-                },
-                {
-                    data: 'order_received'
-                },
-                {
-                    data: 'product.price'
-                },
-                {
-                    data: 'action'
-                },
+                data: 'product.created_at'
+            },
+            {
+                data: 'image'
+            },
+            {
+                data: 'product.name'
+            },
+            {
+                data: 'end_date'
+            },
+            {
+                data: 'order_received'
+            },
+            {
+                data: 'product.price'
+            },
+            {
+                data: 'action'
+            },
             ],
             order: [
                 [0, "desc"]
@@ -76,15 +76,15 @@
                 "visible": false,
                 "searchable": false
             }],
-            drawCallback: function(settings) {
+            drawCallback: function (settings) {
                 $('[data-toggle="tooltip"]').tooltip()
             }
         });
 
         $('#dataTable_filter').css('display', 'none');
 
-        $('#search').on('keyup', function() {
-            delay(function() {
+        $('#search').on('keyup', function () {
+            delay(function () {
                 datatables.search(this.value).draw();
             }, 1000, this);
         });
@@ -119,13 +119,13 @@
         // Subscribe to the channel we specified in our Laravel Event
         var channel = pusher.subscribe('quota-fulfilled');
 
-        channel.bind('pusher:subscription_succeeded', function(members) {
+        channel.bind('pusher:subscription_succeeded', function (members) {
             console.log('successfully subscribed!');
         });
 
         // Bind a function to a Event (the full Laravel class)
-        channel.bind('\\Modules\\Preorder\\Events\\QuotaFulfilled', function(data) {
-            console.log(data);
+        channel.bind('\\Modules\\Preorder\\Events\\QuotaFulfilled', function (data) {
+            console.log(data + 'wew');
             var existingNotifications = notifications.html();
             var newNotificationHtml = `<div class="alert alert-primary" role="alert">` + data.message + `
         <a href="` + data.url + `" class="dropdown-item">
@@ -156,17 +156,14 @@ $user = Auth::user();
 $args = ['title'=>'Preorders'];
 
 if (Gate::forUser($user)->allows('create-preorder')) {
-    $args['addNewAction'] = route('list-preorder.create'); 
+$args['addNewAction'] = route('list-preorder.create');
 }
 
 @endphp
 
 @indexPage($args)
 
-<div class="alert-notifications">
-    <div class="item-notification"></div>
-</div>
-<i data-count="0" class="count-notification"></i>
+
 
 <!-- start table -->
 <table class="table" id="dataTable" width="100%" cellspacing="0">
@@ -183,6 +180,18 @@ if (Gate::forUser($user)->allows('create-preorder')) {
     </thead>
     <tbody>
 </table>
+<ul class="navbar-nav d-none d-md-flex ml-lg-auto">
+    <li class="nav-item dropdown dropdown-notifications">
+        <a class="nav-link pr-0" href="#notifications-panel" role="button" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            <i data-count="0" class="ni ni-bell-55 text-red animated shake"></i>
+            <span class="mb-0 text-sm font-weight-bold"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+            {{--notification goes here--}}
+        </div>
+    </li>
+</ul>
 <!-- end table -->
 @endindexPage
 @endsection

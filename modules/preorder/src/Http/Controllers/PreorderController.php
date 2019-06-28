@@ -260,7 +260,7 @@ class PreorderController extends Controller
         $send = [
             'preOrder' => $preOrder,
             'product' => $preOrder->product,
-            'productVariant' => (isset($preOrder->product->variants)) ? $preOrder->product->variants : null,
+            'variants' => (isset($preOrder->product->variants)) ? $preOrder->product->variants : null,
             'related_tags' => $related_tags,
             'categories' => $categories,
             'data' => $data,
@@ -334,6 +334,21 @@ class PreorderController extends Controller
                 ]);
             }
         }
+
+        foreach ($request->variants_id as $index => $variant_id) {
+            $productVariantItem = ProductVariant::find($variant_id);
+            if (!is_null($productVariantItem)) {
+                $sku = trim($request->skus[$index]);
+                if (!empty($sku)) {
+                    $productVariantItem->update([
+                        'sku' => $sku,
+                        'variant' => $request->variants[$index],
+                        'price' => intval($request->prices[$index]),
+                    ]);
+                }
+            }
+        }
+
         return redirect()->route('list-preorder.index');
     }
 

@@ -1,4 +1,4 @@
-@extends('ecommerce::emails.layouts.without-menu')
+@extends('ecommerce::emails.layouts.gantigol')
 @section('content')
 <table class="row" style="border-collapse: collapse; border-spacing: 0; display: table; padding: 0; position: relative; text-align: left; vertical-align: top; width: 100%;margin-bottom:40px;"><tbody><tr style="padding: 0; text-align: left; vertical-align: top;"><td style="padding: 10px; background: #eaeaea; border: 1px #CCC solid;">
 

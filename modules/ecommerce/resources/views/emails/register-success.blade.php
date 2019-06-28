@@ -1,4 +1,4 @@
-@extends('ecommerce::emails.layouts.with-menu')
+@extends('ecommerce::emails.layouts.gantigol')
 
 @section('content')
 

@@ -18,12 +18,6 @@ class OrderPaymentReminder extends Mailable
      * @var object
      */
     private $transaction;
-    /**
-     * amount of reminder
-     *
-     * @var int
-     */
-    private $times;
 
     /**
      * Create a new message instance.
@@ -31,9 +25,8 @@ class OrderPaymentReminder extends Mailable
      * @param object $transaction
      * @return mixed
      */
-    public function __construct(int $times, Transaction $transaction)
+    public function __construct(Transaction $transaction)
     {
-        $this->times        = $times;
         $this->transaction  = $transaction;
     }
 

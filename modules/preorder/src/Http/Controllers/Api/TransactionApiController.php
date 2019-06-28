@@ -3,20 +3,21 @@
 namespace Modules\Preorder\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Modules\Customers\CustomerProfile;
 use Modules\Membership\Member;
 use Modules\Preorder\Http\Resources\TransactionResource;
-use Modules\Preorder\Mail\InvoiceOrder;
+use Modules\Preorder\Jobs\PaymentReminder;
 use Modules\Preorder\PreOrder;
 use Modules\Preorder\PreOrdersItems;
 use Modules\Preorder\SettingReminder;
 use Modules\Preorder\Traits\OrderTrait;
 use Modules\Preorder\Transaction;
 use Modules\Product\ProductVariant;
+use Modules\Preorder\Mail\InvoiceOrder;
 use Validator;
-use DataTables;
 
 class TransactionApiController extends Controller
 {
@@ -257,12 +258,12 @@ class TransactionApiController extends Controller
             $preOrder = PreOrder::find($request->pre_order_id);
 
             if (!is_null($preOrder)) {
-                $total  = intval($preOrder->total);
+                $total = intval($preOrder->total);
                 $total += intval($quantity);
-                
+
                 $preOrder->total = $total;
                 $preOrder->update();
-                
+
                 if ($preOrder->total >= $preOrder->quota) {
                     event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
                 }
@@ -308,7 +309,23 @@ class TransactionApiController extends Controller
                 'invoice' => $transaction->invoice,
                 'orders' => $transaction->orders,
             ];
-            Mail::to($transaction->customer->email)->send(new InvoiceOrder($invoice));
+
+            try {
+
+                Mail::to($transaction->customer->email)->send(new InvoiceOrder($invoice));
+                
+                $settingReminder = SettingReminder::first();
+                $interval   = (!is_null($settingReminder)) ? $settingReminder->interval : 6;
+                $repeat     = (!is_null($settingReminder)) ? $settingReminder->repeat : 3;
+                $interval   = $interval * 60;
+                for ($i=1; $i <= $repeat; $i++) { 
+                    $interval = $i * $interval;
+                    dispatch(new PaymentReminder($transaction))->delay(now()->addMinutes($interval));
+                }
+                
+            } catch (Exception $ex) {
+                error_log($ex);
+            }
         }
         $transaction->orders;
         foreach ($transaction->orders as $key => $value) {

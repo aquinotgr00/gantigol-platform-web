@@ -4,16 +4,12 @@ namespace Modules\Shipment\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
 use RajaOngkir;
 use \GuzzleHttp\Client;
-
-use Modules\Shipment\Traits\OrderTrait;
 use Validator;
 
 class ShippingController extends Controller
 {
-    use OrderTrait;
     
     /**
      *
