@@ -255,4 +255,49 @@ class BlogController extends Controller
        $blog->save();
         return redirect()->route('blog.index');
     }
+
+    public function indexChart(Request $request)
+    {   
+            $blogs = $this->blogs->whereNotNull('publish_date')->whereNull('deleted_at');
+            if ($request->has(['startdate', 'enddate'])) {
+                //
+                $blogs =$blogs->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            }
+
+            if($request->filter == 'year'){
+                return  $blogs->get()->groupBy(function($item)
+                            {
+                              return $item->created_at->format('M');
+                            })->map(function ($date) {
+                                return $date->sum('counter');
+                            });
+            }else{
+                return $blogs->get()->groupBy(function($item)
+                            {
+                              return $item->created_at->format('d-M');
+                            })->map(function ($date) {
+                                return $date->sum('counter');
+                            });
+            }
+    }
+
+    public function sumPost(Request $request){
+        $item = $this->blogs->whereNotNull('publish_date')->whereNull('deleted_at');
+        $a = $this->sumItemNow($item,$request);
+        $b = $this->sumItemLast($item,$request);
+        $revenue = $a-$b;
+        $data= [
+                'percentage'=>($b == 0 ? 100 : ($revenue/$b)*100),
+                'item'=>$a
+            ];
+        return $data;
+    }
+    private function sumItemNow($item,$request){
+        return $item->whereBetween('created_at', [$request->startdate, $request->enddate])
+                ->sum('counter'); 
+    }
+    private function sumItemLast($item,$request){
+        return $item->whereBetween('created_at', [$request->laststartdate, $request->lastenddate])
+                ->sum('counter');
+    }
 }

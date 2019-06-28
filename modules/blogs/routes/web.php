@@ -10,6 +10,8 @@ Route::post('/post/update', 'BlogController@update')->name('blog.post.update');
 Route::post('/post/publish/{id}', 'BlogController@publish')->name('blog.post.publish')->middleware('can:publish-post');
 Route::get('/post/hide/{id}', 'BlogController@hide')->name('blog.post.hide');
 Route::get('/post/show/{id}', 'BlogController@show')->name('blog.post.show');
+Route::get('/post/hot', 'BlogApiController@getHotPost')->name("blog.post.hot");
+Route::get('/post/card', 'BlogController@sumPost')->name("blog.post.card");
 
 //blogcategory
 Route::get('/category', 'BlogCategoryController@index')->name('blog.category.index')->middleware('can:view-category-post');
@@ -22,3 +24,6 @@ Route::get('/post/highlight/{category}/{id}','BlogCategoryController@setHighligh
 //blogcategorypost
 Route::post('/category/new', 'BlogCategoryController@actionPostCategory')->name('blog.category.new.post');
 Route::post('/category/edit/{id}', 'BlogCategoryController@actionPostCategory')->name('blog.category.new.edit');
+
+//blogchart
+Route::get('/post/chart', 'BlogController@indexChart')->name("blog.post.chart");

@@ -97,19 +97,16 @@
             <div class="card-body">
                 <div class="card-title row">
                     <div class="col-md">
-                        <label>Area Chart</label>
-                        <button id="btnGroupDrop1" type="button" class="btn btn-summary dropdown-toggle ml-5"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Last 30 Days
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <a class="dropdown-item" href="#">Last 30 Days</a>
-                            <a class="dropdown-item" href="#">Last 365 Days</a>
-                        </div>
+                        <label>Post Chart</label>
+                        <select id="btnGroupDropPages"  name"pagechart" type="button" class="btn btn-summary dropdown-toggle ml-5" >
+                            <option  value="month">Last 30 Days</option>
+                            <option value="year">Last 365 Days</option>
+                        </select>
                     </div>
                 </div>
                 <div class="card-body pl-0 pr-0">
                     <div class="chart-area">
-                        <canvas id="myAreaChart"></canvas>
+                        <canvas id="pageChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -160,40 +157,15 @@
                 </div>
                 <div class="card-body pl-0 pr-0">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" id="tableSales">
                             <thead>
                                 <tr>
-                                    <th scope="col">Image</th>
-                                    <th scope="col">Product Name</th>
-                                    <th scope="col">Total Order</th>
+                                    <th scope="col" class="text-center">Image</th>
+                                    <th scope="col"class="text-center">Product Name</th>
+                                    <th scope="col" class="text-center">Total Order</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th><img src="images/product-images/gg-01.jpeg" alt="#"></th>
-                                    <td>T-SHIRT GG BLACK » M</td>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th><img src="images/product-images/gg-01.jpeg" alt="#"></th>
-                                    <td>T-SHIRT GG BLACK » M</td>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th><img src="images/product-images/gg-01.jpeg" alt="#"></th>
-                                    <td>T-SHIRT GG BLACK » M</td>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th><img src="images/product-images/gg-01.jpeg" alt="#"></th>
-                                    <td>T-SHIRT GG BLACK » M</td>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th><img src="images/product-images/gg-01.jpeg" alt="#"></th>
-                                    <td>T-SHIRT GG BLACK » M</td>
-                                    <td>100</td>
-                                </tr>
                             </tbody>
                         </table>
 
@@ -218,34 +190,14 @@
                 </div>
                 <div class="card-body pl-0 pr-0">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" id="tablePost">
                             <thead>
                                 <tr>
-                                    <th scope="col">Post Title</th>
-                                    <th scope="col">Visitors</th>
+                                    <th scope="col" class="text-center">Post Title</th>
+                                    <th scope="col" class="text-center">Visitors</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th>Dikeroyok Pelatih Asing di Piala Presiden, Pelatih Persebaya Tak Minder</th>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th>Exco PSSI: Yang Hoaks Itu Gusti Randa</th>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th>3 Tim Tamu Sukses ke Semifinal Piala Presiden 2019</th>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th>Highlights Premier League: Cardiff City 1-2 Chelsea</th>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <th>Madura United Pilih Pulang ke Bangkalan sebelum Hadapi Persebaya</th>
-                                    <td>100</td>
-                                </tr>
                             </tbody>
                         </table>
 
@@ -271,21 +223,35 @@
         var defaultFormat = "month"
         cardSalesReguler()
         cardItemReguler()
+        cardPagesReguler()
         chartInitiatedSales(defaultFormat)
+        chartInitiatedPages(defaultFormat)
+        tablePosthot()
+        tableSaleshot()
     });
 
     $('#btnGroupDropSales').change(function() {
-        if($(this).val() =="year"){
-            defaultFormat = "year"
-        }
-             chartInitiatedSales(defaultFormat)
-        });
 
+             chartInitiatedSales($(this).val())
+        });
+    $('#btnGroupDropPages').change(function() {
+
+             chartInitiatedPages($(this).val())
+        });
     $('#btnGroupDropCardProduct').change(function() {
             cardItemReguler()
         });
     $('#btnGroupDropCardSales').change(function() {
             cardSalesReguler()
+        });
+    $('#btnGroupDropCardPages').change(function() {
+            cardPagesReguler()
+        });
+    $('#btnGroupDropTablePost').change(function() {
+            tablePosthot()
+        });
+    $('#btnGroupDropTableSales').change(function() {
+            tableSaleshot()
         });
     function chartInitiatedSales(defaultFormat){
          var request = $.ajax({
@@ -313,6 +279,65 @@
                         labels: chartY,
                         datasets: [{
                             label: '# of Sales',
+                            data: chartX,
+                            lineTension: 0.3,
+                            backgroundColor: "rgba(78, 115, 223, 0.05)",
+                            borderColor: "rgba(78, 115, 223, 1)",
+                            pointRadius: 3,
+                            pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                            pointBorderColor: "rgba(78, 115, 223, 1)",
+                            pointHoverRadius: 3,
+                            pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                            pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                            pointHitRadius: 10,
+                            pointBorderWidth: 2,
+                            borderWidth: 1,
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }],
+                            xAxes:[{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+        });
+    }
+    function chartInitiatedPages(defaultFormat){
+         var request = $.ajax({
+          url: '{{ route("blog.post.chart") }}',
+          method: "get",
+         data: { 
+            startdate : moment().startOf($("#btnGroupDropPages").val()).format('YYYY-MM-DD')+" 00:00:00",
+            enddate : moment().endOf($("#btnGroupDropPages").val()).format('YYYY-MM-DD')+" 00:00:00",
+            filter :  defaultFormat
+          }
+        });
+        request.done(function( data ) {
+            chartY = [];
+            chartX =[];
+
+          $.each( data, function( key, value ) {
+            chartY.push(key);
+            chartX.push(value);
+            });
+
+                var ctx = document.getElementById("pageChart");
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartY,
+                        datasets: [{
+                            label: '# of Post',
                             data: chartX,
                             lineTension: 0.3,
                             backgroundColor: "rgba(78, 115, 223, 0.05)",
@@ -381,6 +406,58 @@
         request.done(function( data ) {
             $('#itemReguler').html(data.item)
             $('#percentageItems').html(data.percentage+"%")
+        })
+    }
+    function cardPagesReguler(){
+
+        var request = $.ajax({
+          url: '{{ route("blog.post.card") }}',
+          method: "get",
+         data: { 
+            startdate : moment().startOf($("#btnGroupDropCardPages").val()).format('YYYY-MM-DD')+" 00:00:00",
+            enddate : moment().endOf($("#btnGroupDropCardPages").val()).format('YYYY-MM-DD')+" 23:59:59",
+            laststarttdate : moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD')+" 00:00:00",
+            lastenddate : moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD')+" 23:59:59",
+            filter :  "month"
+          }
+        });
+        request.done(function( data ) {
+            $('#pagesReguler').html(data.item)
+            $('#percentagePages').html(data.percentage+"%")
+        })
+    }
+    function tableSaleshot(){
+
+        var request = $.ajax({
+          url: '{{ route("blog.post.hot") }}',
+          method: "get",
+         data: { 
+            startdate : moment().startOf($("#btnGroupDropTableSales").val()).format('YYYY-MM-DD')+" 00:00:00",
+            enddate : moment().endOf($("#btnGroupDropTableSales").val()).format('YYYY-MM-DD')+" 23:59:59",
+          }
+        });
+        request.done(function( data ) {
+            $("#tableSales > tbody ").html("")
+            $.each( JSON.parse(data), function( key, value ) {
+                $("#tableSales > tbody ").append("<tr><td><img width='50px' src='"+value.image+"'></td><td>"+value.title+"</td><td class='text-right'>"+value.counter+"</td></tr>");
+            });
+        })
+    }
+    function tablePosthot(){
+
+        var request = $.ajax({
+          url: '{{ route("blog.post.hot") }}',
+          method: "get",
+         data: { 
+            startdate : moment().startOf($("#btnGroupDropTablePost").val()).format('YYYY-MM-DD')+" 00:00:00",
+            enddate : moment().endOf($("#btnGroupDropTablePost").val()).format('YYYY-MM-DD')+" 23:59:59",
+          }
+        });
+        request.done(function( data ) {
+            $("#tablePost > tbody ").html("")
+            $.each( JSON.parse(data), function( key, value ) {
+                $("#tablePost > tbody ").append("<tr><td>"+value.title+"</td><td class='text-right'>"+value.counter+"</td></tr>");
+            });
         })
     }
     function addThousandSeparator(nStr)
