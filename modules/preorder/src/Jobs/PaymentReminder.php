@@ -36,7 +36,7 @@ class PaymentReminder implements ShouldQueue
     {
         if (isset($this->transaction->email)) {
             Mail::to($this->transaction->email)->send(new OrderPaymentReminder($this->transaction));
-            $transaction->increment('payment_reminder');
+            $this->transaction->increment('payment_reminder');
         }
     }
 }

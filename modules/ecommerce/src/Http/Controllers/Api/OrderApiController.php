@@ -8,6 +8,7 @@ use Modules\Ecommerce\Order;
 use Modules\Ecommerce\OrderItem;
 use Modules\Product\ProductVariant;
 use Illuminate\Validation\ValidationException;
+use Modules\Membership\Member;
 use Carbon\Carbon;
 use Validator;
 use DB;
@@ -187,5 +188,47 @@ class OrderApiController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getByUserID(int $id)
+    {
+        $member = Member::find($id);
+
+        if (!is_null($member)) {
+            
+            $customer_id    = 0;
+
+            if (!is_null($member->customer)) {
+                $customer_id = $member->customer->id;
+            }
+            
+            $orders         = Order::with('items.productVariant')
+            ->where('customer_id', $customer_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+            $preorders         = [];
+
+            if (class_exists('\Modules\Preorder\Transaction')) {
+                
+                $preorders     = \Modules\Preorder\Transaction::with('orders.productVariant')
+                ->where('customer_id', $customer_id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            }
+
+            return response()->json([
+                'data' => [
+                    'regular' => $orders,
+                    'preorder' => $preorders
+                ]
+            ]);
+            
+        }else{
+            return response()->json([
+                'data' => []
+            ]);
+        }
     }
 }
