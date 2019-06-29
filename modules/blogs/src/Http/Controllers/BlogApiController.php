@@ -98,10 +98,13 @@ class BlogApiController extends Controller
     {
         $data= $this->blogs
         ->whereNull('deleted_at')
-        ->whereNotNull('publish_date')
-        ->orderBy('blogs.counter', 'desc')
+        ->whereNotNull('publish_date');
+        if($request->has(['startdate', 'enddate'])){
+         $data = $data->whereBetween('created_at',[$request->startdate,$request->enddate]);
+        }
+        $data = $data->orderBy('blogs.counter', 'desc')
         ->limit($limit)
-        ->select('title','id','image')
+        ->select('title','id','image','counter')
         ->get();
         return json_encode($data);
     }

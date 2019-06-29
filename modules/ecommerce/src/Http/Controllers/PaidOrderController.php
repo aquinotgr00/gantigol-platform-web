@@ -130,6 +130,21 @@ class PaidOrderController extends Controller
                             });
             }
     }
+    public function indexChartPie(Request $request)
+    {   
+            $orders = Order::whereIn('order_status',[1,3,5]);
+            if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('created_at', [$request->startdate, $request->enddate]);
+            }
+
+                return  $orders->get()->groupBy(function($item)
+                            {
+                              return $item->order_status;
+                            })->map(function ($date) {
+                                return $date->sum('total_amount');
+                            });
+    }
 
     public function indexChartVariants(Request $request)
     {   
@@ -259,5 +274,22 @@ class PaidOrderController extends Controller
     }
     private function countCustomerLast($item,$request){
         return $item->whereBetween('orders.created_at', [$request->laststartdate, $request->lastenddate])->count();
+    }
+
+    public function countVariant(Request $request){
+        $orders = OrderItem::leftjoin('orders','orders.id','=','order_id')
+                                ->leftjoin('product_variants','product_variants.id','productvariant_id')
+                                ->leftjoin('products','products.id','product_id')
+                                ->whereIn('order_status',[1,3,5]);
+                                
+            if ($request->has(['startdate', 'enddate'])) {
+                //
+                $orders =$orders->whereBetween('orders.created_at', [$request->startdate, $request->enddate]);
+            }
+                $orders->select(DB::raw('count(products.id) as count,products.name,products.image'))
+                ->groupBy('productvariant_id')
+                ->orderBy('count', 'desc')
+                ->limit(5);
+                return  json_encode($orders->get());
     }
 }

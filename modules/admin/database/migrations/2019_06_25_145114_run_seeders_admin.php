@@ -13,7 +13,18 @@ class RunSeedersAdmin extends Migration
      */
     public function up()
     {
-        //
+        Artisan::call('db:seed', [
+            '--class' => Modules\Admin\Seeders\SuperuserForAdminsTableSeeder::class,
+        ]);
+        Artisan::call('db:seed', [
+            '--class' => Modules\Admin\Seeders\DefaultPrivilegesTableSeeder::class,
+        ]);
+        Artisan::call('db:seed', [
+            '--class' => Modules\Admin\Seeders\AdminForRolePrivilegeTableSeeder::class,
+        ]);
+        Artisan::call('db:seed', [
+            '--class' => Modules\Admin\Seeders\UserForPrivilegesTableSeeder::class,
+        ]);
     }
 
     /**
