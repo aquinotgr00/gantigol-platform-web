@@ -68,6 +68,8 @@ class ProductController extends Controller
             'image' => 'required',
         ]);
 
+        $request->request->add(['visible' => $request->status]);
+
         $product = Product::create(
             $request->only(
                 'name',
@@ -77,7 +79,8 @@ class ProductController extends Controller
                 'status',
                 'keywords',
                 'image',
-                'weight'
+                'weight',
+                'visible'
             )
         );
 
@@ -227,6 +230,8 @@ class ProductController extends Controller
                 $data['category_id'] = $request->category_id;
             }
         }
+
+        $data['visible'] = $request->status;
 
         $product->update($data);
 

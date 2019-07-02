@@ -33,12 +33,9 @@ class ProductCategory extends Model
         return $this->subcategory()->with('subcategories');
     }
 
-    public function productItems(): hasMany
+    public function productItems()
     {
-        if (class_exists('\Modules\Product\Product')) {
-            return $this->hasMany('\Modules\Product\Product', 'category_id', 'id');
-        }
-        return false;
+        return $this->hasMany('\Modules\Product\Product', 'category_id', 'id');
     }
 
     public function parentRecursive()
@@ -52,5 +49,12 @@ class ProductCategory extends Model
             return $this->hasOne(\Modules\Product\ProductSizeChart::class, 'category_id', 'id');
         }
         return null;
+    }
+
+    public function checkIfHasOneItem(int $id)
+    {
+        $sizeChart      = static::doesntHave('sizeChart')->where('id',$id)->get();
+        $productItems   = static::doesntHave('productItems')->where('id',$id)->get();
+        return ($sizeChart->count() > 0 || $productItems->count() > 0);
     }
 }
