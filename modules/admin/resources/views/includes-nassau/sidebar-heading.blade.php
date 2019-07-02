@@ -8,6 +8,18 @@
         @else
         <h1>{{ $data['title']??'Summary' }}</h1>
         @endif
+        <!--<div class="dropdown ml-auto mb-2 mr-2">
+            <a class="dropdown-toggle" data-toggle="dropdown">
+                <span class="badge badge-danger">4</span>
+                &nbsp;<i class="fa fa-bell"></i>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Link 1 </a>
+                <a class="dropdown-item" href="#">Link 2</a>
+                <a class="dropdown-item" href="#">Link 3</a>
+                <a class="dropdown-item" href="#">Link 4</a>
+            </div>
+        </div>-->
         <div class="dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">

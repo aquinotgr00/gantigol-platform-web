@@ -6,14 +6,11 @@
     </td>
     <td>{{ $parent }}{{ $category['name'] }}</td>
     <td>
-        @if(is_null($category->checkIfHasOneItem))
+        <a href="{{ route('product-categories.edit',['category'=>$category]) }}" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>
+        
+        @if($category->checkIfHasOneItem($category['id']))
 
-        <a href="{{ route('product-categories.edit',['category'=>$category]) }}"
-            class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title=""
-            data-original-title="Edit"></a>
-
-        <a href="#" onclick="deleteItem({{ $category->id }})" class="btn btn-table circle-table delete-table"
-            data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"></a>
+        <a href="#" onclick="deleteItem({{ $category->id }})" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"></a>
 
         @endif
     </td>

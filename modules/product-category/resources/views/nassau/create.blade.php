@@ -35,7 +35,7 @@
                 @endif
             </select>
         </div>
-        <input type="hidden" name="image_id" />
+        <input type="hidden" name="image_id" id="product-category-image-id" />
         <div class="float-right">
             <button type="submit" class="btn btn-success">Submit</button>
         </div>
