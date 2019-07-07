@@ -16,6 +16,7 @@ use Modules\Membership\Member;
 use Modules\Preorder\Mail\InvoiceOrder;
 use Modules\Preorder\SettingReminder;
 use Modules\Shipment\Subdistrict;
+use Modules\Product\ProductVariant;
 use Validator;
 
 class CheckoutApiController extends Controller
@@ -107,7 +108,6 @@ class CheckoutApiController extends Controller
             $request->request->add(['billing_email' => $request->shipping_email]);
             $request->request->add(['billing_phone' => $request->shipping_phone]);
             $request->request->add(['billing_address' => $request->shipping_address]);
-
         }
 
         if ($request->has('courier_type')) {
@@ -154,6 +154,12 @@ class CheckoutApiController extends Controller
                                 'data' => 'Out of stock ',
                                 'status' => 462,
                             ]);
+                        } else {
+                            $reduceProductVariant = ProductVariant::find($value->productVariant->id);
+                            if (!is_null($reduceProductVariant)) {
+                                $reduceProductVariant->quantity_on_hand = $qty_reduced;
+                                $reduceProductVariant->update();
+                            }
                         }
 
                         $value->delete();
@@ -211,24 +217,22 @@ class CheckoutApiController extends Controller
                         'invoice' => $order->invoice_id,
                         'orders' => $order->items,
                     ];
-                    
+
                     try {
-                        
+
                         Mail::to($order->billing_email)->send(new InvoiceOrder($invoice));
 
                         $settingReminder = SettingReminder::first();
                         $interval   = (!is_null($settingReminder)) ? $settingReminder->interval : 6;
                         $repeat     = (!is_null($settingReminder)) ? $settingReminder->repeat : 3;
                         $interval   = $interval * 60;
-                        for ($i=1; $i <= $repeat; $i++) { 
+                        for ($i = 1; $i <= $repeat; $i++) {
                             $interval = $i * $interval;
-                            dispatch(new PaymentReminderJob($i,$order))->delay(now()->addMinutes($interval));
+                            dispatch(new PaymentReminderJob($i, $order))->delay(now()->addMinutes($interval));
                         }
-
                     } catch (Exception $ex) {
                         error_log($ex);
                     }
-
                 } catch (QueryException $e) {
                     DB::rollback();
                 }

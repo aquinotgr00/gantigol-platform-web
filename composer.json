@@ -19,6 +19,7 @@
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "5.7.*",
         "league/flysystem-aws-s3-v3": "^1.0",
+        "pusher/pusher-php-server": "~3.0",
         "rizalafani/rajaongkirlaravel": "^1.0",
         "rtconner/laravel-tagging": "~3.1",
         "spatie/laravel-activitylog": "^3.2",
