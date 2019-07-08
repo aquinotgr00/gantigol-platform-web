@@ -182,8 +182,9 @@
 
         tinymce.init({
           selector:'textarea',
-           toolbar: 'dialog-quote-btn|dialog-hotlink-btn',
-           plugins: "paste",
+          toolbar: 'dialog-quote-btn|dialog-hotlink-btn|code',
+          plugins: ["paste code "
+                    ],
            paste_as_text: true,
            setup: function (editor) {
             editor.ui.registry.addButton('dialog-quote-btn', {
