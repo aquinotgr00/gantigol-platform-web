@@ -32,3 +32,9 @@ Route::get('show-invoice', 'AllTransactionController@showInvoice')->name('show-i
 Route::post('reset-preorder/{id}', 'PreorderController@resetPreOrder')->name('list-preorder.reset');
 
 Route::get('shipping-datatables/{id}', 'TransactionController@getShippingDatatables')->name('shipping.datatables');
+
+Route::get('test', function () {
+    $preOrder = \Modules\Preorder\PreOrder::find(2);
+    event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
+    return "Event has been sent!";
+});

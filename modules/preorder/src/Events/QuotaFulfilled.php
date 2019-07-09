@@ -7,6 +7,9 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Modules\Preorder\PreOrder;
+use Modules\Preorder\Notifications\QuotaPreOrder;
+
+use Notification;
 
 class QuotaFulfilled implements ShouldBroadcast
 {
@@ -38,6 +41,8 @@ class QuotaFulfilled implements ShouldBroadcast
      */
     public function __construct(PreOrder $preOrder)
     {
+        //$user = \Auth::user();
+        //Notification::send($user, new QuotaPreOrder($preOrder));
         $this->product = $preOrder;
         $this->message = "{$preOrder->product->name} quota is fulfilled.";
         $this->url = route('pending.transaction', $preOrder->id);

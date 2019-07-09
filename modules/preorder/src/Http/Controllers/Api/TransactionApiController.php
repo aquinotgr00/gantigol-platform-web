@@ -264,10 +264,10 @@ class TransactionApiController extends Controller
 
                 $preOrder->total = $total;
                 $preOrder->update();
-                /*
+                
                 if ($preOrder->total >= $preOrder->quota) {
                     event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
-                }*/
+                }
             }
 
             $amount += intval($request->courier_fee);

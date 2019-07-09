@@ -9,11 +9,13 @@
         <h1>{{ $title }}</h1>
         @endisset
         <div class="dropdown ml-auto mb-2 mr-2">
-            <a class="dropdown-toggle-notif" data-toggle="dropdown">
+            <a class="dropdown-toggle dropdown-toggle-notif" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span data-count="0" class="badge badge-danger">0</span>
                 &nbsp;<i class="fa fa-bell"></i>
             </a>
-            <div class="dropdown-menu-notif dropdown-notifications">
+            <div class="dropdown-wrapper">
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                </div>
             </div>
         </div>
         <div class="dropdown">
