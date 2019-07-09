@@ -204,8 +204,9 @@ class TransactionApiController extends Controller
                 );
                 $customer_id = $customer->id;
             }
-
-            $invoice_id = str_pad($transaction->id, 5, "0", STR_PAD_LEFT);
+            $transaction_id = Transaction::whereDate('created_at',\Carbon\Carbon::today())->count();
+            ++$transaction_id;
+            $invoice_id     = str_pad($transaction_id, 5, "0", STR_PAD_LEFT);
             $invoice_parts = array('INV', date('Y-m-d'), $invoice_id);
             $invoice = implode('-', $invoice_parts);
             $transaction->update([
@@ -263,11 +264,10 @@ class TransactionApiController extends Controller
 
                 $preOrder->total = $total;
                 $preOrder->update();
-
+                /*
                 if ($preOrder->total >= $preOrder->quota) {
                     event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
-                }
-
+                }*/
             }
 
             $amount += intval($request->courier_fee);

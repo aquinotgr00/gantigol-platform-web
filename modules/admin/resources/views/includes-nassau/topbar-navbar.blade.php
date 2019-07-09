@@ -1,13 +1,13 @@
 <ul class="navbar-nav ml-auto">
 
     <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-    
+
 
     <!-- Nav Item - Alerts -->
-    
+
 
     <!-- Nav Item - Messages -->
-    
+
 
     <div class="topbar-divider d-none d-sm-block"></div>
 

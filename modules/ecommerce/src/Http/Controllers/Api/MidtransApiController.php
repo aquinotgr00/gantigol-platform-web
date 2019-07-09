@@ -97,7 +97,6 @@ class MidtransApiController extends Controller
                 $order = $this->order->where('invoice_id', $result['order_id'])->first();
 
                 if (!is_null($transaction)) {
-
                     Mail::to($transaction->email)->send(new PaymentExpire($transaction));
 
                 } elseif (!is_null($order)) {
@@ -108,6 +107,15 @@ class MidtransApiController extends Controller
                     ];
 
                     Mail::to($order->billing_email)->send(new PaymentExpire($transaction));
+
+                    foreach ($order->items as $key => $value) {
+                        $productVariant = ProductVariant::find($value->productVariant->id);
+                        if (!is_null($productVariant)) {
+                            $stockAdded = intval($productVariant->quantity_on_hand) + intval($value->qty);
+                            $productVariant->quantity_on_hand = $stockAdded;
+                            $productVariant->update();
+                        }
+                    }
                 }
                 break;
         }

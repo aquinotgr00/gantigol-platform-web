@@ -22,7 +22,7 @@
                 <div class="col-md-9 ml-sm-auto col-lg-10 main">
                     @if(isset($data))
                     {{-- start header --}}
-                    @include('admin::includes-nassau.sidebar-heading',$data)
+                    @pageHeader(['title'=>$data['title']])
                     {{-- end header --}}
                     @endif 
                     

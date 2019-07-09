@@ -8,9 +8,16 @@
         @else
         <h1>{{ $title }}</h1>
         @endisset
+        <div class="dropdown ml-auto mb-2 mr-2">
+            <a class="dropdown-toggle-notif" data-toggle="dropdown">
+                <span data-count="0" class="badge badge-danger">0</span>
+                &nbsp;<i class="fa fa-bell"></i>
+            </a>
+            <div class="dropdown-menu-notif dropdown-notifications">
+            </div>
+        </div>
         <div class="dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{ Auth::user()->name }}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
