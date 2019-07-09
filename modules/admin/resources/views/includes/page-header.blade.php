@@ -10,7 +10,7 @@
         @endisset
         <div class="dropdown ml-auto mb-2 mr-2">
             <a class="dropdown-toggle-notif" data-toggle="dropdown">
-                <span data-count="0" class="badge badge-danger">4</span>
+                <span data-count="0" class="badge badge-danger">0</span>
                 &nbsp;<i class="fa fa-bell"></i>
             </a>
             <div class="dropdown-menu-notif dropdown-notifications">
