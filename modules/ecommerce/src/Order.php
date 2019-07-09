@@ -95,9 +95,8 @@ class Order extends Model
 
     public static function getNextID()
     {
-        $table_name = static::getTableName();
-        $statement = DB::select("SHOW TABLE STATUS LIKE '$table_name'");
-        $nextId = $statement[0]->Auto_increment;
+        $nextId = static::whereDate('created_at',\Carbon\Carbon::today())->count();
+        ++$nextId;
         return $nextId;
     }
 
