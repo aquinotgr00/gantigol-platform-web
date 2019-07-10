@@ -88,6 +88,15 @@
                 @endif
             </table>
         </div>
+        <div class="mt-2 float-right">
+            @if($preOrder->total >= $preOrder->quota)
+            <a href="{{ route('list-preorder.reset',$preOrder->id) }}" class="btn btn-warning"
+                onclick="return confirm('Are you sure?')"> 
+                <i class="fas fas-refresh"></i>
+                Reset PreOrder
+            </a>
+            @endif
+        </div>
     </form>
 
     <div class="col-md-4 col-lg-5 pl-5 grs">

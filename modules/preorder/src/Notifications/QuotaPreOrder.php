@@ -26,14 +26,16 @@ class QuotaPreOrder extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'preorder' => $this->preorder
+            'preorder' => $this->preorder,
+            'product' => $this->preorder->product
         ];
     }
 
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'preorder' => $this->preorder
+            'preorder' => $this->preorder,
+            'product' => $this->preorder->product
         ]);
     }
 }

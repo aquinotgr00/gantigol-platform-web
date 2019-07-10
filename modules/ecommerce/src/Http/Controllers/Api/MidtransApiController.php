@@ -47,25 +47,28 @@ class MidtransApiController extends Controller
                     $transaction->preOrder->increment('order_received');
 
                     $transaction->update(['status' => 'paid']);
-                    
+
                     $total = $transaction->preOrder->total;
                     foreach ($transaction->orders as $key => $value) {
                         $total += intval($value->qty);
                     }
 
                     $preOrder = PreOrder::find($transaction->pre_order_id);
-                    
+
                     if (!is_null($preOrder)) {
                         $preOrder->total = $total;
                         $preOrder->update();
                     }
 
                     if ($transaction->preOrder->total >= $transaction->preOrder->quota) {
-                        event(new \Modules\Preorder\Events\QuotaFulfilled($transaction->preOrder));
+                        try {
+                            event(new \Modules\Preorder\Events\QuotaFulfilled($transaction->preOrder));
+                        } catch (\Throwable $th) {
+                            error_log($th);
+                        }
                     }
 
                     Mail::to($transaction->email)->send(new PaymentSuccess($transaction));
-
                 } elseif (!is_null($order)) {
 
                     $order->update(['order_status' => 1]);
@@ -98,7 +101,6 @@ class MidtransApiController extends Controller
 
                 if (!is_null($transaction)) {
                     Mail::to($transaction->email)->send(new PaymentExpire($transaction));
-
                 } elseif (!is_null($order)) {
                     $transaction = (object) [
                         'invoice' => $order->invoice_id,

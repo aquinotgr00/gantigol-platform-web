@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Preorder\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -29,13 +30,13 @@ class PreorderController extends Controller
                 ->get();
             return DataTables::of($preorders)
                 ->addColumn('product.name', function ($row) {
-                    if (Gate::allows('view-transaction',$row)) {
-                        $link = '<a href="'.route('pending.transaction',$row->id).'">';
-                    }else{
-                        $link = '<a href="'.route('list-preorder.show',$row->id).'">';
+                    if (Gate::allows('view-transaction', $row)) {
+                        $link = '<a href="' . route('pending.transaction', $row->id) . '">';
+                    } else {
+                        $link = '<a href="' . route('list-preorder.show', $row->id) . '">';
                     }
                     $link .= $row->product->name;
-                    $link .='</a>';
+                    $link .= '</a>';
                     return $link;
                 })
                 ->addColumn('image', function ($row) {
@@ -62,15 +63,15 @@ class PreorderController extends Controller
                     $button .= '<a href="' . $data["route"] . '" class="btn btn-table circle-table ' . $data["button"] . '" data-toggle="tooltip" data-placement="top" title="' . $data['title'] . '"></a>';
 
                     if ($row->total >= $row->quota) {
-                        $button .='<button type="button" data-url="'.route('list-preorder.reset',$row->id).'" class="btn circle-table btn-reset" onclick="resetPreorder(this)"  data-toggle="tooltip" data-placement="top" title="Reset PreOrder"></button>';
+                        $button .= '<button type="button" data-url="' . route('list-preorder.reset', $row->id) . '" class="btn circle-table btn-reset" onclick="resetPreorder(this)"  data-toggle="tooltip" data-placement="top" title="Reset PreOrder"></button>';
                     }
 
                     return $button;
                 })
-                ->rawColumns(['image','product.name', 'action'])
+                ->rawColumns(['image', 'product.name', 'action'])
                 ->make(true);
         }
-        
+
         return view('preorder::preorder.index');
     }
     /**
@@ -125,7 +126,7 @@ class PreorderController extends Controller
             $productCategory    = \Modules\ProductCategory\ProductCategory::whereNull('parent_id')->with('subcategories')->get();
             $categories         = $productCategory;
         }
-        
+
         $send = [
             'categories' => $categories,
             'preOrder' => $preOrder,
@@ -211,6 +212,11 @@ class PreorderController extends Controller
             'end_date' => $request->end_date,
             'status' => ($request->status == 0) ? 'draft' : 'publish'
         ]);
+
+        if (isset($preOrder->created_by)) {
+            $preOrder->created_by = Auth::user()->id;
+            $preOrder->update();
+        }
 
         if ($request->has('images')) {
             foreach ($request->images as $key => $value) {
@@ -355,15 +361,23 @@ class PreorderController extends Controller
     public function resetPreOrder(int $id)
     {
         $preOrder = PreOrder::find($id);
-        
+
         if (
-            !is_null($preOrder) &&
-            ($preOrder->total >= $preOrder->quota)
+            !is_null($preOrder) && ($preOrder->total >= $preOrder->quota)
         ) {
             $preOrder->total = 0;
             $preOrder->update();
         }
-        
+
         return response()->json(['data' => $preOrder]);
+    }
+
+    public function markAsRead()
+    {
+        $notifications = auth()->user()->notifications()->get();
+        foreach ($notifications as $key => $value) {
+            $value->markAsRead();
+        }
+        return back();
     }
 }

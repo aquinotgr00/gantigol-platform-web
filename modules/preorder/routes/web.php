@@ -33,8 +33,4 @@ Route::post('reset-preorder/{id}', 'PreorderController@resetPreOrder')->name('li
 
 Route::get('shipping-datatables/{id}', 'TransactionController@getShippingDatatables')->name('shipping.datatables');
 
-Route::get('test', function () {
-    $preOrder = \Modules\Preorder\PreOrder::find(2);
-    event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
-    return "Event has been sent!";
-});
+Route::get('preorder/notification/mark-as-read', 'PreorderController@markAsRead')->name('preorder.notification.mark-as-read');
