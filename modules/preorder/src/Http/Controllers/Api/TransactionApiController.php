@@ -324,7 +324,7 @@ class TransactionApiController extends Controller
                 $interval   = $interval * 60;
                 for ($i=1; $i <= $repeat; $i++) { 
                     $interval = $i * $interval;
-                    //dispatch(new PaymentReminder($transaction))->delay($transaction->created_at->addMinutes($interval));
+                    dispatch(new PaymentReminder($transaction))->delay($transaction->created_at->addMinutes($interval));
                 }
                 
             } catch (Exception $ex) {
