@@ -8,12 +8,35 @@
         @else
         <h1>{{ $title }}</h1>
         @endisset
+
+        @php
+
+        $notifications = \Auth::user()->unreadNotifications()->get();
+        $notifications_count = count($notifications);
+
+        @endphp
+
         <div class="dropdown ml-auto mb-2 mr-2">
-            <a class="dropdown-toggle-notif" data-toggle="dropdown">
-                <span data-count="0" class="badge badge-danger">0</span>
+            <a class="dropdown-toggle dropdown-toggle-notif" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span data-count="{{ $notifications_count }}" class="badge badge-danger">{{ $notifications_count }}</span>
                 &nbsp;<i class="fa fa-bell"></i>
             </a>
-            <div class="dropdown-menu-notif dropdown-notifications">
+            <div class="dropdown-wrapper">
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    @if(isset($notifications))
+                    @foreach($notifications as $key => $notif)
+                    @if(isset($notif->data['preorder']) && isset($notif->data['product']))
+                    <a class="dropdown-item" href="{{ route('list-preorder.show',$notif->data['preorder']['id']) }} ">
+                        {{ $notif->data['product']['name'] }} quota is fulfilled.
+                    </a>
+                    @endif
+                    @endforeach
+                    <a class="dropdown-item text-danger" href="{{ route('preorder.notification.mark-as-read') }}"
+                        onclick="return (confirm('Are  you sure?'))">
+                        Mark As Read
+                    </a>
+                    @endif
+                </div>
             </div>
         </div>
         <div class="dropdown">

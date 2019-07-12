@@ -264,10 +264,14 @@ class TransactionApiController extends Controller
 
                 $preOrder->total = $total;
                 $preOrder->update();
-                /*
+                
                 if ($preOrder->total >= $preOrder->quota) {
-                    event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
-                }*/
+                    try {
+                        event(new \Modules\Preorder\Events\QuotaFulfilled($preOrder));
+                    } catch (\Throwable $th) {
+                        error_log($th);
+                    }
+                }
             }
 
             $amount += intval($request->courier_fee);
@@ -320,7 +324,7 @@ class TransactionApiController extends Controller
                 $interval   = $interval * 60;
                 for ($i=1; $i <= $repeat; $i++) { 
                     $interval = $i * $interval;
-                    dispatch(new PaymentReminder($transaction))->delay(now()->addMinutes($interval));
+                    dispatch(new PaymentReminder($transaction))->delay($transaction->created_at->addMinutes($interval));
                 }
                 
             } catch (Exception $ex) {

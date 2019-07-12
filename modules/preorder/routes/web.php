@@ -32,3 +32,5 @@ Route::get('show-invoice', 'AllTransactionController@showInvoice')->name('show-i
 Route::post('reset-preorder/{id}', 'PreorderController@resetPreOrder')->name('list-preorder.reset');
 
 Route::get('shipping-datatables/{id}', 'TransactionController@getShippingDatatables')->name('shipping.datatables');
+
+Route::get('preorder/notification/mark-as-read', 'PreorderController@markAsRead')->name('preorder.notification.mark-as-read');

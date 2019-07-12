@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Modules\Ecommerce\Order;
 use Modules\Preorder\Mail\WayBill;
+use Modules\Product\ProductVariant;
+use Spatie\Activitylog\Models\Activity;
 
 class TransactionController extends Controller
 {
@@ -77,16 +79,65 @@ class TransactionController extends Controller
         ]);
         $order = Order::findOrFail($id);
         $tracking_number = trim($request->shipping_tracking_number);
-        
+
+        if ($request->has('order_status')) {
+            foreach ($order->items as $value) {
+                $productVariant = ProductVariant::find($value->productVariant->id);
+                if (!is_null($productVariant)) {
+
+                    $user           = \Auth::user();
+
+                    $repeat_changes = false;
+
+                    if (in_array($request->order_status, [0, 1, 3, 5, 8])) {
+                        $method = '-';
+                        $stockUpdated = intval($productVariant->quantity_on_hand) - intval($value->qty);
+                        if (in_array($order->order_status,[2, 4, 6, 7, 9])) {
+                            $repeat_changes = true;
+                        }
+                    } else {
+                        $method = '+';
+                        $stockUpdated = intval($productVariant->quantity_on_hand) + intval($value->qty);
+                        if (in_array($order->order_status,[0, 1, 3, 5, 8])) {
+                            $repeat_changes = true;
+                        }
+                    }
+                    
+                    //check log exist
+                    $activity = Activity::where('properties->activity', $method)
+                        ->where('subject_id', $id)
+                        ->orderBy('created_at', 'DESC')
+                        ->first();
+
+                    if (is_null($activity)) {
+                        activity()
+                            ->performedOn($order)
+                            ->causedBy($user)
+                            ->withProperties([
+                                'activity' => $method,
+                            ])
+                            ->log('Change Order Status');
+                        $productVariant->quantity_on_hand = $stockUpdated;
+                        $productVariant->update();
+                    }
+
+                    if ($repeat_changes) {
+                        $productVariant->quantity_on_hand = $stockUpdated;
+                        $productVariant->update();
+                    }
+                }
+            }
+        }
+
         if (
             !empty($tracking_number) &&
             $order->shipping_tracking_number != $tracking_number
         ) {
-            
+
             $order->update([
                 'shipping_tracking_number' => $tracking_number
             ]);
-            
+
             try {
                 $send = (object) [
                     'tracking_number' => $order->shipping_tracking_number,
@@ -95,7 +146,7 @@ class TransactionController extends Controller
                         'tracking_number' => $order->shipping_tracking_number,
                     ],
                     'orders' => (object) $order->items,
-                    'courier_name' => $order->shipment_name 
+                    'courier_name' => $order->shipment_name
                 ];
                 Mail::to($order->shipping_email)->send(new WayBill($send));
                 $order->update([
@@ -103,11 +154,11 @@ class TransactionController extends Controller
                 ]);
             } catch (\Swift_TransportException $e) {
                 $response = $e->getMessage();
-            }   
+            }
         }
 
-        $order->update($request->except('_token', '_method','shipping_tracking_number'));
-        
+        $order->update($request->except('_token', '_method', 'shipping_tracking_number'));
+
         return back();
     }
 }
