@@ -7,11 +7,11 @@
     <td>{{ $parent }}{{ $category['name'] }}</td>
     <td>
         <a href="{{ route('product-categories.edit',['category'=>$category]) }}" class="btn btn-table circle-table edit-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></a>
-        
-        @if($category->checkIfHasOneItem($category['id']))
-
+        @if(
+        $category->productItems->count() == 0 &&
+        is_null($category->sizeChart)
+        )
         <a href="#" onclick="deleteItem({{ $category->id }})" class="btn btn-table circle-table delete-table" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"></a>
-
         @endif
     </td>
 </tr>

@@ -232,7 +232,7 @@
     }
 
     function selectAddtionalImage(images) {
-        var html = '';
+        var html = $('.addtional-images').html();
         $.each(images, function(key, value) {
             html += templateAddtionalImage(value.url, value.id);
         });

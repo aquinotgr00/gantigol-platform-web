@@ -50,11 +50,4 @@ class ProductCategory extends Model
         }
         return null;
     }
-
-    public function checkIfHasOneItem(int $id)
-    {
-        $sizeChart      = static::doesntHave('sizeChart')->where('id',$id)->get();
-        $productItems   = static::doesntHave('productItems')->where('id',$id)->get();
-        return ($sizeChart->count() > 0 || $productItems->count() > 0);
-    }
 }
