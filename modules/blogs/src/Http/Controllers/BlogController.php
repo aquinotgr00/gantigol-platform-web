@@ -181,7 +181,7 @@ class BlogController extends Controller
             'title' => 'required',
             'category_id' => 'required',
         ]);
-        $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags']));
+        $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags','publish_date']));
         $blog = $this->blogs->where('id', $request->id)->first();
         if ($request->has('tags')) {
             $this->insertTags($request, $blog);
@@ -204,7 +204,9 @@ class BlogController extends Controller
             'body' =>'required',
             'image'=>'required',
         ]);
-        $request->request->add(['publish_date' => Carbon::now()]);
+        if(empty($request->publish_date)){
+          $request->merge(['publish_date' => Carbon::now()]);  
+        }
         if (!empty($id)) {
             $this->blogs->where('id', $request->id)->update($request->except(['id','_token','tags']));
             $blog = $this->blogs->where('id', $request->id)->first();
