@@ -3,6 +3,7 @@
 @push('styles')
 
 <link rel="stylesheet" type="text/css" href="{{asset('vendor/product/css/bootstrap-tagsinput.css')}}">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style>
     .add-img-featured {
         padding: 10px;
@@ -63,6 +64,17 @@
                   <label for="exampleInputCategoryPrize">Keywords</label>
                   <input type="text" name="keywords" class="form-control" id="exampleInputCategoryPrize" value="{{implode( ", ", $tags )}}" data-role="tagsinput">
                 </div>
+                 @if(empty($post->publish_date))
+                  <div class="form-group checkbox" id="schedule-checkbox">
+                    <label><input type="checkbox" id="schedule-checkbox-tick"> Schedule Publish Date</label>
+                  </div>
+                  @endif
+                @can('publish-post')
+                <div class="form-group @if(empty($post->publish_date)) d-none @endif" id="publish-form">
+                  <label for="exampleInputCategoryPrize">Publish Date</label>
+                  <input type="text" name="publish_date" class="form-control datepicker" id="" value="{{$post->publish_date}}">
+                </div>
+                @endcan
                  <div class="d-flex flex-row-reverse">
                   @can('publish-post')
                   <button type="submit" class="btn btn-success ml-4" formaction="{{Route('blog.post.publish',$post->id)}}">Publish</button>
@@ -96,7 +108,23 @@
 @useTinymce
 @push('scripts')
  <script src="{{asset('vendor/product/js/bootstrap-tagsinput.js')}}"></script> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
       <script>
+      $(function(){
+
+        $( ".datepicker" ).datepicker({
+          changeMonth: true,
+          changeYear: true,
+          dateFormat:"yy-mm-dd",
+        });
+        $("#schedule-checkbox-tick").on("click",function(){
+         if($( "#schedule-checkbox-tick:checked" ).val() =="on"){
+          $("#schedule-checkbox").addClass("d-none")
+          $("#publish-form").removeClass("d-none")
+          $( ".datepicker" ).datepicker("setDate",new Date())
+         }
+        })
+      })
         var dialogConfigQuote =  {
           title: 'quote text',
           body: {
